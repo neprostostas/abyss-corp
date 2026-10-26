@@ -1,39 +1,286 @@
-import { useEffect } from 'react';
-import type { LiveOps } from '../application/LiveOps';
-import { LIVE_OPS_POLL_MS, TELEMETRY_FLUSH_MS } from '../data/liveOps';
-import type { SaveSync } from '../application/SaveSync';
-import { GameScreen } from '../ui/screens/GameScreen';
-import type { GameSession } from '../application/GameSession';
+import { AdminAnalyticsClient } from '../infrastructure/analytics/AdminAnalyticsClient';
+import { CookieConsent } from '../ui/analytics/CookieConsent';
+import { PrivacyScreen } from '../ui/analytics/PrivacyScreen';
+import { AnalyticsScreen } from '../ui/analytics/AnalyticsScreen';
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+} from 'react';
+import type { SupabaseClient, User } from '@supabase/supabase-js';
+import type { Database } from '../infrastructure/supabase/database.types';
+import { AccountSaveRepository } from '../infrastructure/supabase/AccountSaveRepository';
+import { LocalSaveRepository } from '../infrastructure/persistence/LocalSaveRepository';
+import { browserClock } from '../infrastructure/clock/browserClock';
+import { GameSession } from '../application/GameSession';
+import { AuthScreen } from '../ui/auth/AuthScreen';
+import { PlayerClient } from '../infrastructure/supabase/PlayerClient';
+import { AdminDatabaseClient } from '../infrastructure/supabase/AdminDatabaseClient';
+import { LeaderboardPanel } from '../ui/players/LeaderboardPanel';
+import { AccountPanel } from '../ui/account/AccountPanel';
 
-export function App({
-  session,
-  sync,
-  liveOps,
+const GameScreen = lazy(async () => {
+  const module = await import('../ui/screens/GameScreen');
+  return { default: module.GameScreen };
+});
+const DatabaseScreen = lazy(async () => {
+  const module = await import('../ui/account/DatabaseScreen');
+  return { default: module.DatabaseScreen };
+});
+const loadingScreen = (
+  <main className="account-screen">
+    <p role="status">Loading…</p>
+  </main>
+);
+
+function AccountGame({
+  client,
+  user,
 }: {
-  session: GameSession;
-  sync: SaveSync;
-  liveOps: LiveOps;
+  client: SupabaseClient<Database>;
+  user: User;
 }) {
-  useEffect(() => {
-    void liveOps.refresh();
-    const time = window.setInterval(liveOps.tick, 1000);
-    const refresh = window.setInterval(() => {
-      if (!document.hidden) void liveOps.refresh();
-    }, LIVE_OPS_POLL_MS);
-    const flush = window.setInterval(() => {
-      void liveOps.flush();
-    }, TELEMETRY_FLUSH_MS);
-    const visibility = () => {
-      if (!document.hidden) void liveOps.refresh();
+  const [runtime] = useState(() => {
+    const repository = new AccountSaveRepository(
+      client,
+      user.id,
+      () => window.localStorage,
+    );
+    const session = new GameSession(repository, browserClock);
+    repository.subscribe(() => {
+      const update = repository.takeRemoteUpdate();
+      if (update) session.adoptCloudSave(update);
+    });
+    return {
+      repository,
+      session,
+      synchronize: async () => {
+        await session.save(true);
+        await repository.flush();
+      },
+      players: new PlayerClient(client, user.id),
     };
+  });
+  const { session, repository } = runtime;
+  const cloud = useSyncExternalStore(
+    repository.subscribe,
+    repository.getSnapshot,
+  );
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    let active = true;
+    void client.rpc('is_database_admin').then(({ data, error }) => {
+      if (active) setIsAdmin(!error && data);
+    });
+    return () => {
+      active = false;
+    };
+  }, [client]);
+  const [canImport, setCanImport] = useState(() => {
+    try {
+      return (
+        window.localStorage.getItem('abyss-corp.save') !== null &&
+        window.localStorage.getItem(`${repository.key}.imported`) !== 'true'
+      );
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    const sync = () => {
+      void repository.flush();
+    };
+    const interval = window.setInterval(sync, 15000);
+    const visibility = () => {
+      if (document.hidden) sync();
+    };
+    window.addEventListener('online', sync);
     document.addEventListener('visibilitychange', visibility);
     return () => {
-      window.clearInterval(time);
-      window.clearInterval(refresh);
-      window.clearInterval(flush);
+      window.clearInterval(interval);
+      window.removeEventListener('online', sync);
       document.removeEventListener('visibilitychange', visibility);
-      liveOps.stop();
     };
-  }, [liveOps]);
-  return <GameScreen session={session} sync={sync} liveOps={liveOps} />;
+  }, [repository]);
+  const save = async () => {
+    await session.save(true);
+    if (session.getSnapshot().saveStatus === 'error')
+      throw new Error('Device save failed. Keep this tab open and retry.');
+    await repository.flush();
+    if (repository.getSnapshot().status === 'error')
+      throw new Error(repository.getSnapshot().error ?? 'Cloud save failed.');
+  };
+  const importProgress = async () => {
+    const previous = await new LocalSaveRepository(
+      () => window.localStorage,
+    ).load();
+    if (!previous) throw new Error('No previous progress on this device.');
+    if (
+      !window.confirm(
+        'Replace this account’s progress with the previous device save? A backup of current progress will be kept.',
+      )
+    )
+      return;
+    await session.restoreServerSave(previous);
+    await save();
+    window.localStorage.setItem(`${repository.key}.imported`, 'true');
+    setCanImport(false);
+  };
+  const account = (
+    <AccountPanel
+      isAdmin={isAdmin}
+      email={user.email ?? 'Account'}
+      repository={repository}
+      onSave={save}
+      onSignOut={async () => {
+        session.setActive(false);
+        let signedOut = false;
+        try {
+          await save();
+          if (repository.getSnapshot().status === 'pending')
+            await repository.flush();
+          if (repository.getSnapshot().status === 'error')
+            throw new Error('Sync failed. Retry before signing out.');
+          const { error } = await client.auth.signOut();
+          if (error) throw error;
+          signedOut = true;
+        } finally {
+          if (!signedOut) session.setActive(!document.hidden);
+        }
+      }}
+      onImport={canImport && cloud.status !== 'loading' ? importProgress : null}
+    />
+  );
+  return (
+    <Suspense fallback={loadingScreen}>
+      <GameScreen
+        session={session}
+        accountPanel={account}
+        cloud={cloud}
+        leaderboardPanel={
+          <LeaderboardPanel
+            gateway={runtime.players}
+            synchronize={runtime.synchronize}
+          />
+        }
+      />
+    </Suspense>
+  );
+}
+
+function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
+  const [analyticsClient] = useState(() =>
+    client ? new AdminAnalyticsClient(client) : null,
+  );
+  const [adminClient] = useState(() =>
+    client ? new AdminDatabaseClient(client) : null,
+  );
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(() =>
+    new URLSearchParams(window.location.hash.slice(1)).has('error_description')
+      ? 'This email link has expired or is invalid. Request a new one.'
+      : null,
+  );
+  const [recovery, setRecovery] = useState(
+    window.location.pathname === '/reset-password',
+  );
+  useEffect(() => {
+    if (!client) return;
+    let live = true;
+    const {
+      data: { subscription },
+    } = client.auth.onAuthStateChange((event, session) => {
+      if (!live) return;
+      if (event === 'PASSWORD_RECOVERY') setRecovery(true);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+    void client.auth
+      .getSession()
+      .then(({ error: failure }) => {
+        if (live && failure) {
+          setError('Could not restore your sign-in. Refresh to retry.');
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (live) {
+          setError('Connection failed. Refresh to retry.');
+          setLoading(false);
+        }
+      });
+    const parameters = new URLSearchParams(window.location.hash.slice(1));
+    const callbackError = parameters.get('error_description');
+    if (callbackError) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+    return () => {
+      live = false;
+      subscription.unsubscribe();
+    };
+  }, [client]);
+  if (!client)
+    return (
+      <main className="account-screen">
+        <section className="auth-card">
+          <h1>Connect Abyss Corp</h1>
+          <p>
+            Supabase configuration is missing. Follow docs/deployment.md, then
+            restart the app.
+          </p>
+        </section>
+      </main>
+    );
+  if (loading)
+    return (
+      <main className="account-screen">
+        <p role="status">Connecting…</p>
+      </main>
+    );
+  if (!user || recovery)
+    return (
+      <>
+        {error && (
+          <div className="auth-banner" role="alert">
+            {error}
+          </div>
+        )}
+        <AuthScreen
+          key={recovery ? 'recovery' : 'auth'}
+          client={client}
+          recovery={recovery}
+          signedIn={user !== null}
+          onPasswordUpdated={() => {
+            setRecovery(false);
+            setError(null);
+            window.history.replaceState(null, '', '/');
+          }}
+        />
+      </>
+    );
+  if (window.location.pathname === '/analytics' && analyticsClient)
+    return <AnalyticsScreen gateway={analyticsClient} />;
+  if (window.location.pathname === '/database' && adminClient)
+    return (
+      <Suspense fallback={loadingScreen}>
+        <DatabaseScreen gateway={adminClient} />
+      </Suspense>
+    );
+  return <AccountGame key={user.id} client={client} user={user} />;
+}
+
+export function App({ client }: { client: SupabaseClient<Database> | null }) {
+  return (
+    <>
+      {window.location.pathname === '/privacy' ? (
+        <PrivacyScreen />
+      ) : (
+        <AppContent client={client} />
+      )}
+      <CookieConsent />
+    </>
+  );
 }

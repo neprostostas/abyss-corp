@@ -8,7 +8,8 @@ export type IconName =
   | 'storage'
   | 'research'
   | 'missions'
-  | 'events'
+  | 'trophy'
+  | 'refresh'
   | 'settings'
   | 'lock'
   | 'play'
@@ -69,9 +70,14 @@ const shapes: Record<IconName, ReactNode> = {
       <path d="m8 12 2 2 5-4M8 18h7" />
     </>
   ),
-  events: (
+  trophy: (
     <>
-      <path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z" />
+      <path d="M7 3h10v5a5 5 0 0 1-10 0ZM7 5H3v3a4 4 0 0 0 5 4m9-7h4v3a4 4 0 0 1-5 4M12 13v5m-4 3v-3h8v3Z" />
+    </>
+  ),
+  refresh: (
+    <>
+      <path d="M20 8a8 8 0 1 0 0 8M20 3v5h-5" />
     </>
   ),
   settings: (

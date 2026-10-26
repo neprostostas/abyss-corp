@@ -25,13 +25,20 @@ export default defineConfig([
     },
   },
   {
-    files: ['server/**/*.ts'],
-    languageOptions: {
-      globals: globals.node,
-      parserOptions: {
-        project: './tsconfig.server.json',
-        projectService: false,
-      },
+    files: ['src/ui/world/**/*.tsx'],
+    rules: {
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        { allowNumber: true },
+      ],
+    },
+  },
+  {
+    files: ['src/infrastructure/supabase/database.types.ts'],
+    rules: {
+      '@typescript-eslint/consistent-type-definitions': 'off',
+      '@typescript-eslint/consistent-indexed-object-style': 'off',
+      '@typescript-eslint/no-generated-empty-object-type': 'off',
     },
   },
   {

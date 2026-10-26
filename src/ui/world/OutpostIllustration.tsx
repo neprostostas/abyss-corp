@@ -1,3 +1,4 @@
+import { useSubmarineMotion } from './useSubmarineMotion';
 import { UpgradeReveal } from './UpgradeReveal';
 import type { KeyboardEvent } from 'react';
 import { getProductionSummary, getProcessingDuration } from '../../domain/game';
@@ -39,14 +40,7 @@ export function OutpostIllustration({
     running &&
     game.processingElapsedMs !== null &&
     !production.processorBlocked;
-  const travel =
-    phase === 'delivering'
-      ? progress
-      : phase === 'returning'
-        ? 1 - progress
-        : 0;
-  const x = 370 + travel * 285;
-  const y = 400 - Math.sin(travel * Math.PI) * 45 - travel * 35;
+  const submarineRef = useSubmarineMotion(phase, progress, running, layerId);
   const activation = (id: UpgradeId) => (event: KeyboardEvent<SVGGElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -57,7 +51,9 @@ export function OutpostIllustration({
     role: 'button',
     tabIndex: 0,
     'aria-label': `${name}, level ${game.levels[id]}`,
-    onClick: () => onSelect(id),
+    onClick: () => {
+      onSelect(id);
+    },
     onKeyDown: activation(id),
     className: `world-object${selected === id ? ' selected' : ''}`,
   });
@@ -131,15 +127,17 @@ export function OutpostIllustration({
         </g>
       )}
       <g className="fish-school" fill="#b3efda" opacity=".4">
-        {[
-          [160, 230, 1],
-          [190, 245, 0.75],
-          [218, 222, 0.8],
-          [220, 265, 0.55],
-          [900, 205, 0.8],
-          [926, 220, 0.6],
-          [950, 202, 0.7],
-        ].map(([fx, fy, size], i) => (
+        {(
+          [
+            [160, 230, 1],
+            [190, 245, 0.75],
+            [218, 222, 0.8],
+            [220, 265, 0.55],
+            [900, 205, 0.8],
+            [926, 220, 0.6],
+            [950, 202, 0.7],
+          ] as const
+        ).map(([fx, fy, size], i) => (
           <path
             key={i}
             transform={`translate(${fx} ${fy}) scale(${size})`}
@@ -271,8 +269,15 @@ export function OutpostIllustration({
           {...hit('mining', 'Extraction drill')}
         >
           <ellipse className="selection-ring" cy="2" rx="92" ry="31" />
-          <UpgradeReveal key={`${layerId}-mining`} level={game.levels.mining} width={190} height={155}>
-            {(level) => <MiningRig level={level} active={running && phase === 'mining'} />}
+          <UpgradeReveal
+            key={`${layerId}-mining`}
+            level={game.levels.mining}
+            width={190}
+            height={155}
+          >
+            {(level) => (
+              <MiningRig level={level} active={running && phase === 'mining'} />
+            )}
           </UpgradeReveal>
           <g className="model-level" transform="translate(-20 -164)">
             <rect x="-26" y="-14" width="52" height="25" rx="9" />
@@ -283,13 +288,18 @@ export function OutpostIllustration({
         </g>
         <g transform="translate(693 485)" {...hit('processing', 'Refinery')}>
           <ellipse className="selection-ring" cy="24" rx="126" ry="45" />
-          <UpgradeReveal key={`${layerId}-processing`} level={game.levels.processing} width={250} height={235}>
+          <UpgradeReveal
+            key={`${layerId}-processing`}
+            level={game.levels.processing}
+            width={250}
+            height={235}
+          >
             {(level) => (
-<RefineryModel
-            level={level}
-            active={refining}
-            blocked={production.processorBlocked}
-          />
+              <RefineryModel
+                level={level}
+                active={refining}
+                blocked={production.processorBlocked}
+              />
             )}
           </UpgradeReveal>
           <g className="model-level" transform="translate(0 -251)">
@@ -319,16 +329,24 @@ export function OutpostIllustration({
         </g>
         <g transform="translate(899 546)" {...hit('storage', 'Warehouse')}>
           <ellipse className="selection-ring" cy="20" rx="91" ry="34" />
-          <UpgradeReveal key={`${layerId}-storage`} level={game.levels.storage} width={175} height={180}>
+          <UpgradeReveal
+            key={`${layerId}-storage`}
+            level={game.levels.storage}
+            width={175}
+            height={180}
+          >
             {(level) => (
-<WarehouseModel
-            level={level}
-            fraction={game.refined / production.capacity}
-            color={resource.color}
-          />
+              <WarehouseModel
+                level={level}
+                fraction={game.refined / production.capacity}
+                color={resource.color}
+              />
             )}
           </UpgradeReveal>
-          <g className="model-level" transform={`translate(6 ${game.levels.storage >= 5 ? -205 : game.levels.storage >= 4 ? -153 : game.levels.storage >= 3 ? -141 : -126})`}>
+          <g
+            className="model-level"
+            transform={`translate(6 ${game.levels.storage >= 5 ? -205 : game.levels.storage >= 4 ? -153 : game.levels.storage >= 3 ? -141 : -126})`}
+          >
             <rect x="-26" y="-14" width="52" height="25" rx="9" />
             <text textAnchor="middle" y="3">
               LV {game.levels.storage}
@@ -340,17 +358,26 @@ export function OutpostIllustration({
         d="M370 400Q500 310 655 365"
         className={`sub-route${running ? ' active' : ''}`}
       />
-      <g transform={`translate(${x} ${y})`} {...hit('transport', 'Submarine')}>
+      <g
+        ref={submarineRef}
+        transform="translate(370 400)"
+        {...hit('transport', 'Submarine')}
+      >
         <ellipse className="selection-ring" cy="20" rx="86" ry="33" />
         <g className={running ? 'sub-idle' : undefined}>
-          <UpgradeReveal key={`${layerId}-transport`} level={game.levels.transport} width={180} height={60}>
+          <UpgradeReveal
+            key={`${layerId}-transport`}
+            level={game.levels.transport}
+            width={180}
+            height={60}
+          >
             {(level) => (
-<SubmarineModel
-            level={level}
-            facingLeft={phase === 'returning'}
-            loaded={phase === 'delivering'}
-            color={resource.color}
-          />
+              <SubmarineModel
+                level={level}
+                facingLeft={phase === 'returning'}
+                loaded={phase === 'delivering'}
+                color={resource.color}
+              />
             )}
           </UpgradeReveal>
         </g>

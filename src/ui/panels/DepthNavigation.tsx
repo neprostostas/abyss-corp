@@ -22,7 +22,7 @@ export function DepthNavigation({
         return (
           <button
             key={id}
-            className={`depth-node depth-${index}${selected ? ' selected' : ''}${offer.unlocked ? '' : ' locked'}`}
+            className={`depth-node depth-${String(index)}${selected ? ' selected' : ''}${offer.canUnlock ? ' can-unlock' : ''}${offer.unlocked ? '' : ' locked'}`}
             onClick={() => {
               if (offer.unlocked) onSelect(id);
               else onUnlock(id);
@@ -31,16 +31,21 @@ export function DepthNavigation({
             aria-label={
               offer.unlocked
                 ? layer.name
-                : `Unlock ${layer.name}, ${offer.cost} credits`
+                : `Unlock ${layer.name}, ${String(offer.cost)} credits`
             }
             aria-current={selected ? 'location' : undefined}
             title={
               offer.unlocked
                 ? layer.name
-                : `${layer.name} · ${offer.cost} CR${offer.prerequisiteMet ? '' : ' · unlock previous depth first'}`
+                : `${layer.name} · ${String(offer.cost)} CR${offer.prerequisiteMet ? '' : ' · unlock previous depth first'}`
             }
           >
             <span className="depth-orb">
+              {offer.canUnlock && (
+                <span className="depth-ready" aria-label="New depth available">
+                  !
+                </span>
+              )}
               {offer.unlocked ? (
                 <GameIcon name="crystal" />
               ) : (

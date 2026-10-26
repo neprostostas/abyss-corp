@@ -1,0 +1,222 @@
+.leaderboard-panel {
+  display: grid;
+  gap: 18px;
+}
+.leaderboard-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.leaderboard-heading > div {
+  display: grid;
+  gap: 5px;
+}
+.leaderboard-heading strong {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: #ffe3a1;
+}
+.leaderboard-heading small {
+  font-size: 11px;
+  color: #9fbbb6;
+}
+.leaderboard-heading > button {
+  margin-left: auto;
+}
+.leaderboard-emblem {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #f3c76877;
+  border-radius: 15px;
+  color: #ffe49a;
+  background: radial-gradient(ellipse at top, #8c79465c, #284443);
+  box-shadow:
+    inset 0 1px #ffdfa733,
+    0 4px 14px #001c3140;
+}
+.leaderboard-emblem .game-icon {
+  width: 28px;
+  height: 28px;
+}
+.your-standing {
+  padding: 12px 10px;
+  border: 1px solid #80d0bc80;
+  border-radius: 14px;
+  background: #5b9a8517;
+}
+.your-standing-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #a4cbbf;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0 3px 5px;
+}
+.your-standing-label button {
+  font-size: 10px;
+  text-transform: none;
+}
+.your-standing ol,
+.captain-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.standing-row {
+  display: grid;
+  grid-template-columns: 28px 32px minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+  padding: 12px 3px;
+  border-bottom: 1px solid #99b9a526;
+}
+.your-standing .standing-row {
+  border: 0;
+}
+.standing-place {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: #a2bdb3;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.standing-place .game-icon {
+  width: 13px;
+  height: 13px;
+}
+.place-1 {
+  color: #ffe193;
+}
+.place-2 {
+  color: #bddee2;
+}
+.place-3 {
+  color: #dfa986;
+}
+.captain-avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 34px;
+  border-radius: 9px 9px 13px 13px;
+  background: linear-gradient(#3e7276, #234c5b);
+  border: 1px solid #82baa855;
+  color: #c5e6d7;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+.standing-captain {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+.standing-captain > strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 750;
+}
+.standing-captain strong small {
+  margin-left: 6px;
+  color: #91d8be;
+  font-size: 9px;
+  font-weight: 500;
+}
+.standing-captain > span {
+  color: #9ab6b0;
+  font-size: 9px;
+}
+.standing-depth {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: #ffdf9b;
+  white-space: nowrap;
+}
+.standing-depth small {
+  margin-left: 2px;
+  font-size: 10px;
+  color: #b4c9ba;
+}
+.is-you .captain-avatar {
+  border-color: #a0d5b2;
+}
+.ranking-rule {
+  color: #9ab6ad;
+  font-size: 10px;
+}
+.captain-rename {
+  display: flex;
+  gap: 8px;
+}
+.captain-rename input {
+  min-width: 0;
+  width: 100%;
+  border-radius: 8px;
+  padding: 9px;
+  border: 1px solid #a8c3ac66;
+  background: #102e3d;
+  color: #edf1df;
+  font-size: 13px;
+}
+.captain-rename button {
+  padding: 8px 12px;
+  font-size: 11px;
+}
+.standing-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  font-size: 11px;
+}
+.standing-pagination button {
+  padding: 8px 14px;
+}
+.empty-standings {
+  font-size: 12px;
+  color: #b1c6bc;
+  padding: 18px 0;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.game-dock {
+  gap: clamp(14px, 4vw, 48px);
+}
+.upgrade-info h3 {
+  font-family: var(--font-body);
+  letter-spacing: 0;
+}
+.panel-open .game-dock {
+  gap: 18px;
+}
+@media (max-width: 520px) {
+  .game-dock,
+  .panel-open .game-dock {
+    gap: 20px;
+  }
+  .dock-button {
+    font-size: 10px;
+  }
+  .standing-row {
+    gap: 7px;
+  }
+}

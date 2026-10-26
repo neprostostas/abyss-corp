@@ -30,12 +30,12 @@ export function AutomationPanel({
         <div className="crew-status">
           <span
             className={
-              automation.enabled && layer?.running ? 'active-status' : ''
+              automation.enabled && layer.running ? 'active-status' : ''
             }
           >
             {!automation.enabled
               ? 'Off duty'
-              : !layer?.running
+              : !layer.running
                 ? 'Outpost paused'
                 : 'On duty'}
           </span>

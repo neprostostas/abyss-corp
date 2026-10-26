@@ -1,9 +1,5 @@
-import { RESOURCES } from './resources';
-
-export const RESOURCE = RESOURCES.crystals;
-
 // Each entry describes the resulting level. Level 1 is free.
-// Values are milliseconds for machines and crystal slots per buffer for storage.
+// Values are milliseconds for machines and cargo slots per buffer for storage.
 export const UPGRADES = {
   mining: {
     name: 'Extraction drill',

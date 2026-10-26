@@ -53,7 +53,13 @@ export function Reef({
     </g>
   );
 }
-export function MiningRig({ active, level }: { active: boolean; level: number }) {
+export function MiningRig({
+  active,
+  level,
+}: {
+  active: boolean;
+  level: number;
+}) {
   return (
     <g stroke="#10384b" strokeWidth="3" strokeLinejoin="round">
       <ellipse
@@ -67,21 +73,50 @@ export function MiningRig({ active, level }: { active: boolean; level: number })
       />
       {level >= 2 && (
         <g>
-          <path d="M-73 8-87 27h35M-12 9 7 27h23" fill="none" stroke="#b9d9cd" strokeWidth="8" />
-          <path d="M-48-94-13-67-42-41-17-16" fill="none" stroke="#f6be56" strokeWidth="6" />
+          <path
+            d="M-73 8-87 27h35M-12 9 7 27h23"
+            fill="none"
+            stroke="#b9d9cd"
+            strokeWidth="8"
+          />
+          <path
+            d="M-48-94-13-67-42-41-17-16"
+            fill="none"
+            stroke="#f6be56"
+            strokeWidth="6"
+          />
         </g>
       )}
       {level >= 3 && (
         <g>
           <rect x="-92" y="-70" width="27" height="58" rx="10" fill="#528c98" />
-          <path d="M-87-56h17m-17 12h17m-17 12h17" stroke="#b5e8da" strokeWidth="4" />
-          <path d="M-78-70v-16h25" fill="none" stroke="#e8ba57" strokeWidth="7" />
+          <path
+            d="M-87-56h17m-17 12h17m-17 12h17"
+            stroke="#b5e8da"
+            strokeWidth="4"
+          />
+          <path
+            d="M-78-70v-16h25"
+            fill="none"
+            stroke="#e8ba57"
+            strokeWidth="7"
+          />
         </g>
       )}
       {level >= 4 && (
         <g>
-          <path d="M-17-108 77-137v52" fill="none" stroke="#183e4d" strokeWidth="17" />
-          <path d="M-17-108 77-137v52" fill="none" stroke="#f5cb68" strokeWidth="10" />
+          <path
+            d="M-17-108 77-137v52"
+            fill="none"
+            stroke="#183e4d"
+            strokeWidth="17"
+          />
+          <path
+            d="M-17-108 77-137v52"
+            fill="none"
+            stroke="#f5cb68"
+            strokeWidth="10"
+          />
           <g className={active ? 'rig-drilling' : undefined}>
             <path d="M64-83h26v34L77-29 64-49Z" fill="#b7ddd6" />
             <path d="m65-72 23 9m-23 5 19 8" stroke="#527f8c" strokeWidth="5" />
@@ -105,10 +140,21 @@ export function MiningRig({ active, level }: { active: boolean; level: number })
       {level >= 5 && (
         <g>
           <path d="M22-83h50v18H22Z" fill="#ffdf7b" />
-          <path d="M29-74h36" stroke="#a8fff0" strokeWidth="6" className={active ? 'beacon-light' : undefined} />
+          <path
+            d="M29-74h36"
+            stroke="#a8fff0"
+            strokeWidth="6"
+            className={active ? 'beacon-light' : undefined}
+          />
           <path d="M-30-107 17-132" stroke="#effbdc" strokeWidth="7" />
           <circle cx="-26" cy="-91" r="15" fill="#174e61" />
-          <circle cx="-26" cy="-91" r="8" fill="#9dffdf" className={active ? 'beacon-light' : undefined} />
+          <circle
+            cx="-26"
+            cy="-91"
+            r="8"
+            fill="#9dffdf"
+            className={active ? 'beacon-light' : undefined}
+          />
         </g>
       )}
       <rect x="-67" y="-36" width="43" height="35" rx="10" fill="#fbbe49" />
@@ -161,7 +207,14 @@ export function RefineryModel({
       />
       {level >= 2 && (
         <g>
-          <rect x="-117" y="-143" width="33" height="118" rx="15" fill="#75a8ac" />
+          <rect
+            x="-117"
+            y="-143"
+            width="33"
+            height="118"
+            rx="15"
+            fill="#75a8ac"
+          />
           <ellipse cx="-100" cy="-139" rx="16" ry="7" fill="#e0eddb" />
           <path d="M-116-113h31m-31 54h31" stroke="#f5c45e" strokeWidth="6" />
           <path d="M-101-122v46" stroke="#a2ffdf" strokeWidth="5" />
@@ -222,22 +275,55 @@ export function RefineryModel({
       <path d="M-32-92v43M-5-92v43" stroke="#d0eee0" strokeWidth="4" />
       {level >= 4 && (
         <g>
-          <path d="M-66-150q66 27 132 0" fill="none" stroke="#fbd877" strokeWidth="9" />
-          <path d="M-51-174q51 18 102 0" fill="none" stroke="#d3ffe9" strokeWidth="5" />
+          <path
+            d="M-66-150q66 27 132 0"
+            fill="none"
+            stroke="#fbd877"
+            strokeWidth="9"
+          />
+          <path
+            d="M-51-174q51 18 102 0"
+            fill="none"
+            stroke="#d3ffe9"
+            strokeWidth="5"
+          />
           <rect x="-67" y="-96" width="98" height="51" rx="14" fill="#123e53" />
-          <circle cx="-18" cy="-70" r="20" fill="#297c8b" stroke="#f3d580" strokeWidth="5" />
-          <circle cx="-18" cy="-70" r="11" fill={active ? '#b2ffe0' : '#61b4ac'} className={active ? 'beacon-light' : undefined} />
+          <circle
+            cx="-18"
+            cy="-70"
+            r="20"
+            fill="#297c8b"
+            stroke="#f3d580"
+            strokeWidth="5"
+          />
+          <circle
+            cx="-18"
+            cy="-70"
+            r="11"
+            fill={active ? '#b2ffe0' : '#61b4ac'}
+            className={active ? 'beacon-light' : undefined}
+          />
           <path d="M-55-70h13m49 0h14" stroke="#9cf6d4" strokeWidth="4" />
         </g>
       )}
       {level >= 5 && (
         <g>
-          <path d="M-67-173-15-220 42-190" fill="none" stroke="#edcb76" strokeWidth="6" />
+          <path
+            d="M-67-173-15-220 42-190"
+            fill="none"
+            stroke="#edcb76"
+            strokeWidth="6"
+          />
           <circle cx="-15" cy="-220" r="11" fill="#b2ffe0" />
           <rect x="-111" y="-25" width="29" height="60" rx="8" fill="#e8d6a1" />
           <rect x="81" y="-25" width="29" height="60" rx="8" fill="#e8d6a1" />
           <path d="M-102-14v34M94-14v34" stroke="#2e9c9f" strokeWidth="8" />
-          <path d="M-68 19 0 39 69 19" fill="none" stroke="#a5ffe1" strokeWidth="4" />
+          <path
+            d="M-68 19 0 39 69 19"
+            fill="none"
+            stroke="#a5ffe1"
+            strokeWidth="4"
+          />
         </g>
       )}
       <rect x="43" y="-94" width="26" height="77" rx="8" fill="#f8bb4a" />
@@ -353,14 +439,22 @@ export function WarehouseModel({
         <g>
           <path d="m-65-83 42-15 39 17v31l-41 15-40-17Z" fill="#658f9b" />
           <path d="m-65-83 40 17 41-15-39-17Z" fill="#beddd0" />
-          <path d="M-25-66v31m-28-42v26m15-20v26M-9-64v23" fill="none" stroke="#e7bf64" strokeWidth="4" />
+          <path
+            d="M-25-66v31m-28-42v26m15-20v26M-9-64v23"
+            fill="none"
+            stroke="#e7bf64"
+            strokeWidth="4"
+          />
         </g>
       )}
       {level >= 3 && (
         <g>
           <path d="m-5-104 37-13 38 17v35L32-51-5-68Z" fill="#bd8244" />
           <path d="m-5-104 37 17 38-13-38-17Z" fill="#ffe399" />
-          <path d="M32-87v36M9-97v29m10-24v29m28-25v28m12-32v28" stroke="#f5c66e" />
+          <path
+            d="M32-87v36M9-97v29m10-24v29m28-25v28m12-32v28"
+            stroke="#f5c66e"
+          />
         </g>
       )}
       {level >= 4 && (
@@ -373,10 +467,30 @@ export function WarehouseModel({
       )}
       {level >= 5 && (
         <g>
-          <path d="M-77 5v-149l111-36 45 20v110" fill="none" stroke="#163e50" strokeWidth="13" />
-          <path d="M-77 5v-149l111-36 45 20v110" fill="none" stroke="#eac46c" strokeWidth="7" />
-          <path d="m-73-131 105-34 43 18" fill="none" stroke="#9bdcc9" strokeWidth="4" />
-          <path d="M23-173v29q0 13 12 8" fill="none" stroke="#e9eee0" strokeWidth="4" />
+          <path
+            d="M-77 5v-149l111-36 45 20v110"
+            fill="none"
+            stroke="#163e50"
+            strokeWidth="13"
+          />
+          <path
+            d="M-77 5v-149l111-36 45 20v110"
+            fill="none"
+            stroke="#eac46c"
+            strokeWidth="7"
+          />
+          <path
+            d="m-73-131 105-34 43 18"
+            fill="none"
+            stroke="#9bdcc9"
+            strokeWidth="4"
+          />
+          <path
+            d="M23-173v29q0 13 12 8"
+            fill="none"
+            stroke="#e9eee0"
+            strokeWidth="4"
+          />
           <circle cx="-77" cy="-148" r="5" fill="#a8ffe0" stroke="none" />
         </g>
       )}
@@ -414,7 +528,11 @@ export function SubmarineModel({
       {level >= 2 && (
         <g>
           <path d="M-49-15-56-42-19-25M-45 20-52 45-12 29" fill="#d8e6ce" />
-          <path d="m-52-36 24 10m-19 64 24-9" stroke="#f3b94f" strokeWidth="5" />
+          <path
+            d="m-52-36 24 10m-19 64 24-9"
+            stroke="#f3b94f"
+            strokeWidth="5"
+          />
         </g>
       )}
       {level >= 4 && (
@@ -448,17 +566,37 @@ export function SubmarineModel({
           <rect x="-59" y="19" width="52" height="22" rx="10" fill="#5b929e" />
           <path d="M-55 24h-20v12h20" fill="#9fffe0" stroke="#38888f" />
           <path d="M-43 20v20M-22 20v20" stroke="#e9d697" strokeWidth="5" />
-          <path d="M-48-19q19-8 38-4" fill="none" stroke="#fff0b6" strokeWidth="5" />
+          <path
+            d="M-48-19q19-8 38-4"
+            fill="none"
+            stroke="#fff0b6"
+            strokeWidth="5"
+          />
         </g>
       )}
       {level >= 5 && (
         <g>
-          <path d="M12-23 23-32 56-24 70-8M12 26l14 11 32-11 12-13" fill="none" stroke="#e2eed8" strokeWidth="6" />
+          <path
+            d="M12-23 23-32 56-24 70-8M12 26l14 11 32-11 12-13"
+            fill="none"
+            stroke="#e2eed8"
+            strokeWidth="6"
+          />
           <path d="M-20-42-30-58h20l13 18" fill="#f8cf70" />
           <path d="M-28-51h14" stroke="#a6ffe1" strokeWidth="4" />
           <circle cx="65" cy="21" r="6" fill="#d4fff0" />
-          <path d="m71 21 39-14v29Z" fill="#bdffe6" opacity=".13" stroke="none" />
-          <path d="M-7 31v13H9l8-10" fill="none" stroke="#c9e7d7" strokeWidth="4" />
+          <path
+            d="m71 21 39-14v29Z"
+            fill="#bdffe6"
+            opacity=".13"
+            stroke="none"
+          />
+          <path
+            d="M-7 31v13H9l8-10"
+            fill="none"
+            stroke="#c9e7d7"
+            strokeWidth="4"
+          />
         </g>
       )}
       {loaded && (

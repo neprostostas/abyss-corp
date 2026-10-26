@@ -96,7 +96,7 @@ export function advanceWorld(world: WorldState, elapsedMs: number): WorldState {
   for (const id of LAYER_IDS) {
     if (!world.layers[id]) continue;
     const layer = next.layers[id];
-    if (!layer || !layer.running) continue;
+    if (!layer?.running) continue;
     const config = getLayerProduction(next, id);
     let game = getLayerGame(next, id);
     const automation = layer.automation;

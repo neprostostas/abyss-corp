@@ -1,17 +1,16 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
-import type { CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import type { AccountSaveSnapshot } from '../../application/accountPorts';
 import type { GameSession } from '../../application/GameSession';
-import type { SaveSync } from '../../application/SaveSync';
-import type { LiveOps } from '../../application/LiveOps';
 import { useGameSession } from '../../app/useGameSession';
 import { UPGRADE_IDS } from '../../data/balance';
 import { LAYERS } from '../../data/layers';
-import { getLayerGame } from '../../domain/world';
+import { getLayerGame, getAutomationOffer } from '../../domain/world';
 import {
   getLayerProduction,
   getReadyMissionCount,
+  getResearchOffer,
 } from '../../domain/progression';
-import { getLiveEventOffer } from '../../domain/liveEvents';
 import {
   getPhaseDuration,
   getProductionSummary,
@@ -20,22 +19,21 @@ import {
 import type { UpgradeId } from '../../domain/game';
 import { GameIcon } from '../components/GameIcon';
 import type { IconName } from '../components/GameIcon';
-import { GameDialog } from '../components/GameDialog';
+import { GamePanel } from '../components/GamePanel';
+import { RESEARCH_IDS } from '../../data/progression';
 import { OutpostIllustration } from '../world/OutpostIllustration';
 import { DepthNavigation } from '../panels/DepthNavigation';
 import { UpgradeCard } from '../panels/UpgradeCard';
 import { ProductionPanel } from '../panels/ProductionPanel';
 import { ProgressionPanel } from '../panels/ProgressionPanel';
 import { AutomationPanel } from '../panels/AutomationPanel';
-import { LiveOpsPanel } from '../panels/LiveOpsPanel';
-import { ServerSavePanel } from '../panels/ServerSavePanel';
 
-type WindowName = 'research' | 'missions' | 'crew' | 'events' | 'settings';
+type WindowName = 'research' | 'missions' | 'crew' | 'leaderboard' | 'settings';
 const windows: Record<WindowName, { title: string; icon: IconName }> = {
+  leaderboard: { title: 'Leaders', icon: 'trophy' },
   research: { title: 'Research', icon: 'research' },
   missions: { title: 'Missions', icon: 'missions' },
   crew: { title: 'Crew', icon: 'robot' },
-  events: { title: 'Events', icon: 'events' },
   settings: { title: 'Settings', icon: 'settings' },
 };
 const compact = new Intl.NumberFormat('en-US', {
@@ -49,16 +47,17 @@ const phaseNames = {
 };
 export function GameScreen({
   session,
-  sync,
-  liveOps,
+  accountPanel,
+  leaderboardPanel,
+  cloud,
 }: {
   session: GameSession;
-  sync: SaveSync;
-  liveOps: LiveOps;
+  accountPanel: ReactNode;
+  leaderboardPanel: ReactNode;
+  cloud: AccountSaveSnapshot;
 }) {
   const { world, status, saveStatus, error, offlineReport } =
     useGameSession(session);
-  const live = useSyncExternalStore(liveOps.subscribe, liveOps.getSnapshot);
   const [windowName, setWindow] = useState<WindowName | null>(null);
   const [selected, setSelected] = useState<UpgradeId | null>(null);
   const [saleFlash, setSaleFlash] = useState<{
@@ -67,8 +66,12 @@ export function GameScreen({
   } | null>(null);
   useEffect(() => {
     if (!saleFlash) return;
-    const timeout = window.setTimeout(() => setSaleFlash(null), 1700);
-    return () => window.clearTimeout(timeout);
+    const timeout = window.setTimeout(() => {
+      setSaleFlash(null);
+    }, 1700);
+    return () => {
+      window.clearTimeout(timeout);
+    };
   }, [saleFlash]);
   const layer = LAYERS[world.selectedLayerId];
   const config = getLayerProduction(world);
@@ -77,9 +80,15 @@ export function GameScreen({
   const progress = game.phaseElapsedMs / getPhaseDuration(game, config);
   const saleValue = getSaleValue(game, config);
   const missionsReady = getReadyMissionCount(world);
-  const eventReady = live.config?.event
-    ? getLiveEventOffer(world, live.config.event, live.now).canClaim
-    : false;
+  const researchReady = RESEARCH_IDS.filter(
+    (id) => getResearchOffer(world, id).affordable,
+  ).length;
+  const crewReady = getAutomationOffer(world).affordable;
+  const badges: Partial<Record<WindowName, number>> = {
+    research: researchReady,
+    crew: crewReady ? 1 : 0,
+    missions: missionsReady,
+  };
   const automation = world.layers[world.selectedLayerId]?.automation;
   const stateLabel = !game.running
     ? 'Paused'
@@ -93,7 +102,7 @@ export function GameScreen({
   };
   return (
     <main
-      className={`game-shell biome-${world.selectedLayerId}`}
+      className={`game-shell biome-${world.selectedLayerId}${windowName ? ' panel-open' : ''}`}
       style={{ '--resource-color': config.resource.color } as CSSProperties}
     >
       <header className="game-hud">
@@ -113,7 +122,7 @@ export function GameScreen({
           <span className="coin-medallion">
             <GameIcon name="coin" />
           </span>
-          <strong data-testid="credits">{compact.format(world.credits)}</strong>
+          <strong>{compact.format(world.credits)}</strong>
           <small>CR</small>
         </div>
         <div className="hud-depth">
@@ -124,9 +133,12 @@ export function GameScreen({
           </strong>
         </div>
         <button
-          className={`icon-button settings-trigger${saveStatus === 'error' ? ' has-error' : ''}`}
+          className={`icon-button settings-trigger${saveStatus === 'error' || cloud.status === 'error' ? ' has-error' : ''}`}
           aria-label="Settings"
-          onClick={() => setWindow('settings')}
+          aria-expanded={windowName === 'settings'}
+          onClick={() => {
+            setWindow(windowName === 'settings' ? null : 'settings');
+          }}
         >
           <GameIcon name="settings" />
         </button>
@@ -245,71 +257,70 @@ export function GameScreen({
         ))}
       </section>
       <nav className="game-dock" aria-label="Game menu">
-        {(['research', 'missions', 'crew', 'events'] as const).map((name) => (
-          <button
-            key={name}
-            className={`dock-button${name === 'crew' && automation?.enabled ? ' crew-active' : ''}`}
-            onClick={() => setWindow(name)}
-            disabled={status !== 'ready'}
-          >
-            <span className="dock-icon">
-              <GameIcon name={windows[name].icon} />
-              {name === 'missions' && missionsReady > 0 && (
-                <b className="notification-badge">{missionsReady}</b>
-              )}
-              {name === 'events' && eventReady && (
-                <b className="notification-badge">!</b>
-              )}
-            </span>
-            <span>{windows[name].title}</span>
-          </button>
-        ))}
+        {(['research', 'missions', 'crew', 'leaderboard'] as const).map(
+          (name) => (
+            <button
+              key={name}
+              className={`dock-button${windowName === name ? ' active-room' : ''}${badges[name] ? ' has-opportunity' : ''}${name === 'crew' && automation?.enabled ? ' crew-active' : ''}`}
+              aria-expanded={windowName === name}
+              title={
+                badges[name]
+                  ? `${windows[name].title}: ${String(badges[name])} available`
+                  : windows[name].title
+              }
+              onClick={() => {
+                setWindow(windowName === name ? null : name);
+              }}
+              disabled={status !== 'ready'}
+            >
+              <span className="dock-icon">
+                <GameIcon name={windows[name].icon} />
+                {!!badges[name] && (
+                  <b className="notification-badge">
+                    {name === 'research' || name === 'crew'
+                      ? '↑'
+                      : badges[name]}
+                  </b>
+                )}
+              </span>
+              <span>{windows[name].title}</span>
+            </button>
+          ),
+        )}
         <span
           className="save-indicator"
-          title={
-            saveStatus === 'error'
-              ? 'Save failed — open settings'
-              : 'Autosave on'
-          }
+          title={cloud.error ?? 'Progress syncs to your account automatically'}
         >
-          <i className={saveStatus === 'error' ? 'error' : ''} />
-          {saveStatus === 'saving'
-            ? 'Saving'
-            : saveStatus === 'error'
-              ? 'Save error'
-              : saveStatus === 'unsaved'
-                ? 'Ready'
-                : 'Autosaved'}
+          <i
+            className={
+              saveStatus === 'error' || cloud.status === 'error' ? 'error' : ''
+            }
+          />
+          {saveStatus === 'error'
+            ? 'Save error'
+            : cloud.status === 'error'
+              ? 'Sync paused'
+              : cloud.status === 'syncing'
+                ? 'Syncing'
+                : cloud.status === 'saved'
+                  ? 'Synced'
+                  : 'Saved locally'}
         </span>
       </nav>
       {windowName && (
-        <GameDialog
+        <GamePanel
           title={windows[windowName].title}
           context={
             windowName === 'research' || windowName === 'missions'
-              ? 'Fleet command'
-              : layer.name
-          }
-          credits={compact.format(world.credits)}
-          navigation={
-            <nav className="dialog-navigation" aria-label="Command rooms">
-              {(Object.keys(windows) as WindowName[]).map((name) => (
-                <button
-                  key={name}
-                  aria-current={windowName === name ? 'page' : undefined}
-                  onClick={() => setWindow(name)}
-                >
-                  <GameIcon name={windows[name].icon} />
-                  <span>{windows[name].title}</span>
-                  {name === 'missions' && missionsReady > 0 && (
-                    <b>{missionsReady}</b>
-                  )}
-                </button>
-              ))}
-            </nav>
+              ? 'All outposts'
+              : windowName === 'leaderboard'
+                ? 'Ocean network'
+                : layer.name
           }
           icon={windows[windowName].icon}
-          onClose={() => setWindow(null)}
+          onClose={() => {
+            setWindow(null);
+          }}
         >
           {(windowName === 'research' || windowName === 'missions') && (
             <ProgressionPanel
@@ -326,42 +337,9 @@ export function GameScreen({
               onToggle={session.toggleAutomation}
             />
           )}
-          {windowName === 'events' && (
-            <LiveOpsPanel
-              liveOps={liveOps}
-              session={session}
-              world={world}
-              onNavigate={setWindow}
-            />
-          )}
-          {windowName === 'settings' && (
-            <>
-              <section className="settings-section">
-                <div className="setting-row">
-                  <span>
-                    <GameIcon name="check" />
-                    Local save
-                  </span>
-                  <button
-                    disabled={saveStatus === 'saving' || status !== 'ready'}
-                    onClick={() => {
-                      void session.save(true);
-                    }}
-                  >
-                    {saveStatus === 'saving' ? 'Saving…' : 'Save now'}
-                  </button>
-                </div>
-              </section>
-              <ServerSavePanel sync={sync} />
-              <LiveOpsPanel
-                mode="privacy"
-                liveOps={liveOps}
-                session={session}
-                world={world}
-              />
-            </>
-          )}
-        </GameDialog>
+          {windowName === 'leaderboard' && leaderboardPanel}
+          {windowName === 'settings' && accountPanel}
+        </GamePanel>
       )}
     </main>
   );

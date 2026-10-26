@@ -1,4 +1,3 @@
-import { contentIdSchema } from '../../data/liveOps';
 import { MISSION_IDS, RESEARCH } from '../../data/progression';
 import {
   createProgression,
@@ -17,6 +16,7 @@ import {
 } from '../../domain/game';
 import { parseLegacySave } from './legacySaveSchema';
 
+const contentIdSchema = z.string().regex(/^[a-z0-9][a-z0-9-]{0,63}$/);
 const integer = z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER);
 const level = (max: number) => z.number().int().min(1).max(max);
 const layerSchema = z
@@ -147,7 +147,7 @@ export function validateSave(data: unknown): GameSave {
     const previous = index > 0 ? LAYER_IDS[index - 1] : undefined;
     if (previous && !world.layers[previous])
       throw new Error('Unlocked layers must be sequential.');
-    const automation = world.layers[id]?.automation;
+    const automation = world.layers[id].automation;
     if (
       automation &&
       automation.elapsedMs >=

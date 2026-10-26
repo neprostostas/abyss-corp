@@ -23,9 +23,11 @@ export function UpgradeCard({
 }) {
   const { current, next, affordable } = getUpgradeOffer(game, id, config);
   const format = (value: number) =>
-    id === 'storage' ? `${value}` : `${(value / 1000).toFixed(1)}s`;
+    id === 'storage' ? String(value) : `${(value / 1000).toFixed(1)}s`;
   return (
-    <article className={`upgrade-tile${selected ? ' selected' : ''}`}>
+    <article
+      className={`upgrade-tile${selected ? ' selected' : ''}${affordable ? ' can-upgrade' : ''}`}
+    >
       <div className={`upgrade-art upgrade-art-${id}`}>
         <GameIcon name={id} />
         <span>{game.levels[id]}</span>
@@ -49,12 +51,12 @@ export function UpgradeCard({
         }}
         aria-label={
           next
-            ? `Upgrade ${names[id]} for ${next.cost} credits`
+            ? `Upgrade ${names[id]} for ${String(next.cost)} credits`
             : `${names[id]} maximum level`
         }
         title={
           next && !affordable
-            ? `${next.cost - game.credits} more credits`
+            ? `${String(next.cost - game.credits)} more credits`
             : undefined
         }
       >

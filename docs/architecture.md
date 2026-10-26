@@ -1,86 +1,72 @@
-# Architecture · Milestone 7
+# Architecture
 
-Read [the project specification](../ABYSS_CORP_PROJECT_SPEC.md) completely before changes. It remains the product and engineering source of truth.
+The [persistent specification](../ABYSS_CORP_PROJECT_SPEC.md) remains the source of product and engineering requirements.
 
 ## Boundaries
 
-- `src/data/balance.ts`: upgrade tables and session cadence. Upgrade values are machine durations in milliseconds or storage slots.
-- `src/data/resources.ts` and `src/data/layers.ts`: three resource definitions, depth order, unlock prices, production multipliers and visual metadata.
-- `src/domain/world.ts`: shared wallet, independent layer state, sequential unlocks, selection and simulation of all unlocked outposts. The existing production engine accepts a layer configuration.
-- `src/data/progression.ts`: research definitions, costs, bonuses, mission requirements and rewards.
-- `src/domain/progression.ts`: initial progression, research offers, effective production configuration and mission progress queries. It imports world types only, avoiding runtime cycles.
-- `src/domain/game.ts`: immutable state, elapsed-time simulation, upgrades, sales and derived production summaries. No React, browser, storage or clock dependencies.
-- `src/application`: `GameSession` coordinates commands and serialized saves; `ports.ts` defines the clock and save repository contract.
-- `src/infrastructure`: monotonic browser clock, localStorage adapter, runtime save validation and explicit migration.
-- `src/app`: composition and lifecycle. React observes the session through `useSyncExternalStore`.
-- `src/ui`: reusable progress/upgrade panels, production status and the extended SVG scene. Animation never awards resources.
+- `src/data`: resource, depth, production, automation and research configuration.
+- `src/domain`: immutable production, shared wallet, depth unlocks, research and mission rules. It has no React, network, storage or authentication dependencies.
+- `src/application/GameSession.ts`: elapsed-time simulation, commands, offline reports and serialized local saves through `SaveRepository`.
+- `src/application/accountPorts.ts`: account save synchronization status and canonical cloud update contract.
+- `src/infrastructure/supabase`: the configured Supabase client, generated public database types and account save repository.
+- `src/infrastructure/persistence`: strict runtime save validation, explicit version 1–6 migration and legacy device import.
+- `src/app`: authentication lifecycle, one game runtime per user ID, cloud sync scheduling and route selection.
+- `src/ui`: the ocean scene, upgrades, compact equipment panels, account forms and read-only database browser.
 
-## Production
+The existing bounded extraction → transport → processing → storage/sale engine is unchanged. Production stops at full buffers without losing cargo. Unselected running outposts continue producing; credits are shared. Automation and capped four-hour offline simulation use the same domain engine.
 
-The existing submarine still performs extraction → loaded delivery → empty return. Delivery now deposits three raw crystals instead of earning money. The independent refinery consumes three raw crystals at the start of a batch, spends time refining them, and deposits three refined crystals into storage. The base price is eight credits per crystal, increased by corporate trade research.
+## Authentication
 
-Raw intake and refined storage each have the configured capacity. An active refinery batch and submarine cargo occupy their own fixed three-crystal slots. When the warehouse cannot accept a complete batch, the refinery retains its finished batch. Raw intake then fills, and a loaded submarine waits at the dock until its complete cargo fits. Nothing is discarded. Sale or storage expansion releases completed work immediately; no blocked time becomes free production.
+Supabase Auth owns passwords, verification, reset emails, sessions and token refresh. The SPA uses the provider's supported browser session flow; recovery redirects to `/reset-password`. The application never stores passwords in its database. Only a publishable key reaches the browser. PostgreSQL derives ownership from `auth.uid()`.
 
-All four systems have five explicit levels. Storage upgrades expand both buffers; machine upgrades preserve the fraction of current work, rounded down to a millisecond. The bottleneck indicator identifies full output storage first, otherwise compares refinery capacity against the serial extraction/transport supply rate. Displayed income is potential throughput **with regular sales**; a sales module turns ready stock into credits on its own timer.
+Authentication changes remount the game by user ID. An old runtime can write only its own local journal. The cloud write RPC also compares the requested account ID to the JWT subject, so a late request from an old runtime cannot upload its progress into a newly signed-in account.
 
-## Time and determinism
+## Saving and conflicts
 
-The application samples elapsed integer milliseconds at 10 Hz. Domain simulation jumps between machine completion events instead of replaying frames. Simultaneous events resolve in a fixed order: refinery output, dock unloading, extraction/return completion, then refinery input. With no sales during an elapsed-time call, finite buffers eventually block both stages, bounding long-duration computation. Automation partitions elapsed time at sale boundaries and delegates machine progress to this same engine.
+The account repository implements `SaveRepository`. Each local journal is stored under `abyss-corp.account.<user-id>` with the save, acknowledged server revision and dirty marker. Domain saves keep version 6; account identity and server revision belong to the storage envelope.
 
-All started outposts advance, including unselected depths. The monotonic clock drives foreground simulation. Persisted wall time drives capped offline simulation on loading or resuming a hidden tab. Negative elapsed time becomes zero; each absence is capped at four hours. Foreground timer gaps over 30 seconds also use this cap to handle device sleep. Paused outposts do not advance. Values remain integers; selling near the safe-integer credit limit leaves unsellable crystals in storage rather than discarding them.
+Loading reads the server before enabling gameplay. A clean journal follows the cloud copy. A dirty journal resumes only when its base revision still matches the server; otherwise the rejected device journal is backed up and the canonical cloud copy loads automatically. Load failures never create or overwrite a fresh cloud save.
 
-## Save version 6
+Game actions and the existing two-second autosave persist to the device immediately. Cloud requests are serialized and throttled to a 15-second cadence. The local journal stores the pending operation ID and payload before sending. Newer local edits stay separate while that upload is in flight. A retry acknowledges an already-applied operation without another write; reload can recognize that acknowledgement by the persisted operation ID. Unrelated remote changes use the canonical cloud copy automatically, with a local backup of the rejected journal. SQL performs the compare-and-swap atomically.
 
-The `abyss-corp.save` key contains `{ version: 6, savedAt, world }`. The world stores one corporate credit balance, the selected layer and independent production state for each unlocked layer. Layer state omits credits to prevent duplicate wallets. Optional automation state stores a purchased module level, enabled flag and elapsed sale timer; absence means no module. Corporate progression stores two research levels, unique claimed mission IDs and unique timed-event claim IDs. Derived rates, capacity, prices and cargo counts are not persisted.
+There is no manual conflict dialog. On HTTP 409 the repository backs up local progress, loads the current cloud revision and notifies GameSession to adopt it. The session recalculates capped offline production and resumes without reloading the page. It never adds two wallets together. Concurrent/offline device changes can be superseded by another device's accepted cloud revision; the rejected copy remains under the account backup key for recovery.
 
-Version 1 and 2 saves migrate explicitly into Crystal shallows, preserving the existing wallet and production. Version 3 keeps its entire world and starts without modules. Version 4 preserves installed modules. Version 5 preserves research and missions. All loaded saves normalize to version 6 with missing progression fields initialized for older versions; the repository contract accepts versions 3 and 4 for migration compatibility. Versions 5 and 6 require explicit progression state; version 6 also requires event claim history. Version 1 adds empty processing/storage state; returning cargo was already paid and receives no duplicate reward. Runtime validation requires sequential unlocks, an unlocked selected depth, valid machine progress and bounded stock using each layer's configuration.
+Legacy anonymous progress is imported only by explicit user action. It is not automatically assigned to the next person who signs in. The obsolete SQLite database was archived outside the repository at `../legacy-backups/abyss-before-supabase-2026-10-26.sqlite`; there is no deployed dependency on a local filesystem, Node API process or guest cookie.
 
-Reading does not overwrite the original. Before the first version 6 write replaces an older save, the adapter stores the original under `abyss-corp.save.v1-backup`, `abyss-corp.save.v2-backup`, `abyss-corp.save.v3-backup`, `abyss-corp.save.v4-backup` or `abyss-corp.save.v5-backup`. Backup failure prevents replacement. Invalid or unknown saves prevent loading and writes.
+## UI and deployment
 
-Autosave runs every two seconds, on actions and on hide/exit. Writes are serialized/coalesced. Write failures retain in-memory state and expose retry. The local adapter writes synchronously inside a Promise for page-exit reliability. A crash can lose the latest unsaved interval. One active tab is supported.
+The game remains a viewport-sized ocean with a compact HUD, upgrade deck and bottom navigation. Secondary systems open in a non-modal side panel; narrow screens use a scrolling bottom panel. Affordable actions use existing domain offers. Tutorial overlays, repeated explanatory hints, experimental events and usage sharing have been removed.
 
-## Depth progression
+The account and admin routes scroll independently on short screens. Authenticated game and admin UI are loaded separately. Netlify serves the Vite `dist` bundle and rewrites application paths to `index.html`. Supabase supplies the shared managed backend. See [deployment](deployment.md).
 
-Crystal shallows (50 m) starts unlocked. Golden trench (180 m) costs 250 credits; Pearl caverns (420 m) costs 900 credits and requires Golden trench. Unlocking spends shared credits, selects the new outpost and creates paused level-one production. Each depth retains its own pause state, stock and upgrade levels.
+Checks validate strict TypeScript, ESLint and formatting. The test runner and existing test files were removed as requested. Relevant browser behavior, SQL access policies and the production build were checked directly.
 
-Gold and pearls use the same bounded production engine with distinct values, duration and upgrade cost multipliers. Navigation shows running/paused state, full storage, saleable inventory, unlock requirements and credit progress. Scene colors, formations and resource glyphs follow the selected depth.
+## Captain standings
 
-## Automation and offline production
+`PlayerGateway` separates the game interface from `PlayerClient`. Opening Leaders synchronizes the current account before reading standings; the board then refreshes every 30 seconds. Names can be edited inline without an extra onboarding screen. The public board shows only confirmed accounts, with generated captain names until the owner chooses another name. Emails are never used as default nicknames.
 
-`src/data/automation.ts` owns three sale intervals (12s, 6s, 2s), purchase costs (120, 240, 480 credits before the depth multiplier) and the four-hour offline cap. World commands buy/upgrade a module with shared credits and toggle it without changing its timer. Upgrade scales timer progress proportionally. Module timers only advance when both the outpost and module are enabled.
+`public.player_progress` is a bounded, sanitized projection maintained by database triggers on account confirmation and saved-game writes. Authenticated users can read it and update only their own `captain_name` column. The credits/depth/upgrade columns have no client write grant. `public.leaderboard` is a security-invoker view ranked by deepest outpost, infrastructure upgrades, research, automation, credits and a stable ID tie-break. The same projection supplies pagination and the current player's position.
 
-For each automated layer, world simulation advances production to the next sale boundary, sells ready stock through the existing safe-integer sale rules, then continues. Production completion resolves before a sale at the same instant. Empty sales reset the timer without creating credits. Manual sales remain available. All sales release blocked batches through the normal production engine. Without automation, bounded production stops at full storage as before.
+This is an informational progress board, not a tamper-proof competition. The source simulation still runs in the client. A technical player can submit a modified valid save for their own account even though they cannot directly edit another account or the projected summary columns. Competitive rewards require server-authoritative commands and simulation before launch; no leaderboard rewards or verified-score claims are present here.
 
-`GameSession` applies the same world simulation to offline elapsed time. Loading/resuming immediately saves the resulting world and consumed timestamp, independent of dismissing the offline report. Hiding records one suspension timestamp; repeated hide/exit events preserve it. The report shows applied time, whether the cap was reached and automatic sales earnings. Unsold inventory remains in layer storage. Local wall time is not server-authoritative; multi-tab synchronization remains outside scope.
+## Operator database browser
 
-## Corporate research and missions
+`AdminDatabaseGateway` exposes paged read-only queries. `/database` includes profiles, safe Auth account statuses, current saves, public progress, administrator assignments and pending invitations. Search is literal and server-side; table IDs come from a fixed allowlist. The detail inspector displays the complete selected application record without making the whole underlying database public.
 
-Progression is optional on the domain world for legacy callers; `getProgression` supplies zero research and no claims. New worlds and version 5 saves store it explicitly. Research commands spend the shared wallet and increase one bounded level. Trade research adds 25 percentage points to base sale values per level, rounding down once per unit. Storage research adds three slots per level to each buffer. The effective configuration comes from `getLayerProduction`; foreground simulation, automation, offline simulation, upgrades, save capacity validation and all displayed rates/prices use it. Newly unlocked depths inherit research automatically.
+The public RPC is a security-invoker wrapper around a private, restricted security-definer helper. It checks the operator-controlled administrator table, confirmed identity, ban status and an active, unexpired `auth.sessions` entry for the JWT's `session_id`. Neither user-editable metadata nor a claimed UI role can grant access. Password hashes, recovery tokens, session secrets and provider credentials are excluded. PostgreSQL system data and secrets remain in Supabase Studio, linked from the operator page.
 
-Storage research settles completed batches and blocked deliveries immediately through `settleProduction`, without awarding elapsed production time. It never changes machine durations or current timer fractions.
+## Redirects and API failures
 
-Missions derive progress from monotonically increasing state: production upgrade levels above one, installed modules, unlocked outposts and completed research levels. Migrated progress therefore counts without invented lifetime statistics. Claims require a completed requirement, an unclaimed ID and enough safe-integer headroom for the full reward. The command adds credits and records the claim atomically, then the session saves through the existing command path. Repeated clicks cannot pay twice. Duplicate or unknown claim IDs and out-of-range research levels are rejected at the save boundary.
+Auth redirect allowlists govern where email flows return the browser; they are not a database permission boundary. The hosted project permits only exact `/` and `/reset-password` URLs on production and the named Netlify preview. There are no localhost or globstar entries. `authReturnUrl` sends development email links to the controlled preview; local password sign-in remains usable. An isolated development database can be configured separately when needed.
 
-## Development preference and next scope
+Business save conflicts use SQLSTATE `PT409` (HTTP 409). `40001` is reserved for actual serialization failures because PostgREST 14 can retry that SQLSTATE indefinitely. Idempotent operation IDs still acknowledge interrupted requests without replaying work. Account-scoped backup keys remain `abyss-corp.account.<id>.backup`.
 
-Do not add or run tests or invoke `npm run check`, per the user's current instruction. Existing tests remain in the repository. `npm run build` compiles TypeScript and bundles the app without running tests.
+## Smooth submarine movement
 
-Milestone 5 adds two corporate research branches with permanent network-wide bonuses and seven one-time reward missions. Prestige/reset is outside this milestone. Milestone 6 adds a local server backup boundary, guest sessions, SQLite persistence and explicit revision conflicts. See [backend design](backend.md) for API contracts, authentication design and deployment limits. Milestone 7 adds the live bulletin, timed events, opt-in analytics and a presentation experiment; payments and push delivery remain outside scope.
+`useSubmarineMotion` updates one SVG transform through `requestAnimationFrame`, interpolating between authoritative economic snapshots. React and economy stay at their existing 10 Hz cadence; no per-frame global state is introduced. The render loop stops in hidden tabs, cleans up on unmount and respects reduced motion. Position follows the same curve in both directions and clamps at the endpoints; visual frames never award production.
 
-## Server boundary
+## Visitor analytics and consent
 
-The local save repository remains responsible for autosave and legacy migrations. Optional `backup` supports safe server restore. `CloudSaveGateway` is a separate application port; its HTTP adapter communicates through the frontend's same-origin `/api` proxy. `SaveSync` exposes backup status independently of game session/save status, so network errors do not stop play. Application and domain code do not import the concrete API client.
+`VisitorAnalytics` sends allowlisted anonymous page events to PostHog EU only after affirmative consent, only on the production and named preview hosts. It never reads the Auth token, account ID, email or game save. URL fragments, query strings and referrers are omitted. No autocapture, recordings, forms or advertisements are enabled. Optional visitor/session cookies use Secure on HTTPS and SameSite=Lax; consent is stored separately and can be withdrawn through Settings or `/privacy`.
 
-The server uses the same save schema, validates player ownership through opaque guest sessions and atomically compares revisions before replacing a snapshot in SQLite. Server revision, identity and update timestamps belong to the API envelope, independent of the current game save version. Snapshot history and a local pre-restore backup preserve recovery paths. No state merge or last-write-wins behavior is implemented.
-
-## Live game boundary
-
-`src/data/liveOps.ts` owns strict shared configuration and telemetry schemas. `src/domain/liveEvents.ts` owns timed grant eligibility and immutable claims. `LiveOpsGateway` defines config loading and consented batch delivery; its HTTP adapter has no access to the save repository. The `LiveOps` service owns server time anchoring, refresh state, consent, bounded telemetry queues and stable presentation cohorts. GameSession observes successful commands through an optional callback, keeping telemetry out of production simulation and the domain.
-
-The server reads validated operator config and ingests only allowlisted telemetry into SQLite schema version 2. Event rewards are save version 6 claim markers and retain the same client-trust limitations as the rest of the economy. See [live-ops design](live-ops.md) for consent, retention, scheduling and operator controls.
-
-## Game-first visual pass
-
-`GameScreen` is a viewport-sized board with four UI rows: HUD, ocean, upgrade deck and menu dock. Its local state owns only the open dialog, selected upgrade and temporary sale feedback. Economy and all progression commands remain in GameSession. `GameDialog` uses the native modal dialog lifecycle, including Escape/focus behavior and a guard against StrictMode's effect replay close event.
-
-`WorldModels.tsx` provides reusable vector machinery and reef components. `OutpostIllustration` composes the biome, interactive machinery, mineral deposits and animated submarine from current production state. Stock indicators, machine levels and progress remain derived from the existing domain. No raster downloads, rendering engine or save migration are required for the art pass. Secondary panels use concise labels and values; privacy and conflict explanations remain available in Settings.
+`/analytics` is admin-only. A Netlify Function validates the Supabase access token and checks active database administrator permission before querying PostHog with a server-only read key. Fixed 7/30/90-day reports cover production page views, unique visitors and visits in UTC. The function does not accept arbitrary SQL or expose raw provider responses or API keys. Admin authorization happens before the short-lived report cache. The dashboard counts consenting visits, not all network requests.

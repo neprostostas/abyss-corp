@@ -37,3 +37,9 @@ test-results/
 .data/
 *.sqlite-wal
 *.sqlite-shm
+
+# Local Netlify folder
+.netlify
+
+# Supabase CLI cache
+supabase/.temp/

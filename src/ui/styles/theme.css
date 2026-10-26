@@ -1,21 +1,22 @@
 @font-face {
-  font-family: 'Nunito';
-  src: url('/fonts/nunito-variable.ttf') format('truetype');
-  font-weight: 200 1000;
+  font-family: 'Manrope';
+  src: url('/fonts/manrope-variable.ttf') format('truetype');
+  font-weight: 200 800;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: 'Rajdhani';
-  src: url('/fonts/rajdhani-bold.ttf') format('truetype');
-  font-weight: 700;
+  font-family: 'Oxanium';
+  src: url('/fonts/oxanium-variable.ttf') format('truetype');
+  font-weight: 200 800;
   font-style: normal;
   font-display: swap;
 }
 :root {
   color-scheme: dark;
-  font-family: 'Nunito', 'Segoe UI', sans-serif;
-  --font-display: 'Rajdhani', 'Nunito', sans-serif;
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  --font-body: 'Manrope', 'Segoe UI', sans-serif;
+  --font-display: 'Oxanium', 'Manrope', sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

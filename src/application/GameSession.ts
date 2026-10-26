@@ -1,5 +1,3 @@
-import type { GameplayEvent, LiveEvent } from '../data/liveOps';
-import { claimLiveEvent } from '../domain/liveEvents';
 import type { ResearchId, MissionId } from '../data/progression';
 import {
   OFFLINE_LIMIT_MS,
@@ -57,7 +55,6 @@ export class GameSession {
   constructor(
     private readonly repository: SaveRepository,
     private readonly clock: Clock,
-    private readonly observe: (event: GameplayEvent) => void = () => {},
   ) {
     this.lastTick = clock.now();
   }
@@ -103,7 +100,7 @@ export class GameSession {
       this.publish({
         status: 'load-error',
         error:
-          'Your save could not be read. It has not been replaced. Restore a valid save or allow browser storage, then retry.',
+          'Could not load account progress. Check your connection and retry. Your save has not been replaced.',
       });
     }
   }
@@ -157,64 +154,57 @@ export class GameSession {
     if (world !== this.snapshot.world) this.publish({ world });
   };
 
-  private command(
-    action: (world: WorldState) => WorldState,
-    event?: GameplayEvent,
-  ) {
+  private command(action: (world: WorldState) => WorldState) {
     if (this.snapshot.status !== 'ready') return;
     this.tick();
     const world = action(this.snapshot.world);
     if (world === this.snapshot.world) return;
     this.publish({ world });
-    if (event) this.observe({ ...event, layerId: world.selectedLayerId });
     void this.save();
   }
 
   research = (id: ResearchId) => {
-    this.command((world) => buyResearch(world, id), {
-      name: 'research_purchased',
-      itemId: id,
-    });
+    this.command((world) => buyResearch(world, id));
   };
   claimMission = (id: MissionId) => {
-    this.command((world) => claimMission(world, id), {
-      name: 'mission_claimed',
-      itemId: id,
-    });
+    this.command((world) => claimMission(world, id));
   };
-
   upgradeAutomation = () => {
-    this.command(upgradeAutomation, { name: 'automation_upgraded' });
+    this.command(upgradeAutomation);
   };
   toggleAutomation = () => {
     this.command(toggleAutomation);
   };
-
   toggleRunning = () => {
-    this.command(toggleLayer, { name: 'operation_toggled' });
+    this.command(toggleLayer);
   };
   upgrade = (id: UpgradeId) => {
-    this.command((world) => upgradeLayer(world, id), {
-      name: 'upgrade_purchased',
-      itemId: id,
-    });
+    this.command((world) => upgradeLayer(world, id));
   };
   sell = () => {
-    this.command(sellLayer, { name: 'cargo_sold' });
+    this.command(sellLayer);
   };
   select = (id: LayerId) => {
     this.command((world) => selectLayer(world, id));
   };
   unlock = (id: LayerId) => {
-    this.command((world) => unlockLayer(world, id), { name: 'depth_unlocked' });
+    this.command((world) => unlockLayer(world, id));
   };
 
-  claimLiveEvent = (event: LiveEvent, now: number) => {
-    this.command((world) => claimLiveEvent(world, event, now), {
-      name: 'event_claimed',
-      contentId: event.id,
+  /** Apply the canonical cloud copy without merging currencies or commands. */
+  adoptCloudSave(data: GameSave) {
+    if (this.snapshot.status !== 'ready') return;
+    this.publish({
+      world: data.world,
+      offlineReport: null,
+      error: null,
+      saveStatus: 'saved',
     });
-  };
+    this.applyOffline(data.savedAt);
+    this.lastTick = this.clock.now();
+    this.suspendedAt = this.active ? null : this.clock.timestamp();
+    void this.save();
+  }
 
   captureSave(): GameSave {
     if (this.snapshot.status !== 'ready')

@@ -61,7 +61,7 @@ export function ProgressionPanel({
                 onClick={() => {
                   onClaim(id);
                 }}
-                aria-label={`Claim ${definition.reward} credits for ${definition.name}`}
+                aria-label={`Claim ${String(definition.reward)} credits for ${definition.name}`}
                 title={
                   !progress.rewardFits
                     ? 'Spend credits before claiming'
@@ -88,7 +88,10 @@ export function ProgressionPanel({
         const definition = RESEARCH[id];
         const offer = getResearchOffer(world, id);
         return (
-          <article className={`research-card research-${id}`} key={id}>
+          <article
+            className={`research-card research-${id}${offer.affordable ? ' can-upgrade' : ''}`}
+            key={id}
+          >
             <div className="research-illustration">
               <span className="research-orbit" />
               <GameIcon name={id === 'trade' ? 'research' : 'storage'} />
@@ -96,7 +99,7 @@ export function ProgressionPanel({
             <h3>{id === 'trade' ? 'Deep-sea trade' : 'Warehousing'}</h3>
             <div
               className="level-pips"
-              aria-label={`Level ${offer.level} of 3`}
+              aria-label={`Level ${String(offer.level)} of 3`}
             >
               {definition.costs.map((_, i) => (
                 <i key={i} className={i < offer.level ? 'filled' : ''} />
@@ -125,7 +128,7 @@ export function ProgressionPanel({
               }}
               title={
                 offer.cost !== null && !offer.affordable
-                  ? `${offer.cost - world.credits} more credits`
+                  ? `${String(offer.cost - world.credits)} more credits`
                   : undefined
               }
             >
@@ -136,6 +139,7 @@ export function ProgressionPanel({
                 </>
               ) : (
                 <>
+                  <span>↑ Upgrade</span>
                   <GameIcon name="coin" />
                   {offer.cost}
                 </>

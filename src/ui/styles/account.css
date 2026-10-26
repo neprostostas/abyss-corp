@@ -1,0 +1,421 @@
+.account-screen {
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  align-items: safe center;
+  padding: 32px 18px;
+  color: #e2ede1;
+  background:
+    radial-gradient(ellipse at 20% 0%, #287f8a 0%, transparent 60%),
+    radial-gradient(ellipse at 100% 100%, #2a5470 0%, transparent 55%), #102c3b;
+  overflow-y: auto;
+}
+.auth-card {
+  width: min(100%, 420px);
+  padding: 30px;
+  border: 1px solid #9bbcaf55;
+  border-radius: 24px;
+  background: #123441ee;
+  box-shadow: 0 24px 80px #00152260;
+}
+.auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #ffe7a7;
+  margin-bottom: 26px;
+}
+.auth-brand > span {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+.auth-brand small {
+  font-size: 12px;
+  display: block;
+  letter-spacing: 9px;
+}
+.auth-card h1 {
+  font-size: 30px;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.auth-card > p {
+  font-size: 14px;
+  color: #adcbc4;
+  margin-bottom: 20px;
+}
+.auth-card form {
+  display: grid;
+  gap: 17px;
+  margin-top: 24px;
+}
+.auth-card label {
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.auth-card label small {
+  color: #a2beb9;
+  font-weight: 400;
+}
+.auth-card input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #9dbfb266;
+  background: #082a36;
+  color: #f3f5e9;
+  font: inherit;
+  font-size: 16px;
+}
+.auth-card input:focus-visible {
+  outline: 2px solid #ffda84;
+  outline-offset: 2px;
+}
+.auth-links {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+.text-button {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  padding: 4px 0;
+  color: #b9ddd5;
+  font-size: 12px;
+  min-height: 32px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.form-error,
+.form-notice {
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.form-error {
+  color: #ffb9af;
+}
+.form-notice {
+  color: #b5ead1;
+}
+.auth-banner {
+  position: fixed;
+  z-index: 10;
+  left: 16px;
+  right: 16px;
+  top: 12px;
+  padding: 12px;
+  background: #552f36;
+  border-radius: 10px;
+  color: #ffddd4;
+  text-align: center;
+}
+.account-settings {
+  display: grid;
+  gap: 20px;
+}
+.account-identity {
+  display: grid;
+  gap: 6px;
+  overflow-wrap: anywhere;
+}
+.account-identity small {
+  color: #a5bfb6;
+  font-size: 11px;
+}
+.account-identity strong {
+  color: #f2e6bc;
+  font-size: 15px;
+}
+.sync-status {
+  color: #a5c9bd;
+  font-size: 12px;
+}
+.sync-error {
+  color: #ffcf8d;
+}
+.account-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #9cb7a433;
+  padding-top: 16px;
+}
+.account-links a {
+  color: #b9ddd5;
+  font-size: 12px;
+}
+.database-screen {
+  height: 100dvh;
+  padding: clamp(16px, 4vw, 48px);
+  background: #102c3b;
+  color: #dfebdf;
+  overflow: auto;
+}
+.database-screen > header,
+.database-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.database-screen h1 {
+  font-size: 32px;
+}
+.database-screen small {
+  font-size: 11px;
+  color: #a8c6be;
+}
+.database-screen a {
+  color: #ffdd99;
+}
+.database-toolbar {
+  margin-top: 32px;
+}
+.database-table {
+  position: relative;
+  overflow-x: auto;
+  border: 1px solid #a2c0ae44;
+  border-radius: 12px;
+}
+.database-table table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+.database-table th,
+.database-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #a2c0ae22;
+  white-space: nowrap;
+}
+.database-table th {
+  color: #ffdf9e;
+}
+.database-table td small {
+  display: block;
+  margin-top: 4px;
+}
+.database-pagination {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  align-items: center;
+  margin-top: 20px;
+}
+@media (max-width: 520px) {
+  .auth-card {
+    padding: 24px;
+  }
+  .auth-card h1 {
+    font-size: 26px;
+  }
+  .game-dock {
+    gap: 24px;
+  }
+}
+/* Read-only operator console, kept separate from player controls. */
+.database-header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #88b0a333;
+}
+.database-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+}
+.database-brand small {
+  display: block;
+  margin-top: 5px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 9px;
+}
+.database-header > div {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  font-size: 12px;
+}
+.database-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 30px 0 24px;
+}
+.database-title h1 {
+  margin-top: 8px;
+  font-size: 30px;
+}
+.admin-access {
+  display: inline-block;
+  border: 1px solid #77c7ac55;
+  border-radius: 30px;
+  padding: 4px 9px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #91d8bd;
+  background: #80c8ac11;
+}
+.database-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.database-tabs button {
+  flex-shrink: 0;
+  font-size: 11px;
+  min-height: 42px;
+  background: #1c4350;
+  color: #c0d7cb;
+  box-shadow: inset 0 0 0 1px #86b4a43b;
+}
+.database-tabs button[aria-current='page'] {
+  background: #f0d098;
+  color: #173b43;
+  box-shadow: 0 3px #9a733d;
+}
+.database-tabs button > span {
+  min-width: 20px;
+  border-radius: 5px;
+  padding: 3px 5px;
+  background: #001f2a18;
+  font-size: 10px;
+}
+.database-toolbar input {
+  min-width: 0;
+  width: min(260px, 45vw);
+  border: 1px solid #8ab8a35e;
+  border-radius: 9px;
+  padding: 10px 12px;
+  background: #092735;
+  color: #d8e7d7;
+  font-size: 13px;
+}
+.database-table th {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #9ebfb3;
+  background: #153b47;
+}
+.database-table td {
+  font-size: 12px;
+}
+.database-cell {
+  display: block;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.record-open {
+  padding: 6px 9px;
+  box-shadow: none;
+  color: #a2dac5;
+  background: #6ca48b22;
+}
+.record-open .game-icon {
+  width: 18px;
+  height: 18px;
+}
+.database-empty {
+  padding: 36px;
+  text-align: center;
+  color: #a8c5b8;
+  font-size: 12px;
+}
+.database-error {
+  padding: 60px 10px;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  color: #ddc69b;
+}
+.database-error h2 {
+  font-size: 20px;
+  text-align: center;
+}
+.record-inspector {
+  width: min(760px, calc(100% - 24px));
+  max-height: 85dvh;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #91b3a3;
+  border-radius: 18px;
+  background: #0b2b39;
+  color: #dce9d9;
+  box-shadow: 0 30px 100px #001622c9;
+}
+.record-inspector::backdrop {
+  background: #001b2ab0;
+  backdrop-filter: blur(3px);
+}
+.record-inspector header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid #9bb5a32b;
+}
+.record-inspector small {
+  font-size: 10px;
+  color: #93b7a7;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.record-inspector h2 {
+  margin-top: 5px;
+  font-size: 21px;
+}
+.record-inspector pre {
+  overflow: auto;
+  max-height: 65dvh;
+  margin: 0;
+  padding: 22px;
+  font-size: 12px;
+  line-height: 1.6;
+  tab-size: 2;
+}
+@media (max-width: 600px) {
+  .database-header {
+    align-items: flex-start !important;
+  }
+  .database-brand {
+    font-size: 12px;
+    gap: 8px;
+  }
+  .database-brand img {
+    width: 38px;
+    height: 38px;
+  }
+  .database-header > div {
+    flex-direction: column-reverse;
+    gap: 10px;
+    font-size: 10px;
+  }
+  .database-tabs button {
+    padding: 10px 12px;
+  }
+  .database-toolbar {
+    font-size: 11px;
+  }
+}
