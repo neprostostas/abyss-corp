@@ -1,4 +1,5 @@
-import type { Phase } from '../../domain/game';
+import { getProductionSummary } from '../../domain/game';
+import type { GameState, Phase } from '../../domain/game';
 import { RESOURCE } from '../../data/balance';
 
 /** Position and cargo reflect the real cycle; this scene never awards resources. */
@@ -6,11 +7,18 @@ export function OutpostIllustration({
   phase,
   progress,
   running,
+  game,
 }: {
   phase: Phase;
   progress: number;
   running: boolean;
+  game: GameState;
 }) {
+  const production = getProductionSummary(game);
+  const refining =
+    running &&
+    game.processingElapsedMs !== null &&
+    !production.processorBlocked;
   const travel =
     phase === 'delivering'
       ? progress
@@ -150,13 +158,68 @@ export function OutpostIllustration({
       <text x="160" y="240" className="world-label">
         CRYSTAL VEIN
       </text>
-      <text x="700" y="315" className="world-value">
+      <text x="700" y="295" className="world-value">
         {phase === 'returning'
-          ? 'Cargo sold!'
+          ? 'Cargo delivered to refinery'
           : phase === 'delivering'
             ? `${String(RESOURCE.batchSize)} crystals on board`
             : 'Ready for cargo'}
       </text>
+      <g transform="translate(430 320)">
+        <path d="M70 10V-75h80" fill="none" stroke="#88d8e2" strokeWidth="8" />
+        <rect
+          x="0"
+          y="0"
+          width="135"
+          height="70"
+          rx="16"
+          fill="#eaf8ff"
+          stroke="#073f60"
+          strokeWidth="6"
+        />
+        <rect x="12" y="10" width="80" height="45" rx="10" fill="#197e9b" />
+        <path
+          className={refining ? 'refinery-active' : undefined}
+          d="m42 32 12-18 14 18-14 19z"
+          fill={game.processingElapsedMs === null ? '#36718c' : '#a1fff1'}
+        />
+        <circle
+          cx="112"
+          cy="30"
+          r="8"
+          fill={production.processorBlocked ? '#ff8d93' : '#f7c64b'}
+        />
+        <text x="65" y="93" textAnchor="middle" className="world-label">
+          REFINERY
+        </text>
+        <path d="M137 50h90" stroke="#7cb9ca" strokeWidth="14" />
+        <path
+          d="M137 50h90"
+          className={refining ? 'conveyor-active cargo-route' : 'cargo-route'}
+        />
+      </g>
+      <g transform="translate(660 335)">
+        <rect
+          width="135"
+          height="55"
+          rx="9"
+          fill="#f7c64b"
+          stroke="#073f60"
+          strokeWidth="6"
+        />
+        <rect x="10" y="12" width="115" height="30" rx="5" fill="#073f60" />
+        <rect
+          x="10"
+          y="12"
+          width={(115 * game.refined) / production.capacity}
+          height="30"
+          rx="5"
+          fill="#a1fff1"
+        />
+        <text x="67" y="78" textAnchor="middle" className="world-label">
+          STORAGE
+        </text>
+      </g>
       <g fill="#8cdef0">
         <path d="m229 397 10-26 14 6 7 25z" />
         <path d="m253 403 6-23 14 9-2 17z" />

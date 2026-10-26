@@ -14,11 +14,22 @@ export function UpgradeCard({
   const definition = UPGRADES[id];
   const { current, next, affordable } = getUpgradeOffer(game, id);
   const titleId = `${id}-title`;
+  const formatValue = (value: number) =>
+    id === 'storage'
+      ? `${String(value)} slots`
+      : `${(value / 1000).toFixed(1)}s`;
+  const units = {
+    mining: 'per cargo extracted',
+    transport: 'per one-way trip',
+    processing: 'per cargo refined',
+    storage: 'in each buffer',
+  };
+  const icons = { mining: '◆', transport: '➜', processing: '✦', storage: '▣' };
   return (
     <article className="upgrade-card" aria-labelledby={titleId}>
       <div className="upgrade-heading">
         <span className="upgrade-icon" aria-hidden="true">
-          {id === 'mining' ? '◆' : '➜'}
+          {icons[id]}
         </span>
         <div>
           <h3 id={titleId}>{definition.name}</h3>
@@ -30,16 +41,14 @@ export function UpgradeCard({
       <p>{definition.description}</p>
       <div className="upgrade-effect">
         <strong>
-          {(current.durationMs / 1000).toFixed(1)}s{' '}
+          {formatValue(current.value)}{' '}
           {next && (
             <>
-              → <span>{(next.durationMs / 1000).toFixed(1)}s</span>
+              → <span>{formatValue(next.value)}</span>
             </>
           )}
         </strong>
-        <small>
-          {id === 'mining' ? 'per cargo extracted' : 'per one-way trip'}
-        </small>
+        <small>{units[id]}</small>
       </div>
       <button
         disabled={!affordable}

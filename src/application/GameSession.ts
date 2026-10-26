@@ -1,4 +1,9 @@
-import { advanceGame, buyUpgrade, createGame } from '../domain/game';
+import {
+  advanceGame,
+  buyUpgrade,
+  createGame,
+  sellRefined,
+} from '../domain/game';
 import type { GameState, UpgradeId } from '../domain/game';
 import type { Clock, GameSave, SaveRepository } from './ports';
 
@@ -106,6 +111,15 @@ export class GameSession {
     void this.save();
   };
 
+  sell = () => {
+    if (this.snapshot.status !== 'ready') return;
+    this.tick();
+    const game = sellRefined(this.snapshot.game);
+    if (game === this.snapshot.game) return;
+    this.publish({ game });
+    void this.save();
+  };
+
   save = (retry = false): Promise<void> => {
     if (
       this.snapshot.status !== 'ready' ||
@@ -113,7 +127,7 @@ export class GameSession {
     )
       return Promise.resolve();
     this.pendingSave = {
-      version: 1,
+      version: 2,
       savedAt: this.clock.timestamp(),
       game: this.snapshot.game,
     };

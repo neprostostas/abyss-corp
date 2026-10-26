@@ -1,46 +1,10 @@
-import { z } from 'zod';
 import type { GameSave, SaveRepository } from '../../application/ports';
-import { UPGRADES } from '../../data/balance';
-import { getPhaseDuration } from '../../domain/game';
+import { parseSave, validateSave } from './saveSchema';
 
 export const SAVE_KEY = 'abyss-corp.save';
-const gameSchema = z
-  .object({
-    credits: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),
-    levels: z
-      .object({
-        mining: z.number().int().min(1).max(UPGRADES.mining.levels.length),
-        transport: z
-          .number()
-          .int()
-          .min(1)
-          .max(UPGRADES.transport.levels.length),
-      })
-      .strict(),
-    phase: z.enum(['mining', 'delivering', 'returning']),
-    phaseElapsedMs: z.number().int().nonnegative(),
-    running: z.boolean(),
-  })
-  .strict()
-  .refine(
-    (game) => game.phaseElapsedMs < getPhaseDuration(game),
-    'Phase progress exceeds its duration.',
-  );
+export const LEGACY_BACKUP_KEY = 'abyss-corp.save.v1-backup';
 
-const saveSchema = z
-  .object({
-    version: z.literal(1),
-    savedAt: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),
-    game: gameSchema,
-  })
-  .strict();
-
-export function parseSave(raw: string): GameSave {
-  const data: unknown = JSON.parse(raw);
-  return saveSchema.parse(data);
-}
-
-/** The storage getter defers access so blocked browser storage is a recoverable load error. */
+/** Defers storage access so blocked browser storage is a recoverable error. */
 export class LocalSaveRepository implements SaveRepository {
   constructor(
     private readonly storage: () => Pick<Storage, 'getItem' | 'setItem'>,
@@ -54,10 +18,25 @@ export class LocalSaveRepository implements SaveRepository {
   }
 
   save(data: GameSave): Promise<void> {
-    // Execute the local write synchronously, including during pagehide, while
-    // exposing the same rejection-based contract as a future async adapter.
+    // The local write executes synchronously for pagehide reliability.
     return new Promise((resolve) => {
-      this.storage().setItem(SAVE_KEY, JSON.stringify(saveSchema.parse(data)));
+      const serialized = JSON.stringify(validateSave(data));
+      const storage = this.storage();
+      const previous = storage.getItem(SAVE_KEY);
+      if (previous !== null) {
+        // Refuse to overwrite invalid/newer data, including a save changed in another tab.
+        parseSave(previous);
+        const header: unknown = JSON.parse(previous);
+        if (
+          typeof header === 'object' &&
+          header !== null &&
+          'version' in header &&
+          header.version === 1
+        ) {
+          storage.setItem(LEGACY_BACKUP_KEY, previous);
+        }
+      }
+      storage.setItem(SAVE_KEY, serialized);
       resolve();
     });
   }

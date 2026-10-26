@@ -1,7 +1,7 @@
 {
   "name": "abyss-corp",
   "version": "0.0.0",
-  "description": "Abyss Corp underwater tycoon — first playable slice",
+  "description": "Abyss Corp underwater tycoon — multi-stage production",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

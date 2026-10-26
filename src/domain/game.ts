@@ -8,15 +8,22 @@ export interface GameState {
   readonly phase: Phase;
   readonly phaseElapsedMs: number;
   readonly running: boolean;
+  readonly raw: number;
+  readonly refined: number;
+  /** Null means idle; a full-duration batch waits here when storage is full. */
+  readonly processingElapsedMs: number | null;
 }
 
 export function createGame(): GameState {
   return {
     credits: 0,
-    levels: { mining: 1, transport: 1 },
+    levels: { mining: 1, transport: 1, processing: 1, storage: 1 },
     phase: 'mining',
     phaseElapsedMs: 0,
     running: false,
+    raw: 0,
+    refined: 0,
+    processingElapsedMs: null,
   };
 }
 
@@ -29,71 +36,122 @@ export function getUpgradeLevel(id: UpgradeId, level: number) {
 
 export function getPhaseDuration(state: GameState): number {
   const id = state.phase === 'mining' ? 'mining' : 'transport';
-  return getUpgradeLevel(id, state.levels[id]).durationMs;
+  return getUpgradeLevel(id, state.levels[id]).value;
 }
-
 export function getCycleDuration(state: GameState): number {
   return (
-    getUpgradeLevel('mining', state.levels.mining).durationMs +
-    2 * getUpgradeLevel('transport', state.levels.transport).durationMs
+    getUpgradeLevel('mining', state.levels.mining).value +
+    2 * getUpgradeLevel('transport', state.levels.transport).value
   );
 }
-
-export const DELIVERY_VALUE = RESOURCE.batchSize * RESOURCE.creditValue;
-
-export function getProductionSummary(state: GameState) {
-  return {
-    cargo: state.phase === 'delivering' ? RESOURCE.batchSize : 0,
-    creditsPerSecond: (DELIVERY_VALUE * 1000) / getCycleDuration(state),
-    fullyUpgraded: UPGRADE_IDS.every(
-      (id) => state.levels[id] === UPGRADES[id].levels.length,
-    ),
-  };
+export function getProcessingDuration(state: GameState): number {
+  return getUpgradeLevel('processing', state.levels.processing).value;
 }
-const NEXT_PHASE: Record<Phase, Phase> = {
-  mining: 'delivering',
-  delivering: 'returning',
-  returning: 'mining',
-};
+export function getStorageCapacity(state: GameState): number {
+  return getUpgradeLevel('storage', state.levels.storage).value;
+}
 
-/** Elapsed-time simulation, independent of frame rate. All amounts and time are integers. */
+/** Settle simultaneous events in this order: output, dock, extraction/return, input. */
+function settle(state: GameState): GameState {
+  let next = state;
+  const capacity = getStorageCapacity(state);
+  let changed: boolean;
+  do {
+    changed = false;
+    if (
+      next.processingElapsedMs === getProcessingDuration(next) &&
+      next.refined + RESOURCE.batchSize <= capacity
+    ) {
+      next = {
+        ...next,
+        refined: next.refined + RESOURCE.batchSize,
+        processingElapsedMs: null,
+      };
+      changed = true;
+    }
+    if (next.phaseElapsedMs === getPhaseDuration(next)) {
+      if (next.phase === 'delivering') {
+        if (next.raw + RESOURCE.batchSize <= capacity) {
+          next = {
+            ...next,
+            raw: next.raw + RESOURCE.batchSize,
+            phase: 'returning',
+            phaseElapsedMs: 0,
+          };
+          changed = true;
+        }
+      } else {
+        next = {
+          ...next,
+          phase: next.phase === 'mining' ? 'delivering' : 'mining',
+          phaseElapsedMs: 0,
+        };
+        changed = true;
+      }
+    }
+    if (next.processingElapsedMs === null && next.raw >= RESOURCE.batchSize) {
+      next = {
+        ...next,
+        raw: next.raw - RESOURCE.batchSize,
+        processingElapsedMs: 0,
+      };
+      changed = true;
+    }
+  } while (changed);
+  return next;
+}
+
+/** Event-based elapsed-time simulation. Full storage naturally bounds work for long spans. */
 export function advanceGame(state: GameState, elapsedMs: number): GameState {
   if (!Number.isSafeInteger(elapsedMs) || elapsedMs < 0)
     throw new Error('Elapsed time must be a non-negative safe integer.');
   if (!state.running || elapsedMs === 0) return state;
-
-  // A whole cycle returns to the exact same phase/progress and delivers once.
-  const cycleMs = getCycleDuration(state);
-  const cycles = Math.floor(elapsedMs / cycleMs);
-  let remaining = elapsedMs % cycleMs;
-  let next = {
-    ...state,
-    credits: Math.min(
-      Number.MAX_SAFE_INTEGER,
-      state.credits + cycles * DELIVERY_VALUE,
-    ),
-  };
-
+  let next = settle(state);
+  let remaining = elapsedMs;
   while (remaining > 0) {
-    const step = Math.min(
-      remaining,
-      getPhaseDuration(next) - next.phaseElapsedMs,
+    const transportLeft = getPhaseDuration(next) - next.phaseElapsedMs;
+    const processingLeft =
+      next.processingElapsedMs === null
+        ? 0
+        : getProcessingDuration(next) - next.processingElapsedMs;
+    const untilEvent = Math.min(
+      transportLeft > 0 ? transportLeft : Infinity,
+      processingLeft > 0 ? processingLeft : Infinity,
     );
-    next = { ...next, phaseElapsedMs: next.phaseElapsedMs + step };
+    if (!Number.isFinite(untilEvent)) break; // Both stages are blocked; no time accrues as free work.
+    const step = Math.min(remaining, untilEvent);
+    next = settle({
+      ...next,
+      phaseElapsedMs: next.phaseElapsedMs + (transportLeft > 0 ? step : 0),
+      processingElapsedMs:
+        next.processingElapsedMs === null
+          ? null
+          : next.processingElapsedMs + (processingLeft > 0 ? step : 0),
+    });
     remaining -= step;
-    if (next.phaseElapsedMs === getPhaseDuration(next)) {
-      next = {
-        ...next,
-        credits:
-          next.phase === 'delivering'
-            ? Math.min(Number.MAX_SAFE_INTEGER, next.credits + DELIVERY_VALUE)
-            : next.credits,
-        phase: NEXT_PHASE[next.phase],
-        phaseElapsedMs: 0,
-      };
-    }
   }
   return next;
+}
+
+export function getSaleValue(state: GameState): number {
+  return (
+    Math.min(
+      state.refined,
+      Math.floor(
+        (Number.MAX_SAFE_INTEGER - state.credits) / RESOURCE.refinedValue,
+      ),
+    ) * RESOURCE.refinedValue
+  );
+}
+
+export function sellRefined(state: GameState): GameState {
+  const value = getSaleValue(state);
+  if (value === 0) return state;
+  return settle({
+    ...state,
+    credits: state.credits + value,
+    refined: state.refined - value / RESOURCE.refinedValue,
+  });
 }
 
 export function getUpgradeOffer(state: GameState, id: UpgradeId) {
@@ -114,12 +172,54 @@ export function buyUpgrade(state: GameState, id: UpgradeId): GameState {
     credits: state.credits - offer.next.cost,
     levels: { ...state.levels, [id]: state.levels[id] + 1 },
   };
-  // Keep completed work when changing speed, without an instant free delivery.
-  return {
+  return settle({
     ...upgraded,
     phaseElapsedMs: Math.floor(
       (state.phaseElapsedMs * getPhaseDuration(upgraded)) /
         getPhaseDuration(state),
+    ),
+    processingElapsedMs:
+      state.processingElapsedMs === null
+        ? null
+        : Math.floor(
+            (state.processingElapsedMs * getProcessingDuration(upgraded)) /
+              getProcessingDuration(state),
+          ),
+  });
+}
+
+export function getProductionSummary(state: GameState) {
+  const capacity = getStorageCapacity(state);
+  const storageFull = state.refined + RESOURCE.batchSize > capacity;
+  const dockBlocked =
+    state.phase === 'delivering' &&
+    state.phaseElapsedMs === getPhaseDuration(state);
+  const processorBlocked =
+    state.processingElapsedMs === getProcessingDuration(state) && storageFull;
+  const supplyMs = getCycleDuration(state);
+  const processingMs = getProcessingDuration(state);
+  const supplyBottleneck: UpgradeId =
+    getUpgradeLevel('mining', state.levels.mining).value >=
+    2 * getUpgradeLevel('transport', state.levels.transport).value
+      ? 'mining'
+      : 'transport';
+  const bottleneck: UpgradeId = storageFull
+    ? 'storage'
+    : processingMs > supplyMs
+      ? 'processing'
+      : supplyBottleneck;
+  return {
+    cargo: state.phase === 'delivering' ? RESOURCE.batchSize : 0,
+    capacity,
+    storageFull,
+    dockBlocked,
+    processorBlocked,
+    bottleneck,
+    creditsPerSecond:
+      (RESOURCE.batchSize * RESOURCE.refinedValue * 1000) /
+      Math.max(supplyMs, processingMs),
+    fullyUpgraded: UPGRADE_IDS.every(
+      (id) => state.levels[id] === UPGRADES[id].levels.length,
     ),
   };
 }

@@ -1,13 +1,10 @@
 import type { GameSession } from '../../application/GameSession';
 import { useGameSession } from '../../app/useGameSession';
 import { LAYER, RESOURCE, UPGRADE_IDS } from '../../data/balance';
-import {
-  DELIVERY_VALUE,
-  getProductionSummary,
-  getPhaseDuration,
-} from '../../domain/game';
+import { getProductionSummary, getPhaseDuration } from '../../domain/game';
 import { OutpostIllustration } from '../world/OutpostIllustration';
 import { UpgradeCard } from '../panels/UpgradeCard';
+import { ProductionPanel } from '../panels/ProductionPanel';
 import { ProgressBar } from '../components/ProgressBar';
 
 const PHASE_LABELS = {
@@ -39,7 +36,7 @@ export function GameScreen({ session }: { session: GameSession }) {
             ABYSS<span className="brand-secondary">CORP</span>
           </span>
         </a>
-        <span className="preview-badge">First playable</span>
+        <span className="preview-badge">Production chain</span>
       </header>
       <main id="main" className="game-screen">
         {status === 'loading' && (
@@ -93,7 +90,9 @@ export function GameScreen({ session }: { session: GameSession }) {
                 </strong>
               </div>
               <div className="resource-counter">
-                <span>Full-cycle average{game.running ? '' : ' · paused'}</span>
+                <span>
+                  Potential with regular sales{game.running ? '' : ' · paused'}
+                </span>
                 <strong>
                   {production.creditsPerSecond.toFixed(1)}{' '}
                   <small>CR / sec</small>
@@ -114,18 +113,19 @@ export function GameScreen({ session }: { session: GameSession }) {
                 phase={game.phase}
                 progress={progress}
                 running={game.running}
+                game={game}
               />
               <div className="production-status">
                 <div className="production-status-heading">
                   <strong>
-                    {game.running
-                      ? PHASE_LABELS[game.phase]
-                      : 'Operation paused'}
+                    {!game.running
+                      ? 'Operation paused'
+                      : production.dockBlocked
+                        ? 'Dock blocked · raw intake full'
+                        : PHASE_LABELS[game.phase]}
                   </strong>
                   <span>
-                    {game.phase === 'returning'
-                      ? `Cargo sold · +${String(DELIVERY_VALUE)} CR`
-                      : `${String(RESOURCE.batchSize)} crystals → ${String(DELIVERY_VALUE)} CR at the dock`}
+                    {`${String(RESOURCE.batchSize)} raw crystals per delivery · refine, then sell`}
                   </span>
                 </div>
                 <ProgressBar
@@ -143,13 +143,14 @@ export function GameScreen({ session }: { session: GameSession }) {
                         {phase === 'mining'
                           ? 'Extract'
                           : phase === 'delivering'
-                            ? 'Deliver & sell'
+                            ? 'Deliver raw'
                             : 'Return'}
                       </span>
                     ),
                   )}
                 </div>
               </div>
+              <ProductionPanel game={game} onSell={session.sell} />
             </section>
             <section
               className="upgrades-section"
@@ -172,7 +173,7 @@ export function GameScreen({ session }: { session: GameSession }) {
             </section>
             <aside className="milestone-note">
               <span className="milestone-number" aria-hidden="true">
-                01
+                02
               </span>
               <div>
                 <p className="eyebrow">
@@ -180,13 +181,13 @@ export function GameScreen({ session }: { session: GameSession }) {
                 </p>
                 <h2>
                   {complete
-                    ? 'A small crew, working at full speed.'
-                    : 'Fully upgrade your drill and submarine.'}
+                    ? 'Your production line is fully upgraded.'
+                    : 'Balance your production chain.'}
                 </h2>
                 <p>
                   {complete
-                    ? 'You have completed this playable slice. Keep earning or pause here; more production stages come in a later milestone.'
-                    : 'Every delivery earns credits. Reinvest them to make the next delivery arrive sooner.'}
+                    ? 'All four systems are fully upgraded. Keep selling refined cargo; deeper layers will arrive in a later milestone.'
+                    : 'Sell refined crystals to earn credits. Upgrade the limiting stage, and expand storage to leave more time between sales.'}
                 </p>
               </div>
             </aside>

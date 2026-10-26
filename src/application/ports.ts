@@ -1,7 +1,7 @@
 import type { GameState } from '../domain/game';
 
 export interface GameSave {
-  readonly version: 1;
+  readonly version: 2;
   readonly savedAt: number;
   readonly game: GameState;
 }

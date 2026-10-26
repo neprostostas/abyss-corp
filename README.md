@@ -1,8 +1,8 @@
 # Abyss Corp
 
-A bright underwater idle/tycoon game, built in small milestones. **Current scope: Milestone 1 — First playable vertical slice.** One crystal vein, one submarine, an earning loop, two upgrade categories, and local saves.
+A bright underwater idle/tycoon game, built in small milestones. **Current scope: Milestone 2 — Multi-stage production.** One crystal vein, one submarine, a parallel refinery, bounded storage, manual sales, four upgrade categories, and local saves.
 
-Read [ABYSS_CORP_PROJECT_SPEC.md](ABYSS_CORP_PROJECT_SPEC.md) completely before making changes. It is the persistent product and engineering specification.
+Read [ABYSS_CORP_PROJECT_SPEC.md](ABYSS_CORP_PROJECT_SPEC.md) completely before making changes. It is the persistent specification.
 
 ## Run locally
 
@@ -13,15 +13,17 @@ npm ci
 npm run dev
 ```
 
-Open the local URL printed by Vite. No external art or font requests are needed.
+Open the local URL Vite prints. No external art/font requests are needed.
 
 ## Play and verify
 
-1. Click **Start operation**. The submarine extracts three crystals in four seconds, delivers them in 2.5 seconds, and returns empty in 2.5 seconds.
-2. Confirm credits increase by **15 only on delivery**, while cargo appears during the loaded trip.
-3. After two deliveries (about 16 seconds), buy either **30 CR** upgrade. Its level increases, credits are deducted, and the corresponding stage gets faster. Both categories have five levels.
-4. Pause, click **Save now**, and refresh. Credits, levels, phase progress, and paused state should remain. Resume to continue the same cycle.
-5. Switch away from the tab, then return. Hidden/closed time should grant no income. Check desktop and narrow mobile widths, keyboard focus, and the browser console.
+1. **Start operation.** At level one, extraction takes four seconds and delivery takes 2.5 seconds. Delivery now supplies the refinery, not credits.
+2. The refinery consumes three raw crystals and produces three refined crystals in six seconds, independently of the submarine. From a fresh game the first refined cargo arrives after 12.5 seconds.
+3. Click **Sell refined** to receive eight credits per stored crystal. No credits arrive before selling.
+4. Leave the operation running without sales. At level one, the warehouse fills to six, the refinery holds a finished batch, intake fills to six, and the submarine eventually waits at the dock. Counters must never overflow.
+5. Sell or upgrade **Cargo warehouse**. Completed cargo moves into the freed space and production resumes without lost material or free elapsed work. Upgrade **Crystal refinery** to shorten refining time.
+6. Pause, **Save now**, refresh, and confirm credits, all levels, stock and machine progress are preserved. Existing Milestone 1 saves migrate automatically without losing credits/upgrades.
+7. Check desktop/mobile layout and keyboard focus. Switching away and returning must not grant hidden-time production.
 
 ```sh
 npm run check
@@ -29,14 +31,14 @@ npm run build
 npm run preview
 ```
 
-`check` runs strict TypeScript, type-aware ESLint, Vitest, and formatting checks. `npm test` runs only the domain, persistence, and session tests. `build` also type-checks before creating `dist`; `preview` serves that production build locally.
+`check` runs strict TypeScript, ESLint, Vitest and formatting checks. `npm test` runs domain, persistence and session tests. `build` type-checks and creates `dist`; `preview` serves that build locally.
 
-Use `npm run format` to format project files. The product specification is excluded so tooling does not rewrite it.
+Use `npm run format` to format project files. The persistent specification is excluded.
 
-## Save behavior and limits
+## Persistence and limits
 
-Progress stays in this browser and origin, under the versioned `abyss-corp.save` localStorage key. Use one game tab at a time. Autosave runs every two seconds and on actions/hide/exit; an abrupt crash can lose the latest unsaved interval. Changing the port or clearing browser data changes/removes the available save.
+Use one game tab at a time. Progress belongs to this browser/origin in `abyss-corp.save`. Autosave runs every two seconds and on actions/hide/exit; an abrupt crash can lose the latest unsaved interval. Port changes use a different save.
 
-An invalid or future-version save blocks loading without overwriting it. Restore a valid backup or enable browser storage, then select **Retry loading**. A write failure displays **Retry saving** while keeping the current session in memory. No reset/delete action is provided.
+Save version 2 adds refinery/storage state. Before replacing a version 1 save, the original is backed up to `abyss-corp.save.v1-backup`. Returning legacy cargo was already paid and is not rewarded again; loaded legacy cargo now goes through refining. Invalid or unsupported saves are not overwritten. Restore a valid backup or allow browser storage, then **Retry loading**. Write failures retain the session in memory and offer **Retry saving**.
 
-There is no offline income, processing/storage system, depth unlocking, manager system, or backend in this milestone. See [architecture notes](docs/architecture.md) for boundaries and simulation details. The next step is **Milestone 2 — Multi-stage production**.
+One resource/depth only. Selling is manual; income shown in the HUD is potential with regular sales. No managers, offline income, deeper layers or backend yet. See [architecture notes](docs/architecture.md). Next: **Milestone 3 — Depth progression**.

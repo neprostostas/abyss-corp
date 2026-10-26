@@ -43,13 +43,15 @@ describe('session coordination', () => {
     f.session.setActive(true);
     expect(f.session.getSnapshot().game.phaseElapsedMs).toBe(2000);
     expect(f.session.getSnapshot().game.credits).toBe(0);
-    f.elapse(4500);
+    f.elapse(10500);
     f.session.tick();
-    expect(f.session.getSnapshot().game.credits).toBe(15);
+    expect(f.session.getSnapshot().game.credits).toBe(0);
+    f.session.sell();
+    expect(f.session.getSnapshot().game.credits).toBe(24);
   });
   it('resumes saved cargo without offline rewards', async () => {
     const initial: GameSave = {
-      version: 1,
+      version: 2,
       savedAt: 1,
       game: {
         ...createGame(),
@@ -65,7 +67,8 @@ describe('session coordination', () => {
     f.session.setActive(true);
     f.elapse(100);
     f.session.tick();
-    expect(f.session.getSnapshot().game.credits).toBe(15);
+    expect(f.session.getSnapshot().game.credits).toBe(0);
+    expect(f.session.getSnapshot().game.processingElapsedMs).toBe(0);
   });
   it('keeps an unreadable save untouched and supports retry', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -91,12 +94,13 @@ describe('session coordination', () => {
     expect(f.session.getSnapshot().saveStatus).toBe('error');
     f.session.setActive(true);
     f.session.toggleRunning();
-    f.elapse(6500);
+    f.elapse(12500);
     f.session.tick();
-    expect(f.session.getSnapshot().game.credits).toBe(15);
+    f.session.sell();
+    expect(f.session.getSnapshot().game.credits).toBe(24);
     await f.session.save(true);
     expect(f.session.getSnapshot().saveStatus).toBe('saved');
-    expect(f.saved()?.game.credits).toBe(15);
+    expect(f.saved()?.game.credits).toBe(24);
   });
   it('serializes slow writes and flushes the newest pending snapshot last', async () => {
     const f = fixture();
@@ -114,14 +118,15 @@ describe('session coordination', () => {
     const pending = f.session.save();
     f.session.toggleRunning();
     f.session.setActive(true);
-    f.elapse(6500);
+    f.elapse(12500);
     f.session.tick();
+    f.session.sell();
     void f.session.save();
     expect(writes).toHaveLength(1);
     finish();
     await Promise.resolve();
     expect(writes).toHaveLength(2);
-    expect(writes[1]?.game.credits).toBe(15);
+    expect(writes[1]?.game.credits).toBe(24);
     finish();
     await pending;
     expect(f.session.getSnapshot().saveStatus).toBe('saved');
