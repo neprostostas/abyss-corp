@@ -1,3 +1,4 @@
+import { DRAWER_DURATION_MS, useGameDrawer } from '../hooks/useGameDrawer';
 import { getFirstStep } from '../../domain/firstSteps';
 import { useEffect, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
@@ -75,7 +76,8 @@ function GameBoard({
     sellRef,
     play: playSaleFeedback,
   } = useSaleFeedback(world.selectedLayerId);
-  const [windowName, setWindow] = useState<WindowName | null>(null);
+  const drawer = useGameDrawer<WindowName>();
+  const windowName = drawer.name;
   const [selected, setSelected] = useState<UpgradeId | null>(null);
   const [saleFlash, setSaleFlash] = useState<{
     amount: number;
@@ -156,8 +158,13 @@ function GameBoard({
   };
   return (
     <main
-      className={`game-shell biome-${world.selectedLayerId}${windowName ? ' panel-open' : ''}`}
-      style={{ '--resource-color': config.resource.color } as CSSProperties}
+      className={`game-shell biome-${world.selectedLayerId}${drawer.open ? ' panel-open' : ''}`}
+      style={
+        {
+          '--resource-color': config.resource.color,
+          '--drawer-duration': `${String(DRAWER_DURATION_MS)}ms`,
+        } as CSSProperties
+      }
     >
       <header className="game-hud">
         <div className="game-brand">
@@ -177,9 +184,9 @@ function GameBoard({
         <button
           className={`icon-button settings-trigger${saveStatus === 'error' || cloud.status === 'error' ? ' has-error' : ''}`}
           aria-label="Settings"
-          aria-expanded={windowName === 'settings'}
+          aria-expanded={drawer.open && windowName === 'settings'}
           onClick={() => {
-            setWindow(windowName === 'settings' ? null : 'settings');
+            drawer.toggle('settings');
           }}
         >
           <GameIcon name="settings" />
@@ -310,15 +317,15 @@ function GameBoard({
           (name) => (
             <button
               key={name}
-              className={`dock-button${windowName === name ? ' active-room' : ''}${badges[name] ? ' has-opportunity' : ''}${name === 'crew' && automation?.enabled ? ' crew-active' : ''}`}
-              aria-expanded={windowName === name}
+              className={`dock-button${drawer.open && windowName === name ? ' active-room' : ''}${badges[name] ? ' has-opportunity' : ''}${name === 'crew' && automation?.enabled ? ' crew-active' : ''}`}
+              aria-expanded={drawer.open && windowName === name}
               title={
                 badges[name]
                   ? `${windows[name].title}: ${String(badges[name])} available`
                   : windows[name].title
               }
               onClick={() => {
-                setWindow(windowName === name ? null : name);
+                drawer.toggle(name);
               }}
               disabled={status !== 'ready'}
             >
@@ -339,18 +346,19 @@ function GameBoard({
       </nav>
       {windowName && (
         <GamePanel
+          open={drawer.open}
           title={windows[windowName].title}
           context={
             windowName === 'research' || windowName === 'missions'
               ? 'All outposts'
               : windowName === 'leaderboard'
                 ? 'Ocean network'
-                : layer.name
+                : windowName === 'settings'
+                  ? 'Account'
+                  : layer.name
           }
           icon={windows[windowName].icon}
-          onClose={() => {
-            setWindow(null);
-          }}
+          onClose={drawer.close}
         >
           {(windowName === 'research' || windowName === 'missions') && (
             <ProgressionPanel

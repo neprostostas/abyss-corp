@@ -19,8 +19,70 @@ export type IconName =
   | 'robot'
   | 'cloud'
   | 'check'
-  | 'depth';
+  | 'depth'
+  | 'profile'
+  | 'cookie'
+  | 'database'
+  | 'analytics'
+  | 'logout';
 const shapes: Record<IconName, ReactNode> = {
+  profile: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21v-2a8 8 0 0 1 16 0v2" />
+    </>
+  ),
+  cookie: (
+    <>
+      <path d="M21 12a5 5 0 0 1-5-5 5 5 0 0 1-5-5 10 10 0 1 0 10 10Z" />
+      <circle cx="8" cy="9" r="1" fill="currentColor" />
+      <circle cx="8" cy="16" r="1" fill="currentColor" />
+      <circle cx="14" cy="15" r="1" fill="currentColor" />
+    </>
+  ),
+  database: (
+    <>
+      <ellipse cx="12" cy="5" rx="8" ry="3" />
+      <path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0" />
+    </>
+  ),
+  analytics: (
+    <>
+      <path d="M4 3v18h17" />
+      <rect
+        x="7"
+        y="12"
+        width="3"
+        height="6"
+        rx="1"
+        fill="currentColor"
+        stroke="none"
+      />
+      <rect
+        x="12"
+        y="8"
+        width="3"
+        height="10"
+        rx="1"
+        fill="currentColor"
+        stroke="none"
+      />
+      <rect
+        x="17"
+        y="4"
+        width="3"
+        height="14"
+        rx="1"
+        fill="currentColor"
+        stroke="none"
+      />
+    </>
+  ),
+  logout: (
+    <>
+      <path d="M10 4H4v16h6M9 12h12m-4-4 4 4-4 4" />
+    </>
+  ),
   coin: (
     <>
       <circle cx="12" cy="12" r="9" />

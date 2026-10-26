@@ -135,8 +135,25 @@ export function AuthScreen({
         </a>
         <h1 id="auth-title">{title}</h1>
         <form
+          noValidate
           onSubmit={(event) => {
             event.preventDefault();
+            const fields = Array.from(event.currentTarget.elements).filter(
+              (field): field is HTMLInputElement =>
+                field instanceof HTMLInputElement,
+            );
+            const invalid = fields.find((field) => !field.validity.valid);
+            if (invalid) {
+              setError(
+                invalid.validity.valueMissing
+                  ? `Enter your ${invalid.name === 'confirmation' ? 'password confirmation' : invalid.name}.`
+                  : invalid.type === 'email'
+                    ? 'Enter a valid email.'
+                    : 'Use at least 10 characters.',
+              );
+              invalid.focus();
+              return;
+            }
             void submit();
           }}
         >

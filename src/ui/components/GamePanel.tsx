@@ -6,12 +6,14 @@ import type { IconName } from './GameIcon';
 /** A non-modal equipment drawer: the base and its controls stay interactive. */
 export function GamePanel({
   title,
+  open,
   context,
   icon,
   onClose,
   children,
 }: {
   title: string;
+  open: boolean;
   context: string;
   icon: IconName;
   onClose: () => void;
@@ -25,7 +27,6 @@ export function GamePanel({
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null;
-    closeRef.current?.focus();
     const panel = panelRef.current;
     return () => {
       if (
@@ -38,16 +39,25 @@ export function GamePanel({
     };
   }, []);
   useEffect(() => {
+    if (open) closeRef.current?.focus();
+  }, [open]);
+  useEffect(() => {
     const escape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (open && event.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', escape);
     return () => {
       window.removeEventListener('keydown', escape);
     };
-  }, [onClose]);
+  }, [onClose, open]);
   return (
-    <aside ref={panelRef} className="game-panel" aria-labelledby="panel-title">
+    <aside
+      ref={panelRef}
+      className="game-panel"
+      aria-labelledby="panel-title"
+      aria-hidden={!open}
+      inert={!open}
+    >
       <header className="panel-heading">
         <GameIcon name={icon} />
         <div>

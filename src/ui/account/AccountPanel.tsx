@@ -1,12 +1,13 @@
 import { visitorAnalytics } from '../../infrastructure/analytics/VisitorAnalytics';
 import { useState, useSyncExternalStore } from 'react';
 import type { AccountSaveRepository } from '../../application/accountPorts';
+import { GameIcon } from '../components/GameIcon';
+
 export function AccountPanel({
   email,
   repository,
   onSave,
   onSignOut,
-  onImport,
   isAdmin,
 }: {
   email: string;
@@ -14,7 +15,6 @@ export function AccountPanel({
   repository: AccountSaveRepository;
   onSave: () => Promise<void>;
   onSignOut: () => Promise<void>;
-  onImport: (() => Promise<void>) | null;
 }) {
   const cloud = useSyncExternalStore(
     repository.subscribe,
@@ -22,6 +22,9 @@ export function AccountPanel({
   );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const syncing =
+    busy || cloud.status === 'syncing' || cloud.status === 'loading';
+  const failed = error ?? cloud.error;
   const run = async (action: () => Promise<void>) => {
     setBusy(true);
     setError(null);
@@ -33,71 +36,69 @@ export function AccountPanel({
       setBusy(false);
     }
   };
-  const labels = {
-    loading: 'Loading…',
-    saved: 'Saved to account',
-    pending: 'Saved on device · syncing soon',
-    syncing: 'Syncing…',
-    error: 'Sync paused',
-  };
   return (
-    <section className="account-settings">
-      <div className="account-identity">
-        <small>Signed in as</small>
+    <section className="account-settings" aria-label="Account settings">
+      <div className="account-summary" aria-busy={syncing}>
+        <span className="account-avatar">
+          <GameIcon name="profile" />
+        </span>
         <strong>{email}</strong>
+        <button
+          className={`account-sync${failed ? ' sync-failed' : ''}`}
+          aria-label={failed ? 'Retry sync' : 'Sync progress'}
+          disabled={syncing}
+          onClick={() => {
+            void run(onSave);
+          }}
+        >
+          {syncing ? (
+            <span className="mini-loader" aria-hidden="true" />
+          ) : (
+            <GameIcon name={failed ? 'refresh' : 'cloud'} />
+          )}
+        </button>
       </div>
-      <p className={`sync-status sync-${cloud.status}`} role="status">
-        {labels[cloud.status]}
-      </p>
-      {(error ?? cloud.error) && (
+      {failed && (
         <p className="form-error" role="alert">
-          {error ?? cloud.error}
+          {failed}
         </p>
       )}
+      <nav className="settings-actions" aria-label="Account">
+        <a href="/reset-password">
+          <GameIcon name="lock" />
+          <span>Change password</span>
+          <GameIcon name="arrow" />
+        </a>
+        <button onClick={visitorAnalytics.openPreferences}>
+          <GameIcon name="cookie" />
+          <span>Cookies</span>
+          <GameIcon name="arrow" />
+        </button>
+      </nav>
+      {isAdmin && (
+        <nav className="settings-actions admin-actions" aria-label="Admin">
+          <a href="/database">
+            <GameIcon name="database" />
+            <span>Database</span>
+            <GameIcon name="arrow" />
+          </a>
+          <a href="/analytics">
+            <GameIcon name="analytics" />
+            <span>Analytics</span>
+            <GameIcon name="arrow" />
+          </a>
+        </nav>
+      )}
       <button
-        className="wide-button"
-        disabled={busy || cloud.status === 'syncing'}
+        className="settings-signout"
+        disabled={busy}
         onClick={() => {
-          void run(onSave);
+          void run(onSignOut);
         }}
       >
-        Save now
+        <GameIcon name="logout" />
+        <span>Sign out</span>
       </button>
-      {onImport && (
-        <button
-          className="text-button"
-          disabled={busy}
-          onClick={() => {
-            void run(onImport);
-          }}
-        >
-          Import previous device progress
-        </button>
-      )}
-      <div className="account-links">
-        <a href="/reset-password">Change password</a>
-        <button
-          className="text-button"
-          onClick={visitorAnalytics.openPreferences}
-        >
-          Cookies
-        </button>
-        {isAdmin && (
-          <>
-            <a href="/database">Database</a>
-            <a href="/analytics">Analytics</a>
-          </>
-        )}
-        <button
-          className="text-button"
-          disabled={busy}
-          onClick={() => {
-            void run(onSignOut);
-          }}
-        >
-          Sign out
-        </button>
-      </div>
     </section>
   );
 }

@@ -9,7 +9,7 @@ The [persistent specification](../ABYSS_CORP_PROJECT_SPEC.md) remains the source
 - `src/application/GameSession.ts`: elapsed-time simulation, commands, offline reports and serialized local saves through `SaveRepository`.
 - `src/application/accountPorts.ts`: account save synchronization status and canonical cloud update contract.
 - `src/infrastructure/supabase`: the configured Supabase client, generated public database types and account save repository.
-- `src/infrastructure/persistence`: strict runtime save validation, explicit version 1–6 migration and legacy device import.
+- `src/infrastructure/persistence`: strict runtime save validation, explicit version 1–6 migration.
 - `src/app`: authentication lifecycle, one game runtime per user ID, cloud sync scheduling and route selection.
 - `src/ui`: the ocean scene, upgrades, compact equipment panels, account forms and read-only database browser.
 
@@ -31,7 +31,7 @@ Game actions and the existing two-second autosave persist to the device immediat
 
 There is no manual conflict dialog. On HTTP 409 the repository backs up local progress, loads the current cloud revision and notifies GameSession to adopt it. The session recalculates capped offline production and resumes without reloading the page. It never adds two wallets together. Concurrent/offline device changes can be superseded by another device's accepted cloud revision; the rejected copy remains under the account backup key for recovery.
 
-Legacy anonymous progress is imported only by explicit user action. It is not automatically assigned to the next person who signs in. The obsolete SQLite archive was removed after the Supabase migration; there is no deployed dependency on a local filesystem, Node API process or guest cookie.
+Legacy device import has been removed. Account saves remain isolated by user ID. The obsolete SQLite archive was removed after the Supabase migration; there is no deployed dependency on a local filesystem, Node API process or guest cookie.
 
 ## UI and deployment
 

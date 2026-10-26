@@ -12,7 +12,6 @@ import {
 import type { SupabaseClient, User } from '@supabase/supabase-js';
 import type { Database } from '../infrastructure/supabase/database.types';
 import { AccountSaveRepository } from '../infrastructure/supabase/AccountSaveRepository';
-import { LocalSaveRepository } from '../infrastructure/persistence/LocalSaveRepository';
 import { browserClock } from '../infrastructure/clock/browserClock';
 import { GameSession } from '../application/GameSession';
 import { AuthScreen } from '../ui/auth/AuthScreen';
@@ -78,16 +77,6 @@ function AccountGame({
       active = false;
     };
   }, [client]);
-  const [canImport, setCanImport] = useState(() => {
-    try {
-      return (
-        window.localStorage.getItem('abyss-corp.save') !== null &&
-        window.localStorage.getItem(`${repository.key}.imported`) !== 'true'
-      );
-    } catch {
-      return false;
-    }
-  });
   useEffect(() => {
     const sync = () => {
       void repository.flush();
@@ -112,22 +101,6 @@ function AccountGame({
     if (repository.getSnapshot().status === 'error')
       throw new Error(repository.getSnapshot().error ?? 'Cloud save failed.');
   };
-  const importProgress = async () => {
-    const previous = await new LocalSaveRepository(
-      () => window.localStorage,
-    ).load();
-    if (!previous) throw new Error('No previous progress on this device.');
-    if (
-      !window.confirm(
-        'Replace this account’s progress with the previous device save? A backup of current progress will be kept.',
-      )
-    )
-      return;
-    await session.restoreServerSave(previous);
-    await save();
-    window.localStorage.setItem(`${repository.key}.imported`, 'true');
-    setCanImport(false);
-  };
   const account = (
     <AccountPanel
       isAdmin={isAdmin}
@@ -150,7 +123,6 @@ function AccountGame({
           if (!signedOut) session.setActive(!document.hidden);
         }
       }}
-      onImport={canImport && cloud.status !== 'loading' ? importProgress : null}
     />
   );
   return (

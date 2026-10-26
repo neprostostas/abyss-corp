@@ -230,27 +230,6 @@ export class GameSession {
     };
   }
 
-  async restoreServerSave(data: GameSave): Promise<void> {
-    if (this.snapshot.status !== 'ready')
-      throw new Error('Your session is not ready.');
-    await this.save(true);
-    if (this.snapshot.saveStatus === 'error')
-      throw new Error('Local saving failed; server restore was cancelled.');
-    if (!this.repository.backup)
-      throw new Error('Local backups are unavailable.');
-    await this.repository.backup(this.captureSave());
-    this.publish({ world: data.world, offlineReport: null });
-    this.applyOffline(data.savedAt);
-    this.publish({ world: resumeProduction(this.snapshot.world) });
-    this.lastTick = this.clock.now();
-    this.suspendedAt = this.active ? null : this.clock.timestamp();
-    await this.save(true);
-    if (this.getSnapshot().saveStatus === 'error')
-      throw new Error(
-        'Restored in memory. Retry local saving before closing this tab.',
-      );
-  }
-
   save = (retry = false): Promise<void> => {
     if (
       this.snapshot.status !== 'ready' ||

@@ -205,9 +205,6 @@
   font-family: var(--font-body);
   letter-spacing: 0;
 }
-.panel-open .game-dock {
-  gap: 18px;
-}
 @media (max-width: 520px) {
   .game-dock,
   .panel-open .game-dock {

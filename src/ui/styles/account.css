@@ -111,40 +111,126 @@
 }
 .account-settings {
   display: grid;
-  gap: 20px;
+  gap: 16px;
 }
-.account-identity {
-  display: grid;
-  gap: 6px;
-  overflow-wrap: anywhere;
-}
-.account-identity small {
-  color: #a5bfb6;
-  font-size: 11px;
-}
-.account-identity strong {
-  color: #f2e6bc;
-  font-size: 15px;
-}
-.sync-status {
-  color: #a5c9bd;
-  font-size: 12px;
-}
-.sync-error {
-  color: #ffcf8d;
-}
-.account-links {
+.account-summary {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #9cb7a433;
-  padding-top: 16px;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #9cb7a42b;
 }
-.account-links a {
-  color: #b9ddd5;
+.account-avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #f0d698;
+  background: #0b2e3b;
+  flex-shrink: 0;
+}
+.account-avatar .game-icon {
+  width: 21px;
+  height: 21px;
+}
+.account-summary strong {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+  color: #e0ede4;
   font-size: 12px;
+  font-weight: 600;
+}
+.account-sync {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border-radius: 10px;
+  background: transparent;
+  color: #9ac7b9;
+  box-shadow: none;
+}
+.account-sync:disabled {
+  background: transparent;
+  color: #9ac7b9;
+}
+.account-sync .game-icon {
+  width: 20px;
+  height: 20px;
+}
+.account-sync.sync-failed {
+  color: #edbb80;
+}
+.mini-loader {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+  border: 2px solid #92c7b633;
+  border-top-color: #a6d5c4;
+  border-radius: 50%;
+  animation: sync-spin 800ms linear infinite;
+}
+@keyframes sync-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.settings-actions {
+  display: grid;
+  gap: 4px;
+}
+.settings-actions a,
+.settings-actions button,
+.settings-signout {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #dce9e0;
+  background: #0d303b66;
+  box-shadow: none;
+  letter-spacing: 0;
+}
+.settings-actions a:hover,
+.settings-actions button:hover:not(:disabled),
+.settings-signout:hover:not(:disabled) {
+  background: #608c7d25;
+  transform: none;
+  filter: none;
+}
+.settings-actions .game-icon,
+.settings-signout .game-icon {
+  width: 20px;
+  height: 20px;
+  color: #a5cbbd;
+}
+.settings-actions .game-icon:last-child {
+  width: 15px;
+  height: 15px;
+  margin-left: auto;
+  color: #73968f;
+}
+.admin-actions {
+  padding-top: 12px;
+  border-top: 1px solid #9cb7a42b;
+}
+.settings-signout {
+  margin-top: 4px;
+  background: transparent;
+  color: #e4bfaa;
+}
+.settings-signout .game-icon {
+  color: #cfa993;
 }
 .database-screen {
   height: 100dvh;

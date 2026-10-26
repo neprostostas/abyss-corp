@@ -150,6 +150,7 @@ export function LeaderboardPanel({
           </div>
           {editing ? (
             <form
+              noValidate
               className="captain-rename"
               onSubmit={(event) => {
                 event.preventDefault();

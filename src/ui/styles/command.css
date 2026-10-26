@@ -156,25 +156,28 @@ button {
   }
 }
 .game-shell {
+  --panel-width: 370px;
+  --drawer-easing: cubic-bezier(0.22, 0.7, 0.25, 1);
   position: relative;
+  grid-template-columns: minmax(0, 1fr) 0px;
+  transition: grid-template-columns var(--drawer-duration, 280ms)
+    var(--drawer-easing);
 }
 .game-shell.panel-open {
-  grid-template-columns: minmax(0, 1fr) 370px;
+  grid-template-columns: minmax(0, 1fr) var(--panel-width);
 }
-.panel-open > .game-hud {
+.game-shell > .game-hud {
   grid-column: 1 / -1;
 }
-.panel-open > .ocean-stage {
+.game-shell > .ocean-stage {
   grid-column: 1;
   grid-row: 2;
 }
-.panel-open > .upgrade-deck {
+.game-shell > .upgrade-deck {
   grid-column: 1;
   grid-row: 3;
-  padding-inline: 14px;
-  gap: 9px;
 }
-.panel-open > .game-dock {
+.game-shell > .game-dock {
   grid-column: 1;
   grid-row: 4;
 }
@@ -189,7 +192,12 @@ button {
   background: linear-gradient(120deg, #21454e, #102c3b);
   border-left: 2px solid #b1c29c66;
   box-shadow: -8px 0 25px #03172340;
-  animation: console-slide 0.22s ease-out;
+  width: var(--panel-width);
+  opacity: 0;
+  transition: opacity var(--drawer-duration, 280ms) var(--drawer-easing);
+}
+.panel-open > .game-panel {
+  opacity: 1;
 }
 .panel-heading {
   display: flex;
@@ -330,37 +338,24 @@ button {
   border-color: #ffdb88;
   box-shadow: 0 0 16px #eec66f55;
 }
-@keyframes console-slide {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
 @media (max-width: 1050px) {
-  .game-shell.panel-open {
-    grid-template-columns: minmax(0, 1fr) 325px;
-  }
-  .panel-open .upgrade-tile {
-    gap: 4px;
-    grid-template-columns: 1fr;
-  }
-  .panel-open .upgrade-art {
-    display: none;
-  }
-  .panel-open .upgrade-info h3 {
-    font-size: 12px;
+  .game-shell {
+    --panel-width: 325px;
   }
 }
 @media (max-width: 760px) {
+  .game-shell,
   .game-shell.panel-open {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) 0px;
+    transition: none;
   }
   .game-panel {
     position: absolute;
+    width: auto;
+    transform: translateY(18px);
+    transition:
+      transform var(--drawer-duration, 280ms) var(--drawer-easing),
+      opacity var(--drawer-duration, 280ms) var(--drawer-easing);
     grid-column: 1 / -1;
     grid-row: 1 / -1;
     left: 10px;
@@ -371,6 +366,9 @@ button {
     border-radius: 16px;
     box-shadow: 0 -6px 25px #03172350;
   }
+  .panel-open > .game-panel {
+    transform: none;
+  }
   .panel-heading {
     padding: 10px 14px 6px;
   }
@@ -380,7 +378,7 @@ button {
   .panel-content {
     padding: 12px;
   }
-  .panel-open > .game-dock {
+  .game-shell > .game-dock {
     z-index: 6;
   }
 }
