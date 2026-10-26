@@ -1,0 +1,442 @@
+/* Naval instruments, enamel controls and readable game typography. */
+h1,
+h2,
+h3,
+.game-brand,
+.hud-wallet strong,
+.hud-depth strong,
+.research-bonus,
+.crew-level,
+.stock-value,
+.dialog-balance strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+button {
+  font-weight: 800;
+  letter-spacing: 0.15px;
+}
+.game-brand {
+  font-size: 27px;
+  letter-spacing: 2px;
+  gap: 10px;
+}
+.game-brand small {
+  font-family: 'Nunito', sans-serif;
+  font-size: 8px;
+  letter-spacing: 7px;
+}
+.brand-emblem {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 3px #001a28);
+}
+.game-hud {
+  background: linear-gradient(100deg, #264e5a, #153746 65%);
+  border-bottom: 2px solid #a9c6ae38;
+  box-shadow:
+    inset 0 -5px 0 #0b28354d,
+    0 6px 25px #00192650;
+}
+.hud-wallet {
+  border: 1px solid #dcc27c50;
+  box-shadow:
+    inset 0 2px 8px #00182270,
+    0 1px #b8d0be29;
+}
+.hud-wallet strong {
+  font-size: 30px;
+  letter-spacing: 0.5px;
+}
+.location-hud h1 {
+  font-size: 26px;
+  letter-spacing: 0.4px;
+  text-shadow: 0 2px #123143;
+}
+.location-hud > div > span {
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}
+.upgrade-card h3 {
+  font-size: 18px;
+}
+.dock-button {
+  font-size: 11px;
+  letter-spacing: 0.3px;
+}
+.dock-icon {
+  transition:
+    transform 0.2s,
+    filter 0.2s;
+}
+.dock-button:hover .dock-icon {
+  transform: translateY(-3px);
+  filter: drop-shadow(0 0 8px #a0e6cc70);
+}
+.game-dialog {
+  width: min(760px, calc(100% - 32px));
+  max-height: min(850px, 92dvh);
+  border: 2px solid #93a992;
+  border-radius: 22px;
+  background: #102e3c;
+  box-shadow:
+    0 0 0 5px #0a2536,
+    0 0 0 6px #d1c18a55,
+    0 30px 100px #000d20c0;
+}
+.game-dialog[open] {
+  animation: command-open 0.24s ease-out;
+}
+.game-dialog::backdrop {
+  background: #031725b5;
+  backdrop-filter: blur(5px) saturate(0.65);
+}
+.dialog-shell {
+  max-height: min(846px, calc(92dvh - 4px));
+}
+.dialog-heading {
+  padding: 20px 24px;
+  gap: 16px;
+  background:
+    radial-gradient(ellipse at 15% 0, #57837c60, transparent 70%),
+    linear-gradient(#2d535e, #1e404e);
+  border-bottom: 1px solid #c0c59545;
+  box-shadow: inset 0 3px #e6e2ad15;
+}
+.dialog-emblem {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #f2dda0, #bd944e);
+  color: #244854;
+  border: 2px solid #fff0b4;
+  box-shadow:
+    0 4px 0 #112f3b,
+    inset 0 -4px #856b3c40;
+}
+.dialog-emblem .game-icon {
+  width: 32px;
+  height: 32px;
+}
+.dialog-context {
+  color: #acd0c4;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 800;
+}
+.dialog-heading h2 {
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+.dialog-heading > .icon-button {
+  width: 44px;
+  height: 44px;
+  border-color: #c8d2af50;
+}
+.dialog-title-block {
+  min-width: 0;
+}
+.dialog-navigation {
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+  padding: 12px 20px;
+  background: #0c2735;
+  border-bottom: 1px solid #8bb5a42b;
+}
+.dialog-navigation button {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 9px 8px;
+  font-size: 12px;
+  gap: 7px;
+  background: #203f4b;
+  color: #adc5bd;
+  border: 1px solid #99b9a822;
+  border-radius: 9px;
+  box-shadow:
+    inset 0 1px #b7d3bc15,
+    0 2px #061d2a;
+}
+.dialog-navigation button .game-icon {
+  width: 20px;
+  height: 20px;
+}
+.dialog-navigation button[aria-current] {
+  color: #fff0b5;
+  background: linear-gradient(#4b635b, #304b49);
+  border-color: #e4c77b99;
+  box-shadow:
+    inset 0 -3px #e7c679,
+    0 2px #061d2a;
+}
+.dialog-navigation b {
+  position: absolute;
+  top: -5px;
+  right: -3px;
+  background: #f2cb71;
+  color: #193747;
+  border-radius: 10px;
+  padding: 0 5px;
+  font-size: 10px;
+}
+.dialog-content {
+  min-height: 0;
+  padding: 26px;
+  flex: 1 1 auto;
+  background-image:
+    radial-gradient(#afd0bd0c 1px, transparent 1px),
+    radial-gradient(ellipse at top, #35665c25, transparent 75%);
+  background-size:
+    14px 14px,
+    100% 100%;
+  scrollbar-gutter: stable;
+}
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 13px 24px;
+  border-top: 1px solid #a4b99b33;
+  background: linear-gradient(#1c3b47, #152f3c);
+}
+.dialog-balance {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f6d78c;
+}
+.dialog-balance strong {
+  font-size: 25px;
+  font-variant-numeric: tabular-nums;
+}
+.dialog-balance small {
+  font-size: 10px;
+  color: #a9bfb5;
+}
+.return-to-base {
+  min-height: 42px;
+  background: #284a55;
+  color: #d6e7d5;
+  box-shadow:
+    inset 0 1px #aec9b733,
+    0 3px #0a2331;
+}
+.return-to-base kbd {
+  font:
+    700 10px 'Nunito',
+    sans-serif;
+  border: 1px solid #a4c3ae50;
+  border-radius: 4px;
+  padding: 3px 5px;
+  color: #acc4b6;
+}
+.research-card {
+  border-radius: 13px;
+  padding: 22px;
+  background: linear-gradient(145deg, #e5ebce, #b4cbc1);
+  box-shadow:
+    inset 0 0 0 3px #516f5c15,
+    0 5px #4f7173,
+    0 9px 18px #031e2c55;
+}
+.research-card h3 {
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+.research-card p {
+  font-size: 12px;
+  color: #496960;
+}
+.research-bonus {
+  font-size: 29px;
+}
+.research-card button {
+  min-height: 44px;
+}
+.level-pips i {
+  width: 28px;
+  height: 7px;
+  border-radius: 2px;
+}
+.mission-row {
+  padding: 17px;
+  border-radius: 12px;
+  background: linear-gradient(110deg, #254753, #1a3947);
+  box-shadow: inset 3px 0 #7c9d8d4d;
+}
+.mission-row.ready {
+  box-shadow:
+    inset 3px 0 #ebce7c,
+    0 0 18px #c9de8410;
+}
+.mission-row.claimed {
+  opacity: 0.7;
+}
+.mission-content h3 {
+  font-size: 20px;
+  line-height: 1.1;
+  letter-spacing: 0.2px;
+}
+.mission-content p {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.mission-row button {
+  min-height: 44px;
+}
+.crew-card {
+  max-width: 380px;
+}
+.crew-card h3 {
+  font-size: 30px;
+}
+.crew-card > p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dialog-content .wide-button {
+  min-height: 46px;
+}
+.settings-section {
+  border-radius: 12px;
+}
+.dialog-content input {
+  min-height: 44px;
+}
+@keyframes command-open {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 600px) {
+  .game-brand {
+    font-size: 22px;
+  }
+  .brand-emblem {
+    width: 45px;
+    height: 45px;
+  }
+  .hud-wallet strong {
+    font-size: 25px;
+  }
+  .location-hud h1 {
+    font-size: 21px;
+  }
+  .game-dialog {
+    width: calc(100% - 20px);
+    max-height: 94dvh;
+    border-radius: 16px;
+  }
+  .dialog-shell {
+    max-height: calc(94dvh - 4px);
+  }
+  .dialog-heading {
+    padding: 14px;
+    gap: 12px;
+  }
+  .dialog-heading h2 {
+    font-size: 28px;
+  }
+  .dialog-emblem {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+  }
+  .dialog-context {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+  .dialog-navigation {
+    padding: 10px;
+    gap: 5px;
+  }
+  .dialog-navigation button {
+    flex-direction: column;
+    font-size: 9px;
+    gap: 4px;
+    padding: 8px 2px;
+  }
+  .dialog-content {
+    padding: 16px 12px 20px;
+  }
+  .dialog-footer {
+    padding: 10px 14px;
+  }
+  .return-to-base {
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+  .return-to-base kbd {
+    display: none;
+  }
+  .research-grid {
+    gap: 10px;
+  }
+  .research-card {
+    padding: 14px 9px;
+  }
+  .research-card h3 {
+    font-size: 20px;
+  }
+  .research-bonus {
+    font-size: 23px;
+  }
+  .research-card p {
+    font-size: 11px;
+  }
+  .mission-row {
+    gap: 9px;
+    padding: 12px;
+    flex-wrap: wrap;
+  }
+  .mission-content {
+    flex-basis: calc(100% - 55px);
+  }
+  .mission-row button {
+    margin-left: auto;
+  }
+}
+@media (max-height: 600px) and (min-width: 601px) {
+  .dialog-heading {
+    padding: 10px 20px;
+  }
+  .dialog-heading h2 {
+    font-size: 26px;
+  }
+  .dialog-emblem {
+    width: 44px;
+    height: 44px;
+  }
+  .dialog-navigation {
+    padding-block: 8px;
+  }
+  .dialog-footer {
+    padding-block: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-dialog[open] {
+    animation: none;
+  }
+  .dock-icon {
+    transition: none;
+  }
+}

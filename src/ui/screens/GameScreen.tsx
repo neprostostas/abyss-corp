@@ -98,9 +98,13 @@ export function GameScreen({
     >
       <header className="game-hud">
         <div className="game-brand" aria-label="Abyss Corp">
-          <span className="brand-symbol">
-            <GameIcon name="transport" />
-          </span>
+          <img
+            className="brand-emblem"
+            src="/brand/abyss-emblem.png"
+            alt=""
+            width="56"
+            height="56"
+          />
           <span>
             ABYSS<small>CORP</small>
           </span>
@@ -281,6 +285,29 @@ export function GameScreen({
       {windowName && (
         <GameDialog
           title={windows[windowName].title}
+          context={
+            windowName === 'research' || windowName === 'missions'
+              ? 'Fleet command'
+              : layer.name
+          }
+          credits={compact.format(world.credits)}
+          navigation={
+            <nav className="dialog-navigation" aria-label="Command rooms">
+              {(Object.keys(windows) as WindowName[]).map((name) => (
+                <button
+                  key={name}
+                  aria-current={windowName === name ? 'page' : undefined}
+                  onClick={() => setWindow(name)}
+                >
+                  <GameIcon name={windows[name].icon} />
+                  <span>{windows[name].title}</span>
+                  {name === 'missions' && missionsReady > 0 && (
+                    <b>{missionsReady}</b>
+                  )}
+                </button>
+              ))}
+            </nav>
+          }
           icon={windows[windowName].icon}
           onClose={() => setWindow(null)}
         >

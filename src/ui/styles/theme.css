@@ -1,6 +1,21 @@
+@font-face {
+  font-family: 'Nunito';
+  src: url('/fonts/nunito-variable.ttf') format('truetype');
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rajdhani';
+  src: url('/fonts/rajdhani-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 :root {
   color-scheme: dark;
-  font-family: 'Avenir Next', Avenir, 'Segoe UI', sans-serif;
+  font-family: 'Nunito', 'Segoe UI', sans-serif;
+  --font-display: 'Rajdhani', 'Nunito', sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

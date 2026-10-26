@@ -1799,6 +1799,77 @@ button:disabled {
     font-size: 9px;
   }
 }
+/* Upgrade reconstruction: old silhouette dissolves as the new tier assembles. */
+.upgrade-effects { color: #bcffe4; }
+.upgrade-wave {
+  fill: none;
+  stroke: #b0ffe0;
+  stroke-width: 3;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: upgrade-wave 1.25s ease-out both;
+}
+.upgrade-wave-late { animation-delay: .25s; stroke: #ffe39c; }
+.upgrade-aura {
+  fill: #83fbd4;
+  filter: blur(18px);
+  animation: upgrade-aura 1.5s ease-out both;
+}
+.upgrade-old { animation: upgrade-dissolve .55s ease-in both; }
+.upgrade-new {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: upgrade-assemble 1s cubic-bezier(.2,.8,.2,1) both;
+}
+.upgrade-particle {
+  fill: #fff0af;
+  animation: upgrade-particle 1s ease-out both;
+}
+.upgrade-scan {
+  fill: none;
+  stroke: #dcfff0;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 5px #8bffdb);
+  animation: upgrade-scan 1s ease-in-out both;
+}
+.upgrade-badge { animation: upgrade-badge 1.8s ease-out both; }
+.upgrade-badge rect { fill: #123c49; stroke: #d4f1bb; stroke-width: 2; }
+.upgrade-badge path { fill: none; stroke: #9bffdb; stroke-width: 2; }
+.upgrade-badge text { fill: #fff0b9; font-size: 13px; font-weight: 800; }
+@keyframes upgrade-wave {
+  0% { opacity: 0; transform: scale(.4); }
+  15% { opacity: .95; }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+@keyframes upgrade-aura {
+  0%, 100% { opacity: 0; }
+  30% { opacity: .32; }
+}
+@keyframes upgrade-dissolve {
+  0%, 20% { opacity: 1; }
+  100% { opacity: 0; filter: brightness(2) blur(3px); }
+}
+@keyframes upgrade-assemble {
+  0%, 20% { opacity: 0; transform: translateY(-12px) scale(.92); }
+  55% { opacity: 1; filter: brightness(1.65); transform: translateY(-5px) scale(1.04); }
+  78% { transform: translateY(2px) scale(.99); }
+  100% { opacity: 1; filter: brightness(1); transform: translateY(0) scale(1); }
+}
+@keyframes upgrade-particle {
+  0% { opacity: 0; transform: scale(.3); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--particle-x), var(--particle-y)) scale(.1); }
+}
+@keyframes upgrade-scan {
+  0% { opacity: 0; transform: translateY(15px); }
+  20%, 65% { opacity: .9; }
+  100% { opacity: 0; transform: translateY(var(--scan-height)); }
+}
+@keyframes upgrade-badge {
+  0%, 20% { opacity: 0; transform: translateY(12px); }
+  40%, 75% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-12px); }
+}
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -1809,4 +1880,10 @@ button:disabled {
   .sale-float {
     opacity: 1;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .upgrade-effects, .upgrade-old { display: none; }
+  .upgrade-new { opacity: 1; transform: none; filter: none; }
+  .upgrade-badge { opacity: 1; }
 }

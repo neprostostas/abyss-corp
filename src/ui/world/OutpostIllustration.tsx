@@ -1,3 +1,4 @@
+import { UpgradeReveal } from './UpgradeReveal';
 import type { KeyboardEvent } from 'react';
 import { getProductionSummary, getProcessingDuration } from '../../domain/game';
 import type { GameState, Phase, UpgradeId } from '../../domain/game';
@@ -270,7 +271,9 @@ export function OutpostIllustration({
           {...hit('mining', 'Extraction drill')}
         >
           <ellipse className="selection-ring" cy="2" rx="92" ry="31" />
-          <MiningRig level={game.levels.mining} active={running && phase === 'mining'} />
+          <UpgradeReveal key={`${layerId}-mining`} level={game.levels.mining} width={190} height={155}>
+            {(level) => <MiningRig level={level} active={running && phase === 'mining'} />}
+          </UpgradeReveal>
           <g className="model-level" transform="translate(-20 -164)">
             <rect x="-26" y="-14" width="52" height="25" rx="9" />
             <text textAnchor="middle" y="3">
@@ -280,11 +283,15 @@ export function OutpostIllustration({
         </g>
         <g transform="translate(693 485)" {...hit('processing', 'Refinery')}>
           <ellipse className="selection-ring" cy="24" rx="126" ry="45" />
-          <RefineryModel
-            level={game.levels.processing}
+          <UpgradeReveal key={`${layerId}-processing`} level={game.levels.processing} width={250} height={235}>
+            {(level) => (
+<RefineryModel
+            level={level}
             active={refining}
             blocked={production.processorBlocked}
           />
+            )}
+          </UpgradeReveal>
           <g className="model-level" transform="translate(0 -251)">
             <rect x="-26" y="-14" width="52" height="25" rx="9" />
             <text textAnchor="middle" y="3">
@@ -312,11 +319,15 @@ export function OutpostIllustration({
         </g>
         <g transform="translate(899 546)" {...hit('storage', 'Warehouse')}>
           <ellipse className="selection-ring" cy="20" rx="91" ry="34" />
-          <WarehouseModel
-            level={game.levels.storage}
+          <UpgradeReveal key={`${layerId}-storage`} level={game.levels.storage} width={175} height={180}>
+            {(level) => (
+<WarehouseModel
+            level={level}
             fraction={game.refined / production.capacity}
             color={resource.color}
           />
+            )}
+          </UpgradeReveal>
           <g className="model-level" transform={`translate(6 ${game.levels.storage >= 5 ? -205 : game.levels.storage >= 4 ? -153 : game.levels.storage >= 3 ? -141 : -126})`}>
             <rect x="-26" y="-14" width="52" height="25" rx="9" />
             <text textAnchor="middle" y="3">
@@ -332,12 +343,16 @@ export function OutpostIllustration({
       <g transform={`translate(${x} ${y})`} {...hit('transport', 'Submarine')}>
         <ellipse className="selection-ring" cy="20" rx="86" ry="33" />
         <g className={running ? 'sub-idle' : undefined}>
-          <SubmarineModel
-            level={game.levels.transport}
+          <UpgradeReveal key={`${layerId}-transport`} level={game.levels.transport} width={180} height={60}>
+            {(level) => (
+<SubmarineModel
+            level={level}
             facingLeft={phase === 'returning'}
             loaded={phase === 'delivering'}
             color={resource.color}
           />
+            )}
+          </UpgradeReveal>
         </g>
       </g>
       {running && phase === 'mining' && (

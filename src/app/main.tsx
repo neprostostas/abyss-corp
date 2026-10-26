@@ -10,6 +10,7 @@ import { LocalSaveRepository } from '../infrastructure/persistence/LocalSaveRepo
 import { browserClock } from '../infrastructure/clock/browserClock';
 import '../ui/styles/theme.css';
 import '../ui/styles/app.css';
+import '../ui/styles/command.css';
 
 const root = document.getElementById('root');
 if (!root) {
