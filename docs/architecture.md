@@ -31,7 +31,7 @@ Game actions and the existing two-second autosave persist to the device immediat
 
 There is no manual conflict dialog. On HTTP 409 the repository backs up local progress, loads the current cloud revision and notifies GameSession to adopt it. The session recalculates capped offline production and resumes without reloading the page. It never adds two wallets together. Concurrent/offline device changes can be superseded by another device's accepted cloud revision; the rejected copy remains under the account backup key for recovery.
 
-Legacy anonymous progress is imported only by explicit user action. It is not automatically assigned to the next person who signs in. The obsolete SQLite database was archived outside the repository at `../legacy-backups/abyss-before-supabase-2026-10-26.sqlite`; there is no deployed dependency on a local filesystem, Node API process or guest cookie.
+Legacy anonymous progress is imported only by explicit user action. It is not automatically assigned to the next person who signs in. The obsolete SQLite archive was removed after the Supabase migration; there is no deployed dependency on a local filesystem, Node API process or guest cookie.
 
 ## UI and deployment
 

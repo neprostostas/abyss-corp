@@ -1,3 +1,4 @@
+import { Brand } from '../components/Brand';
 import { authReturnUrl } from '../../infrastructure/supabase/authRedirect';
 import { useState } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -130,13 +131,9 @@ export function AuthScreen({
     <main className="account-screen">
       <section className="auth-card" aria-labelledby="auth-title">
         <a href="/" className="auth-brand">
-          <img src="/brand/abyss-emblem.png" alt="" width="64" height="64" />
-          <span>
-            ABYSS <small>CORP</small>
-          </span>
+          <Brand />
         </a>
         <h1 id="auth-title">{title}</h1>
-        {mode === 'login' && <p>Your ocean. Your progress.</p>}
         <form
           onSubmit={(event) => {
             event.preventDefault();

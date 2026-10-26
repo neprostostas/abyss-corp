@@ -13,7 +13,7 @@ import {
   createWorld,
   selectLayer,
   sellLayer,
-  toggleLayer,
+  resumeProduction,
   unlockLayer,
   upgradeLayer,
 } from '../domain/world';
@@ -92,6 +92,7 @@ export class GameSession {
         saveStatus: saved ? 'saved' : 'unsaved',
       });
       if (saved) this.applyOffline(saved.savedAt);
+      this.publish({ world: resumeProduction(this.snapshot.world) });
       // Consume elapsed time before the next reload, even when the report stays open.
       this.suspendedAt = this.active ? null : this.clock.timestamp();
       if (saved) await this.save();
@@ -175,9 +176,6 @@ export class GameSession {
   toggleAutomation = () => {
     this.command(toggleAutomation);
   };
-  toggleRunning = () => {
-    this.command(toggleLayer);
-  };
   upgrade = (id: UpgradeId) => {
     this.command((world) => upgradeLayer(world, id));
   };
@@ -201,6 +199,7 @@ export class GameSession {
       saveStatus: 'saved',
     });
     this.applyOffline(data.savedAt);
+    this.publish({ world: resumeProduction(this.snapshot.world) });
     this.lastTick = this.clock.now();
     this.suspendedAt = this.active ? null : this.clock.timestamp();
     void this.save();
@@ -228,6 +227,7 @@ export class GameSession {
     await this.repository.backup(this.captureSave());
     this.publish({ world: data.world, offlineReport: null });
     this.applyOffline(data.savedAt);
+    this.publish({ world: resumeProduction(this.snapshot.world) });
     this.lastTick = this.clock.now();
     this.suspendedAt = this.active ? null : this.clock.timestamp();
     await this.save(true);

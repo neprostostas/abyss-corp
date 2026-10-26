@@ -17,6 +17,7 @@ import {
   getSaleValue,
 } from '../../domain/game';
 import type { UpgradeId } from '../../domain/game';
+import { Brand } from '../components/Brand';
 import { GameIcon } from '../components/GameIcon';
 import type { IconName } from '../components/GameIcon';
 import { GamePanel } from '../components/GamePanel';
@@ -106,17 +107,8 @@ export function GameScreen({
       style={{ '--resource-color': config.resource.color } as CSSProperties}
     >
       <header className="game-hud">
-        <div className="game-brand" aria-label="Abyss Corp">
-          <img
-            className="brand-emblem"
-            src="/brand/abyss-emblem.png"
-            alt=""
-            width="56"
-            height="56"
-          />
-          <span>
-            ABYSS<small>CORP</small>
-          </span>
+        <div className="game-brand">
+          <Brand />
         </div>
         <div className="hud-wallet" title="Corporate credits">
           <span className="coin-medallion">
@@ -124,13 +116,6 @@ export function GameScreen({
           </span>
           <strong>{compact.format(world.credits)}</strong>
           <small>CR</small>
-        </div>
-        <div className="hud-depth">
-          <GameIcon name="depth" />
-          <strong>
-            {layer.depthMeters}
-            <small>m</small>
-          </strong>
         </div>
         <button
           className={`icon-button settings-trigger${saveStatus === 'error' || cloud.status === 'error' ? ' has-error' : ''}`}
@@ -157,14 +142,6 @@ export function GameScreen({
                 </span>
               </div>
             </div>
-            <button
-              className={`operation-button${game.running ? ' running' : ''}`}
-              onClick={session.toggleRunning}
-              aria-label={game.running ? 'Pause operation' : 'Start operation'}
-            >
-              <GameIcon name={game.running ? 'pause' : 'play'} />
-              <span>{game.running ? 'Pause' : 'Start'}</span>
-            </button>
             <DepthNavigation
               world={world}
               onSelect={session.select}
@@ -287,25 +264,6 @@ export function GameScreen({
             </button>
           ),
         )}
-        <span
-          className="save-indicator"
-          title={cloud.error ?? 'Progress syncs to your account automatically'}
-        >
-          <i
-            className={
-              saveStatus === 'error' || cloud.status === 'error' ? 'error' : ''
-            }
-          />
-          {saveStatus === 'error'
-            ? 'Save error'
-            : cloud.status === 'error'
-              ? 'Sync paused'
-              : cloud.status === 'syncing'
-                ? 'Syncing'
-                : cloud.status === 'saved'
-                  ? 'Synced'
-                  : 'Saved locally'}
-        </span>
       </nav>
       {windowName && (
         <GamePanel

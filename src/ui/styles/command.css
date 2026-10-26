@@ -1,16 +1,3 @@
-/* Naval instruments, enamel controls and readable game typography. */
-h1,
-h2,
-h3,
-.game-brand,
-.hud-wallet strong,
-.hud-depth strong,
-.research-bonus,
-.crew-level,
-.stock-value {
-  font-family: var(--font-display);
-  font-weight: 700;
-}
 button {
   font-weight: 800;
   letter-spacing: 0.15px;
@@ -19,17 +6,6 @@ button {
   font-size: 27px;
   letter-spacing: 2px;
   gap: 10px;
-}
-.game-brand small {
-  font-family: 'Manrope', sans-serif;
-  font-size: 8px;
-  letter-spacing: 7px;
-}
-.brand-emblem {
-  width: 56px;
-  height: 56px;
-  object-fit: contain;
-  filter: drop-shadow(0 3px 3px #001a28);
 }
 .game-hud {
   background: linear-gradient(100deg, #264e5a, #153746 65%);
@@ -140,10 +116,6 @@ button {
 @media (max-width: 600px) {
   .game-brand {
     font-size: 22px;
-  }
-  .brand-emblem {
-    width: 45px;
-    height: 45px;
   }
   .hud-wallet strong {
     font-size: 25px;
@@ -415,5 +387,91 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .game-panel {
     animation: none;
+  }
+}
+
+/* A quiet hull-shaped signature lets the outpost remain the focus. */
+h1,
+h2,
+h3,
+.hud-wallet strong,
+.research-bonus,
+.crew-level,
+.stock-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+}
+.brand-lockup img {
+  flex-shrink: 0;
+  width: 48px;
+  height: 36px;
+}
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  color: #e8f3eb;
+}
+.game-hud {
+  padding-block: 8px;
+  background: #173e4b;
+  border-bottom: 1px solid #a9d5cb25;
+  box-shadow: none;
+}
+.hud-wallet {
+  margin-right: 0;
+  min-width: 140px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+.hud-wallet strong {
+  font-size: 25px;
+}
+.game-dock {
+  gap: clamp(12px, 5vw, 42px);
+}
+.dock-button {
+  min-height: 48px;
+}
+.notification-badge {
+  background: #e8c375;
+  color: #173e4b;
+  box-shadow: none;
+}
+.upgrade-tile.can-upgrade {
+  box-shadow: 0 3px #9f8246;
+}
+.dock-button.active-room {
+  background: #a4d9ce12;
+  box-shadow: inset 0 -2px #e8c375;
+}
+@media (max-width: 520px) {
+  .game-hud {
+    gap: 8px;
+  }
+  .brand-lockup {
+    gap: 5px;
+  }
+  .game-brand .brand-name {
+    font-size: 15px;
+  }
+  .game-brand .brand-lockup img {
+    width: 34px;
+    height: 28px;
+  }
+  .hud-wallet {
+    min-width: 100px;
+    padding-right: 10px;
+    gap: 6px;
+  }
+  .hud-wallet strong {
+    font-size: 21px;
   }
 }

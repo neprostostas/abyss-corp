@@ -1,3 +1,4 @@
+import { Brand } from '../components/Brand';
 import { useEffect, useState } from 'react';
 import type {
   AdminAnalyticsGateway,
@@ -44,10 +45,7 @@ export function AnalyticsScreen({
     <main className="database-screen analytics-screen">
       <header className="database-header">
         <a className="database-brand" href="/">
-          <img src="/brand/abyss-emblem.png" width="48" height="48" alt="" />
-          <span>
-            ABYSS CORP<small>Traffic control</small>
-          </span>
+          <Brand />
         </a>
         <div>
           <a href="/database">Database</a>

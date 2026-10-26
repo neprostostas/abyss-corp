@@ -79,28 +79,6 @@ button:disabled {
   color: #f1efda;
   line-height: 1;
 }
-.game-brand small {
-  display: block;
-  margin-top: 5px;
-  font-size: 9px;
-  letter-spacing: 5.7px;
-  color: #9bd6cc;
-}
-.brand-symbol {
-  display: grid;
-  place-items: center;
-  width: 43px;
-  height: 43px;
-  border-radius: 13px;
-  color: #ffe3a0;
-  background: #0e3042;
-  border: 1px solid #98bcb830;
-  transform: rotate(-8deg);
-}
-.brand-symbol .game-icon {
-  width: 31px;
-  height: 31px;
-}
 .hud-wallet {
   display: flex;
   align-items: center;
@@ -138,25 +116,6 @@ button:disabled {
   font-size: 10px;
   color: #bba86a;
   margin-left: auto;
-}
-.hud-depth {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #8fc8c4;
-}
-.hud-depth .game-icon {
-  width: 18px;
-  height: 18px;
-}
-.hud-depth strong {
-  color: #dcf0df;
-  font-size: 19px;
-}
-.hud-depth small {
-  font-size: 11px;
-  margin-left: 3px;
-  color: #8badb0;
 }
 .settings-trigger.has-error {
   color: #ff9b86;
@@ -248,26 +207,6 @@ button:disabled {
   height: 32px;
   background: #e4bd66;
   border-radius: 3px;
-}
-.operation-button {
-  position: absolute;
-  z-index: 3;
-  top: 24px;
-  right: 24px;
-  padding: 10px 14px;
-  height: 40px;
-  font-size: 12px;
-}
-.operation-button .game-icon {
-  width: 14px;
-  height: 14px;
-  fill: currentColor;
-}
-.operation-button.running {
-  color: #d8e9df;
-  background: #103e50d9;
-  border: 1px solid #aad0c52b;
-  box-shadow: 0 3px 0 #072b3e;
 }
 .depth-rail {
   position: absolute;
@@ -787,25 +726,6 @@ button:disabled {
   font-size: 9px;
   box-shadow: 0 2px 0 #954e48;
 }
-.save-indicator {
-  position: absolute;
-  right: 24px;
-  bottom: 26px;
-  color: #648c96;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 9px;
-}
-.save-indicator i {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #7ab5a5;
-}
-.save-indicator i.error {
-  background: #f59880;
-}
 .offline-toast {
   position: absolute;
   z-index: 4;
@@ -1243,9 +1163,6 @@ button:disabled {
   .depth-rail {
     left: 40px;
   }
-  .operation-button {
-    right: 42px;
-  }
   .outpost-illustration {
     scale: 1.05;
   }
@@ -1258,22 +1175,11 @@ button:disabled {
   .game-brand {
     font-size: 14px;
   }
-  .game-brand small {
-    font-size: 8px;
-    letter-spacing: 4.6px;
-  }
-  .brand-symbol {
-    width: 37px;
-    height: 37px;
-  }
   .hud-wallet {
     min-width: 142px;
   }
   .hud-wallet strong {
     font-size: 21px;
-  }
-  .save-indicator {
-    display: none;
   }
   .game-dock {
     gap: 38px;
@@ -1322,13 +1228,6 @@ button:disabled {
     padding: 10px 12px;
     gap: 10px;
   }
-  .game-brand > span:last-child {
-    display: none;
-  }
-  .brand-symbol {
-    width: 34px;
-    height: 36px;
-  }
   .hud-wallet {
     min-width: 132px;
     height: 39px;
@@ -1339,12 +1238,6 @@ button:disabled {
   .coin-medallion {
     width: 29px;
     height: 29px;
-  }
-  .hud-depth strong {
-    font-size: 16px;
-  }
-  .hud-depth .game-icon {
-    width: 15px;
   }
   .settings-trigger {
     width: 35px;
@@ -1357,16 +1250,6 @@ button:disabled {
   }
   .location-hud h1 {
     font-size: 15px;
-  }
-  .operation-button {
-    top: 20px;
-    right: 14px;
-    width: 34px;
-    height: 34px;
-    padding: 9px;
-  }
-  .operation-button > span {
-    display: none;
   }
   .depth-rail {
     top: 91px;
@@ -1550,9 +1433,6 @@ button:disabled {
     padding-block: 6px;
   }
   .location-hud {
-    top: 14px;
-  }
-  .operation-button {
     top: 14px;
   }
   .depth-rail {

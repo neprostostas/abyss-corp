@@ -22,7 +22,7 @@ export function createGame(): GameState {
     levels: { mining: 1, transport: 1, processing: 1, storage: 1 },
     phase: 'mining',
     phaseElapsedMs: 0,
-    running: false,
+    running: true,
     raw: 0,
     refined: 0,
     processingElapsedMs: null,

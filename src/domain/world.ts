@@ -88,6 +88,17 @@ function replaceLayer(
   };
 }
 
+/** Resume existing outposts on entry; paused legacy saves keep their historical offline rules. */
+export function resumeProduction(world: WorldState): WorldState {
+  let layers = world.layers;
+  for (const id of LAYER_IDS) {
+    const layer = layers[id];
+    if (layer && !layer.running)
+      layers = { ...layers, [id]: { ...layer, running: true } };
+  }
+  return layers === world.layers ? world : { ...world, layers };
+}
+
 export function advanceWorld(world: WorldState, elapsedMs: number): WorldState {
   if (!Number.isSafeInteger(elapsedMs) || elapsedMs < 0)
     throw new Error('Elapsed time must be a non-negative safe integer.');

@@ -1,3 +1,4 @@
+import { Brand } from '../components/Brand';
 import { useEffect, useRef, useState } from 'react';
 import {
   ADMIN_TABLES,
@@ -115,10 +116,7 @@ export function DatabaseScreen({ gateway }: { gateway: AdminDatabaseGateway }) {
     <main className="database-screen">
       <header className="database-header">
         <a href="/" className="database-brand">
-          <img src="/brand/abyss-emblem.png" width="48" height="48" alt="" />
-          <span>
-            ABYSS CORP<small>Command database</small>
-          </span>
+          <Brand />
         </a>
         <div>
           <a

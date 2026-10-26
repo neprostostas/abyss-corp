@@ -27,16 +27,6 @@
   color: #ffe7a7;
   margin-bottom: 26px;
 }
-.auth-brand > span {
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: 2px;
-}
-.auth-brand small {
-  font-size: 12px;
-  display: block;
-  letter-spacing: 9px;
-}
 .auth-card h1 {
   font-size: 30px;
   margin-bottom: 8px;
