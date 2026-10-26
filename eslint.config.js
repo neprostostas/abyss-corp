@@ -6,7 +6,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', '.data']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -25,7 +25,17 @@ export default defineConfig([
     },
   },
   {
-    files: ['**/*.js'],
+    files: ['server/**/*.ts'],
+    languageOptions: {
+      globals: globals.node,
+      parserOptions: {
+        project: './tsconfig.server.json',
+        projectService: false,
+      },
+    },
+  },
+  {
+    files: ['**/*.{js,mjs}'],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },
   },

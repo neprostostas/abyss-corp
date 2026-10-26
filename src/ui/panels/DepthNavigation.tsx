@@ -1,0 +1,65 @@
+import { LAYERS, LAYER_IDS } from '../../data/layers';
+import type { LayerId } from '../../data/layers';
+import { getUnlockOffer } from '../../domain/world';
+import type { WorldState } from '../../domain/world';
+import { GameIcon } from '../components/GameIcon';
+export function DepthNavigation({
+  world,
+  onSelect,
+  onUnlock,
+}: {
+  world: WorldState;
+  onSelect: (id: LayerId) => void;
+  onUnlock: (id: LayerId) => void;
+}) {
+  return (
+    <nav className="depth-rail" aria-label="Depths">
+      <span className="depth-line" />
+      {LAYER_IDS.map((id, index) => {
+        const layer = LAYERS[id];
+        const offer = getUnlockOffer(world, id);
+        const selected = id === world.selectedLayerId;
+        return (
+          <button
+            key={id}
+            className={`depth-node depth-${index}${selected ? ' selected' : ''}${offer.unlocked ? '' : ' locked'}`}
+            onClick={() => {
+              if (offer.unlocked) onSelect(id);
+              else onUnlock(id);
+            }}
+            disabled={!offer.unlocked && !offer.canUnlock}
+            aria-label={
+              offer.unlocked
+                ? layer.name
+                : `Unlock ${layer.name}, ${offer.cost} credits`
+            }
+            aria-current={selected ? 'location' : undefined}
+            title={
+              offer.unlocked
+                ? layer.name
+                : `${layer.name} · ${offer.cost} CR${offer.prerequisiteMet ? '' : ' · unlock previous depth first'}`
+            }
+          >
+            <span className="depth-orb">
+              {offer.unlocked ? (
+                <GameIcon name="crystal" />
+              ) : (
+                <GameIcon name="lock" />
+              )}
+            </span>
+            <b>
+              {layer.depthMeters}
+              <small>m</small>
+            </b>
+            {!offer.unlocked && (
+              <span className="depth-price">
+                <GameIcon name="coin" />
+                {offer.cost}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </nav>
+  );
+}

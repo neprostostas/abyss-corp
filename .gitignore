@@ -32,3 +32,8 @@ test-results/
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Local backend database
+.data/
+*.sqlite-wal
+*.sqlite-shm

@@ -1,54 +1,46 @@
-import { UPGRADES } from '../../data/balance';
+import type { ProductionConfig } from '../../data/layers';
 import { getUpgradeOffer } from '../../domain/game';
 import type { GameState, UpgradeId } from '../../domain/game';
-
+import { GameIcon } from '../components/GameIcon';
+const names = {
+  mining: 'Drill',
+  transport: 'Submarine',
+  processing: 'Refinery',
+  storage: 'Storage',
+};
 export function UpgradeCard({
   id,
   game,
+  config,
   onUpgrade,
+  selected = false,
 }: {
   id: UpgradeId;
   game: GameState;
+  config: ProductionConfig;
   onUpgrade: (id: UpgradeId) => void;
+  selected?: boolean;
 }) {
-  const definition = UPGRADES[id];
-  const { current, next, affordable } = getUpgradeOffer(game, id);
-  const titleId = `${id}-title`;
-  const formatValue = (value: number) =>
-    id === 'storage'
-      ? `${String(value)} slots`
-      : `${(value / 1000).toFixed(1)}s`;
-  const units = {
-    mining: 'per cargo extracted',
-    transport: 'per one-way trip',
-    processing: 'per cargo refined',
-    storage: 'in each buffer',
-  };
-  const icons = { mining: '◆', transport: '➜', processing: '✦', storage: '▣' };
+  const { current, next, affordable } = getUpgradeOffer(game, id, config);
+  const format = (value: number) =>
+    id === 'storage' ? `${value}` : `${(value / 1000).toFixed(1)}s`;
   return (
-    <article className="upgrade-card" aria-labelledby={titleId}>
-      <div className="upgrade-heading">
-        <span className="upgrade-icon" aria-hidden="true">
-          {icons[id]}
-        </span>
-        <div>
-          <h3 id={titleId}>{definition.name}</h3>
-          <span>
-            Level {game.levels[id]} / {definition.levels.length}
-          </span>
-        </div>
+    <article className={`upgrade-tile${selected ? ' selected' : ''}`}>
+      <div className={`upgrade-art upgrade-art-${id}`}>
+        <GameIcon name={id} />
+        <span>{game.levels[id]}</span>
       </div>
-      <p>{definition.description}</p>
-      <div className="upgrade-effect">
-        <strong>
-          {formatValue(current.value)}{' '}
+      <div className="upgrade-info">
+        <h3>{names[id]}</h3>
+        <span>
+          {format(current.value)}
           {next && (
             <>
-              → <span>{formatValue(next.value)}</span>
+              {' '}
+              <b>→ {format(next.value)}</b>
             </>
           )}
-        </strong>
-        <small>{units[id]}</small>
+        </span>
       </div>
       <button
         disabled={!affordable}
@@ -57,19 +49,27 @@ export function UpgradeCard({
         }}
         aria-label={
           next
-            ? `Upgrade ${definition.name} for ${String(next.cost)} credits`
-            : `${definition.name} fully upgraded`
+            ? `Upgrade ${names[id]} for ${next.cost} credits`
+            : `${names[id]} maximum level`
+        }
+        title={
+          next && !affordable
+            ? `${next.cost - game.credits} more credits`
+            : undefined
         }
       >
-        {next ? `Upgrade · ${String(next.cost)} CR` : 'Fully upgraded'}
+        {next ? (
+          <>
+            <GameIcon name="coin" />
+            {next.cost}
+          </>
+        ) : (
+          <>
+            <GameIcon name="check" />
+            MAX
+          </>
+        )}
       </button>
-      <p className="upgrade-hint">
-        {next
-          ? affordable
-            ? 'Ready to upgrade'
-            : `${String(next.cost - game.credits)} more credits needed`
-          : 'Maximum level for this outpost'}
-      </p>
     </article>
   );
 }

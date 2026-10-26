@@ -1,16 +1,13 @@
-export const RESOURCE = {
-  name: 'Crystals',
-  batchSize: 3,
-  refinedValue: 8,
-} as const;
-export const LAYER = { name: 'Crystal shallows', depthMeters: 50 } as const;
+import { RESOURCES } from './resources';
+
+export const RESOURCE = RESOURCES.crystals;
 
 // Each entry describes the resulting level. Level 1 is free.
 // Values are milliseconds for machines and crystal slots per buffer for storage.
 export const UPGRADES = {
   mining: {
-    name: 'Crystal drill',
-    description: 'Extract each cargo of crystals faster.',
+    name: 'Extraction drill',
+    description: 'Extract each cargo faster.',
     levels: [
       { value: 4000, cost: 0 },
       { value: 3200, cost: 30 },
@@ -31,8 +28,8 @@ export const UPGRADES = {
     ],
   },
   processing: {
-    name: 'Crystal refinery',
-    description: 'Refine delivered crystals into valuable cargo.',
+    name: 'Refinery',
+    description: 'Process delivered materials into valuable cargo.',
     levels: [
       { value: 6000, cost: 0 },
       { value: 4500, cost: 45 },

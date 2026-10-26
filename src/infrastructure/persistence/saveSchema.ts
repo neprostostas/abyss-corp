@@ -1,103 +1,190 @@
+import { contentIdSchema } from '../../data/liveOps';
+import { MISSION_IDS, RESEARCH } from '../../data/progression';
+import {
+  createProgression,
+  getLayerProduction,
+} from '../../domain/progression';
 import { z } from 'zod';
 import type { GameSave } from '../../application/ports';
+import { AUTOMATION_LEVELS } from '../../data/automation';
 import { UPGRADES } from '../../data/balance';
+import { LAYER_IDS } from '../../data/layers';
+import { getLayerGame } from '../../domain/world';
 import {
   getPhaseDuration,
   getProcessingDuration,
   getStorageCapacity,
 } from '../../domain/game';
+import { parseLegacySave } from './legacySaveSchema';
 
 const integer = z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER);
-const phase = z.enum(['mining', 'delivering', 'returning']);
 const level = (max: number) => z.number().int().min(1).max(max);
-const saveSchema = z
+const layerSchema = z
   .object({
-    version: z.literal(2),
-    savedAt: integer,
-    game: z
+    phase: z.enum(['mining', 'delivering', 'returning']),
+    phaseElapsedMs: integer,
+    running: z.boolean(),
+    levels: z
       .object({
-        credits: integer,
-        phase,
-        phaseElapsedMs: integer,
-        running: z.boolean(),
-        levels: z
-          .object({
-            mining: level(UPGRADES.mining.levels.length),
-            transport: level(UPGRADES.transport.levels.length),
-            processing: level(UPGRADES.processing.levels.length),
-            storage: level(UPGRADES.storage.levels.length),
-          })
-          .strict(),
-        raw: integer,
-        refined: integer,
-        processingElapsedMs: integer.nullable(),
+        mining: level(UPGRADES.mining.levels.length),
+        transport: level(UPGRADES.transport.levels.length),
+        processing: level(UPGRADES.processing.levels.length),
+        storage: level(UPGRADES.storage.levels.length),
       })
       .strict(),
+    raw: integer,
+    refined: integer,
+    processingElapsedMs: integer.nullable(),
+    automation: z
+      .object({
+        level: level(AUTOMATION_LEVELS.length),
+        enabled: z.boolean(),
+        elapsedMs: integer,
+      })
+      .strict()
+      .optional(),
   })
   .strict();
-
-// Freeze v1 balance here: future balance changes must not redefine old save validity.
-const LEGACY_DURATIONS = {
-  mining: [4000, 3200, 2500, 1800, 1200],
-  transport: [2500, 2000, 1500, 1100, 800],
-} as const;
-const legacySchema = z
+const schema = z
   .object({
-    version: z.literal(1),
+    version: z.union([z.literal(3), z.literal(4), z.literal(5), z.literal(6)]),
     savedAt: integer,
-    game: z
+    world: z
       .object({
+        progression: z
+          .object({
+            research: z
+              .object({
+                trade: z.number().int().min(0).max(RESEARCH.trade.costs.length),
+                storage: z
+                  .number()
+                  .int()
+                  .min(0)
+                  .max(RESEARCH.storage.costs.length),
+              })
+              .strict(),
+            claimedEvents: z
+              .array(contentIdSchema)
+              .max(1000)
+              .refine(
+                (ids) => new Set(ids).size === ids.length,
+                'Duplicate event claims.',
+              )
+              .optional(),
+            claimedMissions: z
+              .array(z.enum(MISSION_IDS))
+              .max(MISSION_IDS.length)
+              .refine(
+                (ids) => new Set(ids).size === ids.length,
+                'Duplicate mission claims.',
+              ),
+          })
+          .strict()
+          .optional(),
         credits: integer,
-        phase,
-        phaseElapsedMs: integer,
-        running: z.boolean(),
-        levels: z.object({ mining: level(5), transport: level(5) }).strict(),
+        selectedLayerId: z.enum(LAYER_IDS),
+        layers: z
+          .object({
+            shallows: layerSchema,
+            'golden-trench': layerSchema.optional(),
+            'pearl-caverns': layerSchema.optional(),
+          })
+          .strict(),
       })
       .strict(),
   })
   .strict();
 
 export function validateSave(data: unknown): GameSave {
-  const save = saveSchema.parse(data);
-  const game = save.game;
-  const duration = getPhaseDuration(game);
+  const parsed = schema.parse(data);
+  if (parsed.version >= 5 && !parsed.world.progression)
+    throw new Error('Save requires progression state.');
+  if (parsed.version < 5 && parsed.world.progression)
+    throw new Error('Legacy save cannot contain progression.');
   if (
-    game.phaseElapsedMs > duration ||
-    (game.phase !== 'delivering' && game.phaseElapsedMs === duration)
+    parsed.version < 6 &&
+    parsed.world.progression?.claimedEvents !== undefined
   )
-    throw new Error('Invalid transport progress.');
+    throw new Error('Legacy save cannot contain event claims.');
   if (
-    game.raw > getStorageCapacity(game) ||
-    game.refined > getStorageCapacity(game)
+    parsed.version === 6 &&
+    parsed.world.progression?.claimedEvents === undefined
   )
-    throw new Error('Storage exceeds capacity.');
-  if (
-    game.processingElapsedMs !== null &&
-    game.processingElapsedMs > getProcessingDuration(game)
-  )
-    throw new Error('Invalid refinery progress.');
+    throw new Error('Version 6 requires event claim history.');
+  const normalizeLayer = (layer: z.infer<typeof layerSchema>) => {
+    const { automation, ...production } = layer;
+    if (parsed.version === 3 && automation)
+      throw new Error('Version 3 cannot contain automation.');
+    return automation ? { ...production, automation } : production;
+  };
+  const parsedLayers = parsed.world.layers;
+  // Normalize optional fields to absent keys under exactOptionalPropertyTypes.
+  const save: GameSave = {
+    ...parsed,
+    version: 6,
+    world: {
+      ...parsed.world,
+      progression: {
+        ...(parsed.world.progression ?? createProgression()),
+        claimedEvents: parsed.world.progression?.claimedEvents ?? [],
+      },
+      layers: {
+        shallows: normalizeLayer(parsedLayers.shallows),
+        ...(parsedLayers['golden-trench']
+          ? { 'golden-trench': normalizeLayer(parsedLayers['golden-trench']) }
+          : {}),
+        ...(parsedLayers['pearl-caverns']
+          ? { 'pearl-caverns': normalizeLayer(parsedLayers['pearl-caverns']) }
+          : {}),
+      },
+    },
+  };
+  const world = save.world;
+  if (!world.layers[world.selectedLayerId])
+    throw new Error('Selected layer is locked.');
+  for (const [index, id] of LAYER_IDS.entries()) {
+    if (!world.layers[id]) continue;
+    const previous = index > 0 ? LAYER_IDS[index - 1] : undefined;
+    if (previous && !world.layers[previous])
+      throw new Error('Unlocked layers must be sequential.');
+    const automation = world.layers[id]?.automation;
+    if (
+      automation &&
+      automation.elapsedMs >=
+        (AUTOMATION_LEVELS[automation.level - 1]?.intervalMs ?? 0)
+    )
+      throw new Error('Invalid automation progress.');
+    const game = getLayerGame(world, id);
+    const config = getLayerProduction(world, id);
+    const duration = getPhaseDuration(game, config);
+    if (
+      game.phaseElapsedMs > duration ||
+      (game.phase !== 'delivering' && game.phaseElapsedMs === duration)
+    )
+      throw new Error('Invalid transport progress.');
+    if (
+      game.raw > getStorageCapacity(game, config) ||
+      game.refined > getStorageCapacity(game, config)
+    )
+      throw new Error('Storage exceeds capacity.');
+    if (
+      game.processingElapsedMs !== null &&
+      game.processingElapsedMs > getProcessingDuration(game, config)
+    )
+      throw new Error('Invalid refinery progress.');
+  }
   return save;
 }
 
 export function parseSave(raw: string): GameSave {
   const data: unknown = JSON.parse(raw);
   const version = z.object({ version: z.number() }).parse(data).version;
-  if (version !== 1) return validateSave(data);
-  const legacy = legacySchema.parse(data);
-  const id = legacy.game.phase === 'mining' ? 'mining' : 'transport';
-  const duration = LEGACY_DURATIONS[id][legacy.game.levels[id] - 1];
-  if (duration === undefined || legacy.game.phaseElapsedMs >= duration)
-    throw new Error('Invalid legacy phase progress.');
-  // Delivering retains its cargo; returning was already paid in v1 and grants no new cargo.
+  if (version !== 1 && version !== 2) return validateSave(data);
+  const old = parseLegacySave(raw);
+  const { credits, ...shallows } = old.game;
   return validateSave({
-    ...legacy,
-    version: 2,
-    game: {
-      ...legacy.game,
-      levels: { ...legacy.game.levels, processing: 1, storage: 1 },
-      raw: 0,
-      refined: 0,
-      processingElapsedMs: null,
-    },
+    version: 3,
+    savedAt: old.savedAt,
+    world: { credits, selectedLayerId: 'shallows', layers: { shallows } },
   });
 }
