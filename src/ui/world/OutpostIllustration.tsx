@@ -22,6 +22,7 @@ export function OutpostIllustration({
   layerId,
   config,
   selected,
+  bottleneck,
   onSelect,
 }: {
   phase: Phase;
@@ -31,6 +32,7 @@ export function OutpostIllustration({
   layerId: LayerId;
   config: ProductionConfig;
   selected: UpgradeId | null;
+  bottleneck: UpgradeId | null;
   onSelect: (id: UpgradeId) => void;
 }) {
   const layer = LAYERS[layerId];
@@ -50,12 +52,12 @@ export function OutpostIllustration({
   const hit = (id: UpgradeId, name: string) => ({
     role: 'button',
     tabIndex: 0,
-    'aria-label': `${name}, level ${game.levels[id]}`,
+    'aria-label': `${name}, level ${game.levels[id]}${bottleneck === id ? ', production bottleneck' : ''}`,
     onClick: () => {
       onSelect(id);
     },
     onKeyDown: activation(id),
-    className: `world-object${selected === id ? ' selected' : ''}`,
+    className: `world-object${selected === id ? ' selected' : ''}${bottleneck === id ? ' production-limit' : ''}`,
   });
   const processFraction =
     game.processingElapsedMs === null

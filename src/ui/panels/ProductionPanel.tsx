@@ -1,3 +1,4 @@
+import { ResourceGlyph } from '../world/ResourceGlyph';
 import type { ProductionConfig } from '../../data/layers';
 import { getProcessingDuration, getProductionSummary } from '../../domain/game';
 import type { GameState } from '../../domain/game';
@@ -17,8 +18,10 @@ export function ProductionPanel({
       : game.processingElapsedMs / getProcessingDuration(game, config);
   return (
     <div className="production-readout" aria-label="Production stock">
-      <div title="Raw materials">
-        <GameIcon name="crystal" />
+      <div title={config.resource.name}>
+        <svg className="game-icon" viewBox="-24 -24 48 48" aria-hidden="true">
+          <ResourceGlyph resource={config.resource} x={0} y={0} />
+        </svg>
         <span>
           <small>Raw</small>
           <b>

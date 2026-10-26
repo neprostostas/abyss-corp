@@ -1,6 +1,8 @@
+import { getFirstStep } from '../../domain/firstSteps';
 import { useEffect, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import type { AccountSaveSnapshot } from '../../application/accountPorts';
+import type { SessionSnapshot } from '../../application/GameSession';
 import type { GameSession } from '../../application/GameSession';
 import { useGameSession } from '../../app/useGameSession';
 import { UPGRADE_IDS } from '../../data/balance';
@@ -17,6 +19,7 @@ import {
   getSaleValue,
 } from '../../domain/game';
 import type { UpgradeId } from '../../domain/game';
+import { useSaleFeedback } from '../feedback/useSaleFeedback';
 import { Brand } from '../components/Brand';
 import { GameIcon } from '../components/GameIcon';
 import type { IconName } from '../components/GameIcon';
@@ -46,30 +49,49 @@ const phaseNames = {
   delivering: 'Delivering',
   returning: 'Returning',
 };
-export function GameScreen({
-  session,
-  accountPanel,
-  leaderboardPanel,
-  cloud,
-}: {
+interface GameScreenProps {
   session: GameSession;
   accountPanel: ReactNode;
   leaderboardPanel: ReactNode;
   cloud: AccountSaveSnapshot;
-}) {
-  const { world, status, saveStatus, error, offlineReport } =
-    useGameSession(session);
+}
+
+export function GameScreen(props: GameScreenProps) {
+  const snapshot = useGameSession(props.session);
+  return <GameBoard {...props} snapshot={snapshot} />;
+}
+
+/** Open panels belong to the screen; machine selection and effects belong to one depth. */
+function GameBoard({
+  session,
+  accountPanel,
+  leaderboardPanel,
+  cloud,
+  snapshot,
+}: GameScreenProps & { snapshot: SessionSnapshot }) {
+  const { world, status, saveStatus, error, offlineReport } = snapshot;
+  const {
+    walletRef,
+    sellRef,
+    play: playSaleFeedback,
+  } = useSaleFeedback(world.selectedLayerId);
   const [windowName, setWindow] = useState<WindowName | null>(null);
   const [selected, setSelected] = useState<UpgradeId | null>(null);
   const [saleFlash, setSaleFlash] = useState<{
     amount: number;
     id: number;
   } | null>(null);
+  const [viewLayerId, setViewLayerId] = useState(world.selectedLayerId);
+  if (viewLayerId !== world.selectedLayerId) {
+    setViewLayerId(world.selectedLayerId);
+    setSelected(null);
+    setSaleFlash(null);
+  }
   useEffect(() => {
     if (!saleFlash) return;
     const timeout = window.setTimeout(() => {
       setSaleFlash(null);
-    }, 1700);
+    }, 1000);
     return () => {
       window.clearTimeout(timeout);
     };
@@ -91,15 +113,46 @@ export function GameScreen({
     missions: missionsReady,
   };
   const automation = world.layers[world.selectedLayerId]?.automation;
+  const firstStep = status === 'ready' ? getFirstStep(world) : null;
+  const bottleneck =
+    status === 'ready' &&
+    game.running &&
+    firstStep === null &&
+    (production.storageFull || !production.fullyUpgraded)
+      ? production.bottleneck
+      : null;
+  const bottleneckLabels: Record<UpgradeId, string> = {
+    mining: 'Slowest: drill',
+    transport: 'Slowest: submarine',
+    processing: 'Slowest: refinery',
+    storage: 'Storage full · sell cargo',
+  };
+  const firstUpgradeNames: Record<UpgradeId, string> = {
+    mining: 'drill',
+    transport: 'submarine',
+    processing: 'refinery',
+    storage: 'storage',
+  };
+  const firstStepLabel =
+    firstStep?.kind === 'produce'
+      ? 'Mine → refine → sell'
+      : firstStep?.kind === 'sell'
+        ? 'Sell cargo to earn credits'
+        : firstStep?.kind === 'upgrade'
+          ? `Upgrade your ${firstUpgradeNames[firstStep.upgradeId]}`
+          : null;
   const stateLabel = !game.running
     ? 'Paused'
-    : production.storageFull
-      ? 'Storage full'
-      : phaseNames[game.phase];
+    : (firstStepLabel ??
+      (bottleneck ? bottleneckLabels[bottleneck] : phaseNames[game.phase]));
+  const guidedUpgrade =
+    firstStep?.kind === 'upgrade' ? firstStep.upgradeId : null;
   const sell = () => {
     if (!saleValue) return;
-    session.sell();
-    setSaleFlash({ amount: saleValue, id: Date.now() });
+    const earned = session.sell(world.selectedLayerId);
+    if (earned <= 0) return;
+    playSaleFeedback();
+    setSaleFlash({ amount: earned, id: Date.now() });
   };
   return (
     <main
@@ -110,7 +163,11 @@ export function GameScreen({
         <div className="game-brand">
           <Brand />
         </div>
-        <div className="hud-wallet" title="Corporate credits">
+        <div
+          ref={walletRef}
+          className="hud-wallet"
+          title="Credits shared across all depths"
+        >
           <span className="coin-medallion">
             <GameIcon name="coin" />
           </span>
@@ -136,7 +193,13 @@ export function GameScreen({
               <span className="location-marker" />
               <div>
                 <h1>{layer.name}</h1>
-                <span>
+                <span
+                  id="production-status"
+                  className={
+                    bottleneck || firstStep ? 'production-limited' : undefined
+                  }
+                  role={firstStep ? 'status' : undefined}
+                >
                   <i className={game.running ? 'running-dot' : ''} />
                   {stateLabel}
                 </span>
@@ -148,6 +211,7 @@ export function GameScreen({
               onUnlock={session.unlock}
             />
             <OutpostIllustration
+              key={world.selectedLayerId}
               phase={game.phase}
               progress={progress}
               running={game.running}
@@ -155,6 +219,7 @@ export function GameScreen({
               layerId={world.selectedLayerId}
               config={config}
               selected={selected}
+              bottleneck={guidedUpgrade ?? bottleneck}
               onSelect={setSelected}
             />
             {offlineReport && (
@@ -173,28 +238,33 @@ export function GameScreen({
                 </button>
               </div>
             )}
-            {saleFlash && (
-              <span key={saleFlash.id} className="sale-float" role="status">
-                +{compact.format(saleFlash.amount)}
-                <GameIcon name="coin" />
-              </span>
-            )}
             <div className="stage-bottom">
               <ProductionPanel game={game} config={config} />
-              <button
-                className="sell-button"
-                disabled={saleValue === 0}
-                onClick={sell}
-              >
-                <span>
-                  <GameIcon name="storage" />
-                  Sell cargo
-                </span>
-                <strong>
-                  <GameIcon name="coin" />
-                  {compact.format(saleValue)}
-                </strong>
-              </button>
+              <div className="sell-control">
+                {saleFlash && (
+                  <span key={saleFlash.id} className="sale-float" role="status">
+                    +{compact.format(saleFlash.amount)} CR
+                  </span>
+                )}
+                <button
+                  ref={sellRef}
+                  className={`sell-button${production.storageFull ? ' cargo-full' : ''}${firstStep?.kind === 'sell' ? ' first-step-target' : ''}`}
+                  aria-describedby={
+                    firstStep?.kind === 'sell' ? 'production-status' : undefined
+                  }
+                  disabled={saleValue === 0}
+                  onClick={sell}
+                >
+                  <span>
+                    <GameIcon name="storage" />
+                    Sell cargo
+                  </span>
+                  <strong>
+                    <GameIcon name="coin" />
+                    {compact.format(saleValue)}
+                  </strong>
+                </button>
+              </div>
             </div>
           </>
         )}
@@ -218,17 +288,19 @@ export function GameScreen({
           </div>
         )}
       </section>
-      <section className="upgrade-deck" aria-label="Upgrade your outpost">
+      <section className="upgrade-deck" aria-label={`Upgrade ${layer.name}`}>
         {UPGRADE_IDS.map((id) => (
           <UpgradeCard
-            key={id}
+            key={`${world.selectedLayerId}-${id}`}
             id={id}
             game={game}
             config={config}
             selected={selected === id}
+            limiting={bottleneck === id}
+            guided={guidedUpgrade === id}
             onUpgrade={(upgradeId) => {
               setSelected(upgradeId);
-              session.upgrade(upgradeId);
+              session.upgrade(upgradeId, world.selectedLayerId);
             }}
           />
         ))}
@@ -291,8 +363,12 @@ export function GameScreen({
           {windowName === 'crew' && (
             <AutomationPanel
               world={world}
-              onUpgrade={session.upgradeAutomation}
-              onToggle={session.toggleAutomation}
+              onUpgrade={() => {
+                session.upgradeAutomation(world.selectedLayerId);
+              }}
+              onToggle={() => {
+                session.toggleAutomation(world.selectedLayerId);
+              }}
             />
           )}
           {windowName === 'leaderboard' && leaderboardPanel}

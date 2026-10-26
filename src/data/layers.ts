@@ -49,7 +49,7 @@ export const LAYERS = {
   'golden-trench': {
     name: 'Golden trench',
     depthMeters: 180,
-    unlockCost: 250,
+    unlockCost: 200,
     description:
       'Gold seams between steep rock walls. Slower trips carry more valuable cargo.',
     production: {
@@ -67,7 +67,7 @@ export const LAYERS = {
   'pearl-caverns': {
     name: 'Pearl caverns',
     depthMeters: 420,
-    unlockCost: 900,
+    unlockCost: 650,
     description:
       'Glowing oysters beneath a cavern canopy. Polish precious pearls at your new outpost.',
     production: {

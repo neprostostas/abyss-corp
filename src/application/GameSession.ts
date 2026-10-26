@@ -170,17 +170,31 @@ export class GameSession {
   claimMission = (id: MissionId) => {
     this.command((world) => claimMission(world, id));
   };
-  upgradeAutomation = () => {
-    this.command(upgradeAutomation);
+  upgradeAutomation = (layerId = this.snapshot.world.selectedLayerId) => {
+    this.command((world) =>
+      world.selectedLayerId === layerId ? upgradeAutomation(world) : world,
+    );
   };
-  toggleAutomation = () => {
-    this.command(toggleAutomation);
+  toggleAutomation = (layerId = this.snapshot.world.selectedLayerId) => {
+    this.command((world) =>
+      world.selectedLayerId === layerId ? toggleAutomation(world) : world,
+    );
   };
-  upgrade = (id: UpgradeId) => {
-    this.command((world) => upgradeLayer(world, id));
+  upgrade = (id: UpgradeId, layerId = this.snapshot.world.selectedLayerId) => {
+    this.command((world) =>
+      world.selectedLayerId === layerId ? upgradeLayer(world, id) : world,
+    );
   };
-  sell = () => {
-    this.command(sellLayer);
+  /** Return only this manual sale; the preceding tick may sell other bases automatically. */
+  sell = (layerId = this.snapshot.world.selectedLayerId): number => {
+    let earned = 0;
+    this.command((world) => {
+      if (world.selectedLayerId !== layerId) return world;
+      const sold = sellLayer(world);
+      earned = sold.credits - world.credits;
+      return sold;
+    });
+    return earned;
   };
   select = (id: LayerId) => {
     this.command((world) => selectLayer(world, id));

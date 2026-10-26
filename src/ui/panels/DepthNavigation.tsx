@@ -1,3 +1,4 @@
+import { ResourceGlyph } from '../world/ResourceGlyph';
 import { LAYERS, LAYER_IDS } from '../../data/layers';
 import type { LayerId } from '../../data/layers';
 import { getUnlockOffer } from '../../domain/world';
@@ -47,7 +48,18 @@ export function DepthNavigation({
                 </span>
               )}
               {offer.unlocked ? (
-                <GameIcon name="crystal" />
+                <svg
+                  className="depth-resource"
+                  viewBox="-24 -24 48 48"
+                  aria-hidden="true"
+                >
+                  <ResourceGlyph
+                    resource={layer.production.resource}
+                    x={0}
+                    y={0}
+                    scale={1}
+                  />
+                </svg>
               ) : (
                 <GameIcon name="lock" />
               )}

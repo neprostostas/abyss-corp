@@ -475,3 +475,114 @@ h3,
     font-size: 21px;
   }
 }
+
+/* Miniatures share the world's hulls, windows and level silhouettes. */
+.upgrade-art {
+  width: 54px;
+  height: 50px;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+.machine-portrait {
+  display: block;
+  width: 54px;
+  height: 50px;
+  overflow: visible;
+}
+.upgrade-art .machine-level {
+  right: -1px;
+  bottom: -1px;
+  border-radius: 4px;
+  font-size: 9px;
+  animation: level-stamp 320ms ease-out;
+}
+@keyframes level-stamp {
+  0% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (max-width: 520px) {
+  .upgrade-art,
+  .machine-portrait {
+    width: 46px;
+    height: 38px;
+  }
+}
+
+/* One shared amber cue connects the limiting machine to its upgrade. */
+.location-hud .production-limited {
+  color: #f4d99b;
+}
+.location-hud .production-limited i {
+  background: #f4d99b;
+  box-shadow: none;
+}
+.world-object.production-limit .selection-ring {
+  opacity: 0.65;
+  fill: #edc9790a;
+  stroke: #edc979;
+  stroke-dasharray: none;
+  stroke-width: 2;
+}
+.world-object.production-limit .model-level rect {
+  stroke: #edc979;
+}
+.upgrade-tile.production-limit {
+  border-color: #edc979;
+  box-shadow:
+    inset 3px 0 #b68738,
+    0 3px #718e8d;
+}
+.bottleneck-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9b671d;
+  flex-shrink: 0;
+}
+.upgrade-info h3 {
+  gap: 5px;
+}
+.sell-button.cargo-full {
+  outline: 2px solid #fff0b8;
+  outline-offset: 3px;
+}
+
+/* A single stationary cue guides the next real action without blocking play. */
+.sell-button.first-step-target,
+.upgrade-tile.first-step-target {
+  outline: 2px solid #fff0b8;
+  outline-offset: 3px;
+}
+.upgrade-tile.first-step-target {
+  border-color: #bc8839;
+}
+
+.depth-resource {
+  width: 27px;
+  height: 27px;
+}
+.depth-node.selected .depth-orb {
+  border-color: #fff0b8;
+  box-shadow: 0 0 0 3px #fff0b829;
+}
+.depth-node.selected > b {
+  color: #fff0b8;
+}
+
+/* Keep the depth rail reachable while a drawer is open on a phone. */
+@media (max-width: 760px) {
+  .game-panel {
+    left: 104px;
+  }
+}
+@media (max-width: 520px) {
+  .game-panel {
+    left: 78px;
+  }
+}
