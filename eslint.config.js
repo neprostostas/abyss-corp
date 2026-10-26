@@ -25,6 +25,16 @@ export default defineConfig([
     },
   },
   {
+    files: ['netlify/functions/**/*.ts'],
+    languageOptions: {
+      globals: globals.node,
+      parserOptions: {
+        project: './tsconfig.functions.json',
+        projectService: false,
+      },
+    },
+  },
+  {
     files: ['src/ui/world/**/*.tsx'],
     rules: {
       '@typescript-eslint/restrict-template-expressions': [

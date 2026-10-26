@@ -1,16 +1,27 @@
+import { z } from 'zod';
+import type { Database } from '../../src/infrastructure/supabase/database.types';
+import type { TrafficReport } from '../../src/application/analyticsPorts';
 import { createClient } from '@supabase/supabase-js';
 const headers = {
   'Content-Type': 'application/json',
   'Cache-Control': 'private, no-store',
   'X-Content-Type-Options': 'nosniff',
 };
-const reply = (statusCode, body) => ({
+const reply = (statusCode: number, body: unknown) => ({
   statusCode,
   headers,
   body: JSON.stringify(body),
 });
-const cache = new Map();
-export const handler = async (event) => {
+const cache = new Map<number, { expires: number; data: TrafficReport }>();
+interface FunctionEvent {
+  httpMethod: string;
+  headers: Record<string, string | undefined>;
+  queryStringParameters: Record<string, string | undefined> | null;
+}
+const count = z.number().int().nonnegative();
+const dailyRows = z.array(z.tuple([z.string(), count, count, count]));
+const totalRows = z.array(z.tuple([count, count, count]));
+export const handler = async (event: FunctionEvent) => {
   if (event.httpMethod !== 'GET')
     return reply(405, { error: 'Method not allowed.' });
   const authorization = event.headers.authorization;
@@ -21,7 +32,7 @@ export const handler = async (event) => {
   if (!url || !publicKey)
     return reply(503, { error: 'Analytics authorization is not configured.' });
   try {
-    const client = createClient(url, publicKey, {
+    const client = createClient<Database>(url, publicKey, {
       global: {
         headers: { Authorization: authorization },
         fetch: (input, init) =>
@@ -29,10 +40,10 @@ export const handler = async (event) => {
       },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { data: user, error: authError } = await client.auth.getUser(
+    const { error: authError } = await client.auth.getUser(
       authorization.slice(7),
     );
-    if (authError || !user.user) return reply(401, { error: 'Sign in again.' });
+    if (authError) return reply(401, { error: 'Sign in again.' });
     const permission = await client.rpc('is_database_admin');
     if (permission.error || !permission.data)
       return reply(403, { error: 'Administrator access required.' });
@@ -47,7 +58,7 @@ export const handler = async (event) => {
     if (cached && cached.expires > Date.now()) return reply(200, cached.data);
     const query = `SELECT toString(toDate(timestamp)) AS day, uniqExact(distinct_id) AS visitors, count() AS pageviews, uniqExact(properties.$session_id) AS sessions FROM events WHERE event = '$pageview' AND properties.app = 'abyss-corp' AND properties.environment = 'production' AND timestamp >= today() - INTERVAL ${String(days - 1)} DAY GROUP BY day ORDER BY day`;
     const totalsQuery = `SELECT uniqExact(distinct_id), count(), uniqExact(properties.$session_id) FROM events WHERE event = '$pageview' AND properties.app = 'abyss-corp' AND properties.environment = 'production' AND timestamp >= today() - INTERVAL ${String(days - 1)} DAY`;
-    const execute = async (query) => {
+    const execute = async (query: string): Promise<unknown[]> => {
       const response = await fetch(
         `https://eu.posthog.com/api/projects/${encodeURIComponent(project)}/query/`,
         {
@@ -62,28 +73,28 @@ export const handler = async (event) => {
       );
       if (!response.ok)
         throw new Error('Analytics provider is temporarily unavailable.');
-      const data = await response.json();
-      if (!Array.isArray(data.results))
-        throw new Error('Invalid analytics report.');
-      return data.results;
+      const raw: unknown = await response.json();
+      return z.object({ results: z.array(z.unknown()) }).parse(raw).results;
     };
-    const [daily, totals] = await Promise.all([
+    const [rawDaily, rawTotals] = await Promise.all([
       execute(query),
       execute(totalsQuery),
     ]);
-    const data = {
+    const daily = dailyRows.parse(rawDaily);
+    const totals = totalRows.parse(rawTotals);
+    const data: TrafficReport = {
       days,
       updatedAt: new Date().toISOString(),
       totals: {
-        visitors: Number(totals[0]?.[0] ?? 0),
-        pageviews: Number(totals[0]?.[1] ?? 0),
-        sessions: Number(totals[0]?.[2] ?? 0),
+        visitors: totals[0]?.[0] ?? 0,
+        pageviews: totals[0]?.[1] ?? 0,
+        sessions: totals[0]?.[2] ?? 0,
       },
       daily: daily.map((row) => ({
-        day: String(row[0]),
-        visitors: Number(row[1]),
-        pageviews: Number(row[2]),
-        sessions: Number(row[3]),
+        day: row[0],
+        visitors: row[1],
+        pageviews: row[2],
+        sessions: row[3],
       })),
     };
     cache.set(days, { expires: Date.now() + 60000, data });
