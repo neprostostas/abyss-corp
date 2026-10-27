@@ -28,11 +28,13 @@
   margin-bottom: 26px;
 }
 .auth-card h1 {
+  text-align: center;
   font-size: 30px;
   margin-bottom: 8px;
   line-height: 1.2;
 }
 .auth-card > p {
+  text-align: center;
   font-size: 14px;
   color: #adcbc4;
   margin-bottom: 20px;
