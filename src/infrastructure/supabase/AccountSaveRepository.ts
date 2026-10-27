@@ -26,7 +26,6 @@ interface CachedSave {
   pendingWrite?: { id: string; save: GameSave };
 }
 
-/** A per-account local journal plus automatic, revision-checked cloud writes. */
 export class AccountSaveRepository implements AccountSavePort {
   private snapshot: AccountSaveSnapshot = {
     status: 'loading',

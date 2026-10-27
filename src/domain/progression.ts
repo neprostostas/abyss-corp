@@ -52,7 +52,6 @@ export function getResearchOffer(world: WorldState, id: ResearchId) {
   };
 }
 
-/** All gameplay and UI use this derived configuration; save files keep base content out. */
 export function getLayerProduction(
   world: WorldState,
   id: LayerId = world.selectedLayerId,

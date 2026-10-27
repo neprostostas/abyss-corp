@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 
-/** Browser animations own their frames; no animation state enters the simulation. */
 export function useSaleFeedback(layerId: string) {
   const walletRef = useRef<HTMLDivElement>(null);
   const sellRef = useRef<HTMLButtonElement>(null);

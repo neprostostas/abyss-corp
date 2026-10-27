@@ -1,27 +1,24 @@
+<div align="center">
+
+<img src="public/brand/abyss-mark.svg" width="76" alt="Abyss Corp submarine" />
+
 # Abyss Corp
 
-Підводний idle/tycoon: розвивай базу, автоматизуй виробництво й відкривай нові глибини.
+**A little submarine. A growing underwater empire.**
 
-[Грати](https://abyss-corp.netlify.app/) · [База даних](https://abyss-corp.netlify.app/database) · [Статистика](https://abyss-corp.netlify.app/analytics) — лише для адміністратора.
+Build your outpost, keep the cargo moving, and uncover the ocean below.
 
-## Локальний запуск
+### [Dive in and play](https://abyss-corp.netlify.app/)
 
-Node.js 24+. Якщо `.env.local` ще немає, створи його за `.env.example` з параметрами Supabase.
+</div>
 
-```sh
-npm ci
-npm run dev
-```
+![A fully upgraded pearl-mining outpost in Abyss Corp](docs/images/abyss-corp-gameplay.png)
 
-```sh
-npm run check   # TypeScript, ESLint, форматування
-npm run build  # production-збірка
-```
+### Start small. Go deeper.
 
-## Деплой
+- **Build a living base.** Watch your drill, submarine, refinery, and warehouse work together.
+- **Explore three depths.** Mine bright crystals, uncover gold, and collect deep-sea pearls.
+- **Put your crew to work.** Hire cargo pilots and keep earning while you are away.
+- **Reach the abyss beacon.** Complete research, grow your outposts, and supply three expeditions.
 
-Push у `main` → Netlify автоматично збирає `dist`. Конфігурація вже в `netlify.toml`.
-
-Акаунти й прогрес — Supabase. Листи — Brevo Free. Статистика за згодою — PostHog EU.
-
-[Налаштування та безпека](docs/deployment.md) · [Архітектура](docs/architecture.md)
+Your progress follows your account. Play on your phone or settle in on a bigger screen.

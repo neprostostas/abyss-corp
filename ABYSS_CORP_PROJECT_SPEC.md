@@ -1,4 +1,4 @@
-# Abyss Corp — Project Brief & Engineering Guide
+# Abyss Corp - Project Brief & Engineering Guide
 
 > **Purpose of this file**
 >
@@ -846,7 +846,7 @@ Prefer a fixed or scheduled economic tick.
 Example:
 
 - world animation: normal frame loop;
-- economy simulation: 4–10 ticks/second or less;
+- economy simulation: 4-10 ticks/second or less;
 - UI display updates: throttled where appropriate.
 
 The exact rate should be chosen based on feel, not habit.
@@ -909,7 +909,7 @@ UI snapshots are much lower priority than domain correctness.
 
 The agent must not implement later milestones unless explicitly asked.
 
-### Milestone 0 — Foundation
+### Milestone 0 - Foundation
 
 Goal:
 Create the technical skeleton.
@@ -927,7 +927,7 @@ Include:
 
 Do not build the game economy yet beyond what is needed to prove structure.
 
-### Milestone 1 — First playable vertical slice
+### Milestone 1 - First playable vertical slice
 
 Goal:
 Prove the core loop.
@@ -944,7 +944,7 @@ Include:
 - local save;
 - basic animation/feedback.
 
-### Milestone 2 — Multi-stage production
+### Milestone 2 - Multi-stage production
 
 Add:
 
@@ -955,7 +955,7 @@ Add:
 - bottlenecks;
 - clearer production flow.
 
-### Milestone 3 — Depth progression
+### Milestone 3 - Depth progression
 
 Add:
 
@@ -965,7 +965,7 @@ Add:
 - navigation/scrolling;
 - new resources.
 
-### Milestone 4 — Automation
+### Milestone 4 - Automation
 
 Add:
 
@@ -973,7 +973,7 @@ Add:
 - automation upgrades;
 - better offline loop.
 
-### Milestone 5 — Progression systems
+### Milestone 5 - Progression systems
 
 Possible:
 
@@ -985,7 +985,7 @@ Possible:
 
 Do not assume prestige is required.
 
-### Milestone 6 — Backend readiness
+### Milestone 6 - Backend readiness
 
 Only when needed:
 
@@ -995,7 +995,7 @@ Only when needed:
 - database;
 - synchronization.
 
-### Milestone 7 — Live game systems
+### Milestone 7 - Live game systems
 
 Only after the core game works:
 
@@ -1117,31 +1117,31 @@ Before considering a task finished, check:
 
 Do not lose these while adding features.
 
-### Principle 1 — Satisfying motion
+### Principle 1 - Satisfying motion
 
 The game should visibly show its economy working.
 
-### Principle 2 — Strong progression
+### Principle 2 - Strong progression
 
 Every meaningful upgrade should be felt or seen.
 
-### Principle 3 — Readable complexity
+### Principle 3 - Readable complexity
 
 The game may become deep, but the current player decision should remain clear.
 
-### Principle 4 — Layered expansion
+### Principle 4 - Layered expansion
 
 Going deeper should visually and mechanically transform the world.
 
-### Principle 5 — Build systems, not hacks
+### Principle 5 - Build systems, not hacks
 
 New content should mostly be added through configuration and reusable systems.
 
-### Principle 6 — No premature backend
+### Principle 6 - No premature backend
 
 Build boundaries now; build infrastructure when it is actually needed.
 
-### Principle 7 — Quality over speed
+### Principle 7 - Quality over speed
 
 A smaller stable milestone is better than a large fragile implementation.
 

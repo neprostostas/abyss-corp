@@ -9,7 +9,7 @@ The [persistent specification](../ABYSS_CORP_PROJECT_SPEC.md) remains the source
 - `src/application/GameSession.ts`: elapsed-time simulation, commands, offline reports and serialized local saves through `SaveRepository`.
 - `src/application/accountPorts.ts`: account save synchronization status and canonical cloud update contract.
 - `src/infrastructure/supabase`: the configured Supabase client, generated public database types and account save repository.
-- `src/infrastructure/persistence`: strict runtime save validation, explicit version 1–7 migration.
+- `src/infrastructure/persistence`: strict runtime save validation, explicit version 1-7 migration.
 - `src/app`: authentication lifecycle, one game runtime per user ID, cloud sync scheduling and route selection.
 - `src/ui`: the ocean scene, upgrades, compact equipment panels, account forms and read-only database browser.
 

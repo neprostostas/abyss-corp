@@ -8,7 +8,6 @@ function position(phase: Phase, progress: number): number {
       ? 1 - progress
       : 0;
 }
-/** Render-only interpolation; never advances or awards economic state. */
 export function useSubmarineMotion(
   phase: Phase,
   progress: number,

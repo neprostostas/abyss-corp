@@ -21,7 +21,7 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
   minute: '2-digit',
 });
 function cell(value: unknown, column: string): string {
-  if (value === null || value === undefined) return '—';
+  if (value === null || value === undefined) return '-';
   if (column === 'depth_m' && typeof value === 'number')
     return value === 0 ? 'Not started' : `${String(value)} m`;
   if (column === 'email_confirmed_at') return 'Verified';
@@ -31,7 +31,7 @@ function cell(value: unknown, column: string): string {
       ? dateFormat.format(new Date(value))
       : value;
   if (typeof value === 'object') return 'JSON';
-  return typeof value === 'boolean' ? (value ? 'Yes' : 'No') : '—';
+  return typeof value === 'boolean' ? (value ? 'Yes' : 'No') : '-';
 }
 function RecordInspector({
   record,
@@ -209,7 +209,7 @@ export function DatabaseScreen({ gateway }: { gateway: AdminDatabaseGateway }) {
               }}
             >
               {ADMIN_TABLES[id].label}
-              <span>{data?.tables[id] ?? '—'}</span>
+              <span>{data?.tables[id] ?? '-'}</span>
             </button>
           ))}
         </nav>

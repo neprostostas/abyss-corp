@@ -95,7 +95,7 @@ export function LeaderboardPanel({
       trimmed.length > 24 ||
       /[\p{Cc}]/u.test(trimmed)
     ) {
-      setError('Use 3–24 characters.');
+      setError('Use 3-24 characters.');
       return;
     }
     setRenaming(true);

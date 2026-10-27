@@ -6,7 +6,6 @@ interface DrawerState<Name extends string> {
   phase: 'opening' | 'open' | 'closing';
 }
 
-/** Keep content mounted through exit; rapid toggles cancel the previous transition. */
 export function useGameDrawer<Name extends string>() {
   const [state, setState] = useState<DrawerState<Name> | null>(null);
   useEffect(() => {

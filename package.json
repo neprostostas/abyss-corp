@@ -1,7 +1,7 @@
 {
   "name": "abyss-corp",
   "version": "0.0.0",
-  "description": "Abyss Corp — account-based underwater tycoon",
+  "description": "Abyss Corp - account-based underwater tycoon",
   "scripts": {
     "dev": "vite",
     "build": "npm run typecheck && vite build",

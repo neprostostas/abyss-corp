@@ -10,7 +10,6 @@ const dayFormat = new Intl.DateTimeFormat('en-GB', {
 });
 const label = (day: string) => dayFormat.format(new Date(`${day}T00:00:00Z`));
 
-/** One readable time series, with the same exact values available by pointer or keyboard. */
 export function TimelineChart({
   title,
   points,

@@ -39,7 +39,7 @@ export function GamePanel({
     };
   }, []);
   useEffect(() => {
-    if (open) closeRef.current?.focus();
+    if (open) closeRef.current?.focus({ preventScroll: true });
   }, [open]);
   useEffect(() => {
     const escape = (event: KeyboardEvent) => {

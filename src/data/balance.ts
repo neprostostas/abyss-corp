@@ -1,4 +1,3 @@
-// Each entry describes the resulting level. Level 1 is free.
 // Values are milliseconds for machines and cargo slots per buffer for storage.
 export const UPGRADES = {
   mining: {

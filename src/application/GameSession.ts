@@ -36,7 +36,6 @@ export interface SessionSnapshot {
   readonly error: string | null;
 }
 
-/** Owns one session; React observes it and never owns economy state. */
 export class GameSession {
   private snapshot: SessionSnapshot = {
     offlineReport: null,

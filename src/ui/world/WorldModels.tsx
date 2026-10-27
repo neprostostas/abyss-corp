@@ -1,4 +1,3 @@
-/** Reusable vector models: shaded shells, glass, structural parts and moving mechanisms. */
 export function CrystalCluster({
   color,
   x,

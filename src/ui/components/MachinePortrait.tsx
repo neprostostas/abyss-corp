@@ -6,7 +6,6 @@ import {
   WarehouseModel,
 } from '../world/WorldModels';
 
-/** Upgrade cards show the actual purchased machine, rather than an unrelated symbol. */
 export function MachinePortrait({
   id,
   level,

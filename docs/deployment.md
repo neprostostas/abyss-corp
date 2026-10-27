@@ -54,9 +54,9 @@ on conflict do nothing;
 
 Для публічної реєстрації потрібен custom SMTP: [вбудована пошта Supabase](https://supabase.com/docs/guides/auth/auth-smtp) обмежена учасниками організації та невеликою кількістю листів.
 
-Для цього проєкту вже підключено **Brevo Free**: [до 300 листів на день](https://help.brevo.com/hc/en-us/articles/208589409-About-Brevo-s-pricing-plans). Ліміт Auth у Supabase — 30 листів на годину, інтервал повторного листа — 60 секунд. Ключ SMTP зберігається тільки в налаштуваннях Supabase; він не потрібен Netlify, браузеру чи GitHub.
+Для цього проєкту вже підключено **Brevo Free**: [до 300 листів на день](https://help.brevo.com/hc/en-us/articles/208589409-About-Brevo-s-pricing-plans). Ліміт Auth у Supabase - 30 листів на годину, інтервал повторного листа - 60 секунд. Ключ SMTP зберігається тільки в налаштуваннях Supabase; він не потрібен Netlify, браузеру чи GitHub.
 
-Налаштування підключення: `smtp-relay.brevo.com`, порт `587`, username з розділу **Brevo → SMTP & API**, password — окремий SMTP key, ім'я відправника **Abyss Corp**. Не використовуйте пароль від акаунта Brevo замість SMTP key. Адреса відправника `neprostostas.gg@gmail.com` підтверджена в Brevo, ім’я відправника — Abyss Corp. Отримання листа реєстрації підтверджено власником.
+Налаштування підключення: `smtp-relay.brevo.com`, порт `587`, username з розділу **Brevo → SMTP & API**, password - окремий SMTP key, ім'я відправника **Abyss Corp**. Не використовуйте пароль від акаунта Brevo замість SMTP key. Адреса відправника `neprostostas.gg@gmail.com` підтверджена в Brevo, ім’я відправника - Abyss Corp. Отримання листа реєстрації підтверджено власником.
 
 SMTP-ключ **Abyss Corp Supabase Auth** створено зі строком дії до 26.10.2027. Brevo також деактивує ключі після 90 днів без надсилань. Перед закінченням строку створіть новий SMTP key і замініть пароль у Supabase → Auth → Emails → SMTP Settings. IP-фільтр для SMTP вимкнений, щоб керована інфраструктура Supabase могла надсилати листи; доступ захищений окремим ключем і TLS. Налаштування 2FA акаунта Brevo не змінювалися.
 
@@ -99,9 +99,9 @@ npm run dev
 
 Відвідування вимірює PostHog EU. Cookie-банер пропонує рівноцінні **Essential only** / **Allow analytics**; вибір можна змінити в Settings → Cookies або `/privacy`. Без згоди події та аналітичні cookies не створюються. Сторінки адміністратора й відновлення пароля не відправляються в аналітику.
 
-`/analytics` доступна тільки адміністратору: унікальні відвідувачі, перегляди, візити й графік за 7/30/90 днів. Звіти відображають тільки production та користувачів, які погодились на аналітику. Дати — UTC. Ключ читання PostHog зберігається в Netlify environment у приватному environment сайту, не у VITE-змінних або репозиторії.
+`/analytics` доступна тільки адміністратору: унікальні відвідувачі, перегляди, візити й графік за 7/30/90 днів. Звіти відображають тільки production та користувачів, які погодились на аналітику. Дати - UTC. Ключ читання PostHog зберігається в Netlify environment у приватному environment сайту, не у VITE-змінних або репозиторії.
 
-Змінні: `VITE_POSTHOG_KEY` — публічний токен проєкту для збірки; `POSTHOG_PROJECT_ID` і `POSTHOG_READ_KEY` — приватні серверні змінні. Функція також використовує `SUPABASE_URL` і `SUPABASE_PUBLISHABLE_KEY`, а права перевіряє через JWT користувача та `is_database_admin()` без service-role ключа.
+Змінні: `VITE_POSTHOG_KEY` - публічний токен проєкту для збірки; `POSTHOG_PROJECT_ID` і `POSTHOG_READ_KEY` - приватні серверні змінні. Функція також використовує `SUPABASE_URL` і `SUPABASE_PUBLISHABLE_KEY`, а права перевіряє через JWT користувача та `is_database_admin()` без service-role ключа.
 
 PostHog Free дає 1M подій/місяць без платіжної картки. Повні умови: https://posthog.com/pricing. Не називайте ці лічильники абсолютною кількістю всіх відвідувачів: відмови, блокувальники й обмеження браузера зменшують виміряну кількість.
 

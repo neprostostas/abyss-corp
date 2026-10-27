@@ -21,7 +21,6 @@ import {
 } from './game';
 import type { GameState, UpgradeId } from './game';
 
-/** A layer owns production; the corporation owns the only wallet. */
 export interface AutomationState {
   readonly level: number;
   readonly enabled: boolean;
@@ -66,7 +65,6 @@ export function createWorld(): WorldState {
   };
 }
 
-/** Supplies the existing single-line engine with the shared wallet, without persisting it twice. */
 export function getLayerGame(
   world: WorldState,
   id: LayerId = world.selectedLayerId,

@@ -125,7 +125,6 @@
   }
 }
 
-/* Operator reports: one chosen metric, readable axes, exact values on hover or focus. */
 .analytics-totals > button {
   min-width: 0;
   display: grid;

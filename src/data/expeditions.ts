@@ -1,4 +1,3 @@
-/** Cargo goals, not timers: upgraded bases and active pilots complete these faster. */
 export const EXPEDITIONS = [
   {
     name: 'Map the shelf',

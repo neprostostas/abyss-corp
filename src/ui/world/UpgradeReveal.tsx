@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 
-/** Cosmetic only; a completed purchase never interrupts production. */
 export function UpgradeReveal({
   level,
   width,

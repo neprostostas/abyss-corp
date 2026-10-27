@@ -1,4 +1,3 @@
-/* The whole viewport is a game board. Secondary systems live in dialogs. */
 .game-shell {
   height: 100dvh;
   display: grid;
@@ -1494,7 +1493,6 @@ button:disabled {
     font-size: 9px;
   }
 }
-/* A purchase settles the new machine into its existing footprint. */
 .upgrade-new {
   transform-box: fill-box;
   transform-origin: center bottom;

@@ -64,7 +64,6 @@ export function GameScreen(props: GameScreenProps) {
   return <GameBoard {...props} snapshot={snapshot} />;
 }
 
-/** Open panels belong to the screen; machine selection and effects belong to one depth. */
 function GameBoard({
   session,
   accountPanel,

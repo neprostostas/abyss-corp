@@ -1,4 +1,3 @@
-/** The same compact submarine signature is used on game and account screens. */
 export function Brand() {
   return (
     <span className="brand-lockup">

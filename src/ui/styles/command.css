@@ -388,7 +388,6 @@ button {
   }
 }
 
-/* A quiet hull-shaped signature lets the outpost remain the focus. */
 h1,
 h2,
 h3,
@@ -474,7 +473,6 @@ h3,
   }
 }
 
-/* Miniatures share the world's hulls, windows and level silhouettes. */
 .upgrade-art {
   width: 54px;
   height: 50px;
@@ -511,7 +509,6 @@ h3,
   }
 }
 
-/* One shared amber cue connects the limiting machine to its upgrade. */
 .location-hud .production-limited {
   color: #f4d99b;
 }
@@ -551,7 +548,6 @@ h3,
   outline-offset: 3px;
 }
 
-/* A single stationary cue guides the next real action without blocking play. */
 .sell-button.first-step-target,
 .upgrade-tile.first-step-target {
   outline: 2px solid #fff0b8;
@@ -573,7 +569,6 @@ h3,
   color: #fff0b8;
 }
 
-/* Keep the depth rail reachable while a drawer is open on a phone. */
 @media (max-width: 760px) {
   .game-panel {
     left: 104px;
