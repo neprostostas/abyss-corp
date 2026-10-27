@@ -3,7 +3,6 @@ import { LAYER_IDS } from '../data/layers';
 import type { LayerId, ProductionConfig } from '../data/layers';
 import { UPGRADE_IDS, UPGRADES } from '../data/balance';
 import { RESEARCH, RESEARCH_IDS } from '../data/progression';
-import { AUTOMATION_LEVELS } from '../data/automation';
 import type { WorldState } from './world';
 import type { GameState } from './game';
 import { settleProduction } from './game';
@@ -21,7 +20,7 @@ export function getExpeditionOffer(world: WorldState) {
         UPGRADE_IDS.every(
           (kind) => layer.levels[kind] === UPGRADES[kind].levels.length,
         ) &&
-        layer.automation?.level === AUTOMATION_LEVELS.length
+        layer.automation !== undefined
       );
     }) &&
     RESEARCH_IDS.every(
