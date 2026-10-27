@@ -25,7 +25,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['netlify/functions/**/*.ts'],
+    files: ['netlify/**/*.ts'],
     languageOptions: {
       globals: globals.node,
       parserOptions: {

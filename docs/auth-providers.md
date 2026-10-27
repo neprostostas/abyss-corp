@@ -10,9 +10,9 @@ All native OAuth applications use `https://qduhqhhhsboljuipruvy.supabase.co/auth
 | Twitch       | `twitch`          | App `y6yltmiwz2g6zpvzmh65pbxb02sqn0`; enabled in Supabase; full player sign-in verification pending                                |
 | Microsoft    | `azure`           | Entra app registration; request `email`; use an account allowed to register apps                                                   |
 | X / Twitter  | `x`               | OAuth 2.0 app; request confirmed email; developer onboarding pending                                                               |
-| LinkedIn     | `linkedin_oidc`   | LinkedIn Page association, app logo, OpenID Connect product and redirect required                                                  |
+| LinkedIn     | `linkedin_oidc`   | Excluded at the owner’s request                                                                                                    |
 | Telegram     | `custom:telegram` | OIDC enabled; bot `abysscorp_login_bot`; email optional; profile migration applied; production sign-in reached nickname onboarding |
-| Steam        | `custom:steam`    | Steam uses OpenID 2.0; an authenticated server-side bridge is needed before it can be a Supabase OAuth provider                    |
+| Steam        | `custom:steam`    | OpenID-to-OAuth bridge implemented; Netlify secret configured; Supabase credential transfer and end-to-end verification pending    |
 
 Apple is excluded from the frontend catalog. Facebook remains disabled because the owner's account lacks the business verification required by Meta's current setup flow.
 
@@ -25,3 +25,5 @@ Provider icon paths for Discord, GitHub, Telegram, Steam, Twitch and X come from
 Manual identity linking is enabled in Supabase. The profile lists connected identities and offers enabled providers under “Connect another account”. Linking uses `auth.linkIdentity`, flushes the current save before redirecting and keeps the same player account. An identity already owned by another player is rejected rather than merging saves. Email association requires email confirmation.
 
 The header avatar carries a session provider badge. Its local session label is cosmetic only and never authorizes access; linked identities are read from Supabase Auth.
+
+Steam uses `netlify/functions/steam-auth.ts` as a confidential OAuth2 bridge. It accepts only the fixed Supabase callback, binds Steam assertions to an HttpOnly browser cookie, verifies signed OpenID responses directly with Steam and rejects stale/replayed nonces. Netlify Blobs uses strong consistency and conditional writes for one-time codes. Codes expire after 60 seconds and userinfo tokens after 120 seconds. PKCE S256 is supported. The scheduled cleanup removes expired records. The client secret lives in Netlify environment configuration and Supabase; it is never a VITE variable. Public Steam profile metadata is optional and never establishes identity.

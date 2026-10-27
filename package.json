@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/neprostostas/abyss-corp#readme",
   "dependencies": {
+    "@netlify/blobs": "^11.1.7",
     "@supabase/supabase-js": "2.118.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

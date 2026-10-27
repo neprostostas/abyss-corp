@@ -3,7 +3,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { test } from 'node:test';
 import { PGlite } from '@electric-sql/pglite';
 
-void test('Telegram identities provision email-less players without trusting metadata or granting admin', async () => {
+void test('Telegram and Steam identities provision email-less players without trusting metadata or granting admin', async () => {
   const db = new PGlite();
   try {
     await db.exec(`
@@ -35,7 +35,7 @@ void test('Telegram identities provision email-less players without trusting met
       await db.exec(await readFile(new URL(file, migrations), 'utf8'));
     }
     const ids = Array.from(
-      { length: 6 },
+      { length: 7 },
       (_, i) => `00000000-0000-4000-8000-00000000000${String(i)}`,
     );
     for (const id of ids)
@@ -63,15 +63,19 @@ void test('Telegram identities provision email-less players without trusting met
       "update auth.users set banned_until=now()+interval '1 day' where id=$1",
       [ids[5]],
     );
-    for (const id of ids.slice(4))
+    for (const id of ids.slice(4, 6))
       await db.query(
         "insert into auth.identities(user_id,provider) values($1,'custom:telegram')",
         [id],
       );
+    await db.query(
+      "insert into auth.identities(user_id,provider) values($1,'custom:steam')",
+      [ids[6]],
+    );
     assert.deepEqual(
       (await db.query('select id from public.player_progress order by id'))
         .rows,
-      [{ id: ids[2] }, { id: ids[3] }],
+      [{ id: ids[2] }, { id: ids[3] }, { id: ids[6] }],
     );
     assert.deepEqual(
       (await db.query('select * from private.admin_users')).rows,
