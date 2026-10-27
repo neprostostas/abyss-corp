@@ -7,7 +7,7 @@
 - Netlify: **abyss-corp**, основна адреса `https://abysscorp.us.ci` (резервна `https://abyss-corp.netlify.app`).
 - GitHub-підключення: `neprostostas/abyss-corp`, гілка `main`, build `npm run build`, publish `dist`.
 - Старі тестові деплої account-preview видалено. Публікується тільки production з main.
-- Supabase Site URL: `https://abysscorp.us.ci`; дозволені тільки точні `/` та `/reset-password` на основному сайті та стандартній Netlify-адресі. Localhost і wildcard-адреси видалено.
+- Supabase Site URL: `https://abysscorp.us.ci`; дозволені тільки точні `/` та `/reset-password` тільки на основному домені. Стандартна Netlify-адреса також надсилає листи на основний домен. Localhost і wildcard-адреси видалено.
 
 Основний сайт оновлюється через commit/push у `main` та автоматичну збірку Netlify. Preview використовується для перевірки перед основною публікацією.
 
