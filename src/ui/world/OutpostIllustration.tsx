@@ -99,10 +99,6 @@ export function OutpostIllustration({
           <stop stopColor={resource.color} stopOpacity=".4" />
           <stop offset="1" stopColor={resource.color} stopOpacity="0" />
         </radialGradient>
-        <linearGradient id="beam" x2=".5" y2="1">
-          <stop stopColor="#c7fff0" stopOpacity=".15" />
-          <stop offset="1" stopColor="#c7fff0" stopOpacity="0" />
-        </linearGradient>
         <filter id="object-shadow" x="-50%" y="-50%" width="200%" height="220%">
           <feDropShadow
             dx="0"
@@ -113,22 +109,6 @@ export function OutpostIllustration({
           />
         </filter>
       </defs>
-      <g className="sun-rays" fill="url(#beam)">
-        <path d="M270-50h90l140 790H-10Z" />
-        <path d="M580-50h45l360 790H380Z" />
-        <path d="M910-50h35l340 790H780Z" />
-      </g>
-      <g opacity=".21" fill="#0b3b52">
-        <path d="M0 385 90 303 144 325 187 440 245 462 293 659H0Z" />
-        <path d="M1200 298 1102 256 1067 327 1002 345 974 483 907 519 855 722H1200Z" />
-        <path d="m190 514 86-69 105 26 22 139 94 50H100Z" />
-        <path d="M630 596 700 443 759 427 810 478 866 640Z" />
-      </g>
-      {layer.visual.formation === 'cavern' && (
-        <g fill="#101f3f" opacity=".6">
-          <path d="M0 0H1200V100l-73-25-72 70-89-103-121 65-87-78-127 50-65-38-114 83-72-90-129 39L160 30 0 128Z" />
-        </g>
-      )}
       <g className="fish-school" fill="#b3efda" opacity=".4">
         {(
           [
@@ -398,11 +378,6 @@ export function OutpostIllustration({
         <Reef x={181} y={744} color="#358e88" scale={0.65} />
         <Reef x={1006} y={745} color="#3b9290" scale={0.8} />
       </g>
-      <path
-        d="M0 743q145-53 265-5t235 7 252-6 448-10v51H0Z"
-        fill="#0c3449"
-        opacity=".7"
-      />
       <g fill="#79b7a6" opacity=".5">
         <ellipse cx="445" cy="650" rx="9" ry="3" />
         <ellipse cx="557" cy="673" rx="5" ry="2" />

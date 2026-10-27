@@ -1,3 +1,4 @@
+import { OceanAtmosphere } from '../world/OceanAtmosphere';
 import { getExpeditionOffer } from '../../domain/expeditions';
 import { ExpeditionsPanel } from '../panels/ExpeditionsPanel';
 import { DRAWER_DURATION_MS, useGameDrawer } from '../hooks/useGameDrawer';
@@ -190,6 +191,8 @@ function GameBoard({
         } as CSSProperties
       }
     >
+      <OceanAtmosphere layerId={world.selectedLayerId} />
+      <div className="ocean-caustics" aria-hidden="true" />
       <header className="game-hud">
         <div className="game-brand">
           <Brand />
@@ -218,7 +221,6 @@ function GameBoard({
         </button>
       </header>
       <section className="ocean-stage" aria-label={layer.name}>
-        <div className="ocean-caustics" aria-hidden="true" />
         {status === 'ready' && (
           <>
             <div className="location-hud">

@@ -1078,3 +1078,26 @@ h3,
     transition: none;
   }
 }
+
+/* Scenery spans the whole game; stage bounds only position interactive objects. */
+.ocean-atmosphere {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+.game-shell > .ocean-stage {
+  overflow: visible;
+}
+.game-shell > .ocean-caustics {
+  z-index: 0;
+}
+.game-shell > .game-hud,
+.game-shell > .game-dock,
+.game-shell > .upgrade-deck {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
