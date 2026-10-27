@@ -178,13 +178,6 @@ export function selectLayer(world: WorldState, id: LayerId): WorldState {
     ? world
     : { ...world, selectedLayerId: id };
 }
-export function toggleLayer(world: WorldState): WorldState {
-  const game = getLayerGame(world);
-  return replaceLayer(world, world.selectedLayerId, {
-    ...game,
-    running: !game.running,
-  });
-}
 export function upgradeLayer(world: WorldState, id: UpgradeId): WorldState {
   const game = getLayerGame(world);
   const upgraded = buyUpgrade(game, id, getLayerProduction(world));

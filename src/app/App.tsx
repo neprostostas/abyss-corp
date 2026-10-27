@@ -57,7 +57,13 @@ function AccountGame({
       session,
       synchronize: async () => {
         await session.save(true);
+        if (session.getSnapshot().saveStatus === 'error')
+          throw new Error('Device save failed. Keep this tab open and retry.');
         await repository.flush();
+        if (repository.getSnapshot().status === 'error')
+          throw new Error(
+            repository.getSnapshot().error ?? 'Cloud save failed.',
+          );
       },
       players: new PlayerClient(client, user.id),
     };
@@ -93,14 +99,7 @@ function AccountGame({
       document.removeEventListener('visibilitychange', visibility);
     };
   }, [repository]);
-  const save = async () => {
-    await session.save(true);
-    if (session.getSnapshot().saveStatus === 'error')
-      throw new Error('Device save failed. Keep this tab open and retry.');
-    await repository.flush();
-    if (repository.getSnapshot().status === 'error')
-      throw new Error(repository.getSnapshot().error ?? 'Cloud save failed.');
-  };
+  const save = runtime.synchronize;
   const account = (
     <AccountPanel
       isAdmin={isAdmin}

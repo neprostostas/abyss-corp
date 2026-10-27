@@ -8,7 +8,6 @@ export interface GameSave {
 
 export interface SaveRepository {
   load(): Promise<GameSave | null>;
-  backup?(data: GameSave): Promise<void>;
   save(data: GameSave): Promise<void>;
 }
 

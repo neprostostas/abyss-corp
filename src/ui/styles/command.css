@@ -33,9 +33,6 @@ button {
   font-size: 11px;
   letter-spacing: 0.4px;
 }
-.upgrade-card h3 {
-  font-size: 18px;
-}
 .dock-button {
   font-size: 11px;
   letter-spacing: 0.3px;
@@ -402,8 +399,7 @@ h2,
 h3,
 .hud-wallet strong,
 .research-bonus,
-.crew-level,
-.stock-value {
+.crew-level {
   font-family: var(--font-display);
   font-weight: 700;
 }

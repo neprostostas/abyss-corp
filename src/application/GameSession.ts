@@ -225,17 +225,6 @@ export class GameSession {
     void this.save();
   }
 
-  captureSave(): GameSave {
-    if (this.snapshot.status !== 'ready')
-      throw new Error('Wait for your local save to load.');
-    this.tick();
-    return {
-      version: 7,
-      savedAt: this.suspendedAt ?? this.clock.timestamp(),
-      world: this.snapshot.world,
-    };
-  }
-
   save = (retry = false): Promise<void> => {
     if (
       this.snapshot.status !== 'ready' ||

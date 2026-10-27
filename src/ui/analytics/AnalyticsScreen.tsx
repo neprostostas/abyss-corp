@@ -95,6 +95,7 @@ export function AnalyticsScreen({
             aria-pressed={days === value}
             disabled={busy}
             onClick={() => {
+              if (value === days) return;
               setBusy(true);
               setDays(value);
             }}

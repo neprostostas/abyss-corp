@@ -202,6 +202,8 @@ export function DatabaseScreen({ gateway }: { gateway: AdminDatabaseGateway }) {
               key={id}
               aria-current={table === id ? 'page' : undefined}
               onClick={() => {
+                if (id === table && page === 0) return;
+                setData(null);
                 setTable(id);
                 setPage(0);
                 setBusy(true);

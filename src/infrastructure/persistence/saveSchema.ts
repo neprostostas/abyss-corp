@@ -16,7 +16,6 @@ import {
   getProcessingDuration,
   getStorageCapacity,
 } from '../../domain/game';
-import { parseLegacySave } from './legacySaveSchema';
 
 const contentIdSchema = z.string().regex(/^[a-z0-9][a-z0-9-]{0,63}$/);
 const integer = z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER);
@@ -220,17 +219,4 @@ export function validateSave(data: unknown): GameSave {
       throw new Error('Invalid refinery progress.');
   }
   return save;
-}
-
-export function parseSave(raw: string): GameSave {
-  const data: unknown = JSON.parse(raw);
-  const version = z.object({ version: z.number() }).parse(data).version;
-  if (version !== 1 && version !== 2) return validateSave(data);
-  const old = parseLegacySave(raw);
-  const { credits, ...shallows } = old.game;
-  return validateSave({
-    version: 3,
-    savedAt: old.savedAt,
-    world: { credits, selectedLayerId: 'shallows', layers: { shallows } },
-  });
 }

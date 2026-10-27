@@ -9,7 +9,7 @@ The [persistent specification](../ABYSS_CORP_PROJECT_SPEC.md) remains the source
 - `src/application/GameSession.ts`: elapsed-time simulation, commands, offline reports and serialized local saves through `SaveRepository`.
 - `src/application/accountPorts.ts`: account save synchronization status and canonical cloud update contract.
 - `src/infrastructure/supabase`: the configured Supabase client, generated public database types and account save repository.
-- `src/infrastructure/persistence`: strict runtime save validation, explicit version 1-7 migration.
+- `src/infrastructure/persistence`: strict runtime save validation, explicit version 3-7 migration for account saves.
 - `src/app`: authentication lifecycle, one game runtime per user ID, cloud sync scheduling and route selection.
 - `src/ui`: the ocean scene, upgrades, compact equipment panels, account forms and read-only database browser.
 
@@ -25,11 +25,11 @@ Authentication changes remount the game by user ID. An old runtime can write onl
 
 The account repository implements `SaveRepository`. Each local journal is stored under `abyss-corp.account.<user-id>` with the save, acknowledged server revision and dirty marker. Domain saves keep version 7; account identity and server revision belong to the storage envelope.
 
-Loading reads the server before enabling gameplay. A clean journal follows the cloud copy. A dirty journal resumes only when its base revision still matches the server; otherwise the rejected device journal is backed up and the canonical cloud copy loads automatically. Load failures never create or overwrite a fresh cloud save.
+Loading reads the server before enabling gameplay. An invalid device journal is retained under the account `.corrupt` key and can be replaced only by a valid cloud copy; a missing or unreachable cloud save keeps loading blocked rather than creating fresh progress. A clean journal follows the cloud copy. A dirty journal resumes only when its base revision still matches the server; otherwise the rejected device journal is backed up and the canonical cloud copy loads automatically. Load failures never create or overwrite a fresh cloud save.
 
 Game actions and the existing two-second autosave persist to the device immediately. Cloud requests are serialized and throttled to a 15-second cadence. The local journal stores the pending operation ID and payload before sending. Newer local edits stay separate while that upload is in flight. A retry acknowledges an already-applied operation without another write; reload can recognize that acknowledgement by the persisted operation ID. Unrelated remote changes use the canonical cloud copy automatically, with a local backup of the rejected journal. SQL performs the compare-and-swap atomically.
 
-There is no manual conflict dialog. On HTTP 409 the repository backs up local progress, loads the current cloud revision and notifies GameSession to adopt it. The session recalculates capped offline production and resumes without reloading the page. It never adds two wallets together. Concurrent/offline device changes can be superseded by another device's accepted cloud revision; the rejected copy remains under the account backup key for recovery.
+There is no manual conflict dialog. On HTTP 409 the repository backs up local progress, loads the current cloud revision and notifies GameSession to adopt it. The session recalculates capped offline production and resumes without reloading the page. It never adds two wallets together. Completed expeditions are preserved as permanent milestones from valid device, backup and cloud copies; their maximum count is retained without combining currencies or cargo. Concurrent/offline device changes can be superseded by another device's accepted cloud revision; the rejected copy remains under the account backup key for recovery.
 
 Legacy device import has been removed. Account saves remain isolated by user ID. The obsolete SQLite archive was removed after the Supabase migration; there is no deployed dependency on a local filesystem, Node API process or guest cookie.
 
@@ -57,7 +57,7 @@ The public RPC is a security-invoker wrapper around a private, restricted securi
 
 ## Redirects and API failures
 
-Auth redirect allowlists govern where email flows return the browser; they are not a database permission boundary. The hosted project permits only exact `/` and `/reset-password` URLs on production and the named Netlify preview. There are no localhost or globstar entries. `authReturnUrl` sends development email links to the controlled preview; local password sign-in remains usable. An isolated development database can be configured separately when needed.
+Auth redirect allowlists govern where email flows return the browser; they are not a database permission boundary. The hosted project permits only exact `/` and `/reset-password` URLs on `https://abysscorp.us.ci`. There are no preview, localhost or globstar entries. `authReturnUrl` sends all email links to this primary domain; local password sign-in remains usable. An isolated development database can be configured separately when needed.
 
 Business save conflicts use SQLSTATE `PT409` (HTTP 409). `40001` is reserved for actual serialization failures because PostgREST 14 can retry that SQLSTATE indefinitely. Idempotent operation IDs still acknowledge interrupted requests without replaying work. Account-scoped backup keys remain `abyss-corp.account.<id>.backup`.
 
@@ -67,13 +67,13 @@ Business save conflicts use SQLSTATE `PT409` (HTTP 409). `40001` is reserved for
 
 ## Visitor analytics and consent
 
-`VisitorAnalytics` sends allowlisted anonymous page events to PostHog EU only after affirmative consent, only on the production and named preview hosts. It never reads the Auth token, account ID, email or game save. URL fragments, query strings and referrers are omitted. No autocapture, recordings, forms or advertisements are enabled. Optional visitor/session cookies use Secure on HTTPS and SameSite=Lax; consent is stored separately and can be withdrawn through Settings or `/privacy`.
+`VisitorAnalytics` sends allowlisted anonymous page events to PostHog EU only after affirmative consent, only on the primary domain and the reserve `abyss-corp.netlify.app` host. It never reads the Auth token, account ID, email or game save. URL fragments, query strings and referrers are omitted. No autocapture, recordings, forms or advertisements are enabled. Optional visitor/session cookies use Secure on HTTPS and SameSite=Lax; consent is stored separately and can be withdrawn through Settings or `/privacy`.
 
 `/analytics` is admin-only. A Netlify Function validates the Supabase access token and checks active database administrator permission before querying PostHog with a server-only read key. Fixed 7/30/90-day reports cover production page views, unique visitors and visits in UTC. The function does not accept arbitrary SQL or expose raw provider responses or API keys. Admin authorization happens before the short-lived report cache. The dashboard counts consenting visits, not all network requests.
 
 ## Expeditions
 
-Version 7 adds an explicit expedition state. Older saves migrate with zero completed expeditions and empty deliveries; their credits, levels and timers are unchanged. After all three outposts, research and pilots reach maximum level, three sequential cargo expeditions become available in Missions. Opting in routes pilot shipments into capped per-resource goals before selling the remainder. Manual sales still earn credits normally. Completion is claimed once and adds five percentage points to base cargo prices, without a cash payout or progress reset. The same supply logic runs in foreground and capped offline simulation.
+Version 7 adds an explicit expedition state. Older saves migrate with zero completed expeditions and empty deliveries; their credits, levels and timers are unchanged. After all three outposts and research reach maximum level, with a pilot hired at every outpost, three sequential cargo expeditions become available in Missions. Opting in routes pilot shipments into capped per-resource goals before selling the remainder. Manual sales still earn credits normally. Completion is claimed once and adds five percentage points to base cargo prices, without a cash payout or progress reset. The same supply logic runs in foreground and capped offline simulation.
 
 ## Admin reports
 

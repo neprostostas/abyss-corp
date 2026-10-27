@@ -132,10 +132,29 @@ export class AccountSaveRepository implements AccountSavePort {
   }
   async load(): Promise<GameSave | null> {
     try {
-      let local = this.readCache();
+      let local: CachedSave | null;
+      let corruptCache = false;
+      try {
+        local = this.readCache();
+      } catch (error) {
+        const raw = this.storage().getItem(this.key);
+        if (raw === null) throw error;
+        // Keep the rejected journal intact before replacing it with a valid cloud copy.
+        this.storage().setItem(`${this.key}.corrupt`, raw);
+        console.warn(
+          'Recovering an invalid device save from the cloud.',
+          error,
+        );
+        local = null;
+        corruptCache = true;
+      }
       const previous = local?.save;
       const backup = this.readBackup();
       const remote = await this.remote();
+      if (corruptCache && !remote)
+        throw new Error(
+          'No cloud copy is available to recover device progress.',
+        );
       if (local?.pendingWrite && remote?.write_id === local.pendingWrite.id) {
         local = {
           revision: remote.revision,
