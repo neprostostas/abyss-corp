@@ -193,21 +193,23 @@ export function AuthScreen({
         <h1 id="auth-title">{title}</h1>
         {(mode === 'login' || mode === 'register') && (
           <>
-            <button className="quick-play" disabled={busy} onClick={onGuest}>
-              <GameIcon name="transport" />
-              <span>
-                <strong>Quick play</strong>
-                <small>No account needed</small>
-              </span>
-              <GameIcon name="arrow" />
-            </button>
-            <SocialSignIn
-              providers={providers}
-              busy={busy}
-              onSignIn={(provider) => {
-                void socialSignIn(provider);
-              }}
-            />
+            <div className="auth-methods">
+              <button className="quick-play" disabled={busy} onClick={onGuest}>
+                <GameIcon name="transport" />
+                <span>
+                  <strong>Quick play</strong>
+                  <small>No account needed</small>
+                </span>
+                <GameIcon name="arrow" />
+              </button>
+              <SocialSignIn
+                providers={providers}
+                busy={busy}
+                onSignIn={(provider) => {
+                  void socialSignIn(provider);
+                }}
+              />
+            </div>
             <div className="auth-divider">
               <span>or with email</span>
             </div>
@@ -271,7 +273,7 @@ export function AuthScreen({
             </label>
           )}
           {mode !== 'forgot' && (
-            <label>
+            <label className="auth-password">
               Password
               <input
                 type="password"
@@ -292,7 +294,7 @@ export function AuthScreen({
             </label>
           )}
           {(mode === 'register' || mode === 'reset') && (
-            <label>
+            <label className="auth-confirmation">
               Confirm password
               <input
                 type="password"

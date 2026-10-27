@@ -999,3 +999,121 @@
     margin-bottom: 12px;
   }
 }
+
+.auth-methods {
+  min-width: 0;
+}
+.auth-entry-register form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+.auth-entry-register form > label:not(.auth-password):not(.auth-confirmation),
+.auth-entry-register form > button,
+.auth-entry-register form > p {
+  grid-column: 1 / -1;
+}
+@media (min-width: 760px) {
+  .auth-entry-register {
+    width: min(100%, 900px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1fr);
+    column-gap: 20px;
+    align-items: start;
+  }
+  .auth-entry-register .auth-brand,
+  .auth-entry-register h1 {
+    grid-column: 1 / -1;
+  }
+  .auth-entry-register .auth-brand {
+    justify-content: flex-start;
+  }
+  .auth-entry-register .auth-methods {
+    grid-column: 1;
+    grid-row: 3;
+    padding-top: 4px;
+  }
+  .auth-entry-register .auth-divider {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: stretch;
+    flex-direction: column;
+    margin: 0;
+    gap: 12px;
+  }
+  .auth-entry-register .auth-divider span {
+    writing-mode: vertical-rl;
+  }
+  .auth-entry-register .auth-divider::before,
+  .auth-entry-register .auth-divider::after {
+    width: 1px;
+    height: auto;
+    min-height: 20px;
+  }
+  .auth-entry-register form {
+    grid-column: 3;
+    grid-row: 3;
+    margin-top: 0;
+  }
+  .auth-entry-register .auth-links {
+    grid-column: 3;
+    margin-top: 14px;
+  }
+  .auth-entry-register .provider-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 759px) {
+  .auth-entry-register {
+    padding: 20px 22px;
+  }
+  .auth-entry-register .auth-brand {
+    margin-bottom: 12px;
+  }
+  .auth-entry-register h1 {
+    margin-bottom: 12px;
+    font-size: 25px;
+  }
+  .auth-entry-register .provider-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .auth-entry-register .provider-grid button {
+    font-size: 11px;
+    gap: 6px;
+    padding: 9px 6px;
+  }
+  .auth-entry-register .provider-grid svg {
+    width: 17px;
+    height: 17px;
+  }
+  .auth-entry-register .auth-divider {
+    margin-top: 10px;
+  }
+  .auth-entry-register form {
+    margin-top: 10px;
+    gap: 10px 12px;
+  }
+  .auth-entry-register input {
+    padding: 10px 12px;
+  }
+  .auth-entry-register label {
+    gap: 5px;
+    font-size: 12px;
+  }
+  .auth-entry-register label small {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .auth-entry-register .auth-links {
+    margin-top: 12px;
+  }
+}
+@media (max-width: 359px) {
+  .auth-entry-register {
+    padding-inline: 14px;
+  }
+  .auth-entry-register .provider-grid button {
+    gap: 4px;
+    font-size: 10px;
+  }
+}
