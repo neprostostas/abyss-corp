@@ -526,28 +526,70 @@
   flex-shrink: 0;
 }
 .social-signin {
-  display: flex;
-  gap: 8px;
+  display: grid;
+  gap: 6px;
   margin-top: 14px;
-  flex-wrap: wrap;
 }
 .social-signin button {
-  flex: 1 1 90px;
   min-height: 46px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px;
+  gap: 10px;
+  padding: 12px;
   background: #0c2c38;
   border: 1px solid #71988f55;
   color: #e2ede1;
   box-shadow: none;
   border-radius: 10px;
-  font-size: 12px;
+  font-size: 13px;
+  min-width: 0;
+}
+.social-signin button:hover:not(:disabled) {
+  border-color: #a1bfb5;
+  background: #183e48;
+}
+.social-signin button:focus-visible,
+.provider-options summary:focus-visible {
+  outline: 2px solid #ffda84;
+  outline-offset: 3px;
+}
+.social-signin button span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .social-signin svg {
   flex-shrink: 0;
+}
+.social-signin .provider-primary {
+  justify-content: center;
+}
+.provider-options summary {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  color: #b4cdc3;
+  padding: 10px 2px;
+  font-size: 12px;
+  list-style: none;
+}
+.provider-options summary::-webkit-details-marker {
+  display: none;
+}
+.provider-options summary .game-icon {
+  width: 16px;
+  height: 16px;
+}
+.provider-options[open] summary .game-icon {
+  transform: rotate(90deg);
+}
+.provider-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 1px 4px;
 }
 .auth-divider {
   display: flex;

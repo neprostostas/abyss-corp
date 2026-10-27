@@ -6,6 +6,12 @@ import type { SupabaseClient, User } from '@supabase/supabase-js';
 import type { Database } from '../src/infrastructure/supabase/database.types';
 import { AuthScreen } from '../src/ui/auth/AuthScreen';
 import { ProfileGate } from '../src/ui/account/ProfileGate';
+import { SocialSignIn } from '../src/ui/auth/SocialSignIn';
+import {
+  SOCIAL_PROVIDERS,
+  PROVIDER_LABELS,
+  providerScopes,
+} from '../src/infrastructure/supabase/socialProviders';
 import { ProfileAvatar } from '../src/ui/account/ProfileAvatar';
 
 const dom = new JSDOM('<!doctype html><div id="root"></div>', {
@@ -219,5 +225,77 @@ void test('a broken provider image falls back to a complete nickname initial', a
   });
   assert.equal(document.querySelector('img'), null);
   assert.equal(document.querySelector('.account-avatar')?.textContent, '👩‍🚀');
+  await reset();
+});
+
+void test('many sign-in providers stay in a collapsed, labelled list and dispatch the correct provider', async () => {
+  const selected: string[] = [];
+  await ui(() => {
+    root.render(
+      createElement(SocialSignIn, {
+        providers: SOCIAL_PROVIDERS,
+        busy: false,
+        onSignIn: (provider) => {
+          selected.push(provider);
+        },
+      }),
+    );
+  });
+  const details = document.querySelector('details');
+  assert(details);
+  assert.equal(details.open, false);
+  assert.equal(
+    document.querySelector('.provider-primary')?.textContent,
+    'Continue with Google',
+  );
+  const summary = details.querySelector('summary');
+  assert(summary);
+  await ui(() => {
+    summary.click();
+  });
+  assert.equal(details.open, true);
+  for (const provider of SOCIAL_PROVIDERS.slice(1)) {
+    const button = document.querySelector(
+      `[aria-label="Continue with ${PROVIDER_LABELS[provider]}"]`,
+    );
+    assert(button instanceof dom.window.HTMLButtonElement);
+    assert(button.querySelector('path')?.getAttribute('d'));
+    await ui(() => {
+      button.click();
+    });
+  }
+  assert.deepEqual(selected, SOCIAL_PROVIDERS.slice(1));
+  await ui(() => {
+    root.render(
+      createElement(SocialSignIn, {
+        providers: SOCIAL_PROVIDERS,
+        busy: true,
+        onSignIn: (provider) => {
+          selected.push(provider);
+        },
+      }),
+    );
+  });
+  for (const button of document.querySelectorAll('button'))
+    assert.equal(button.disabled, true);
+  await reset();
+});
+void test('a single active provider does not expose an empty extra-options control', async () => {
+  await ui(() => {
+    root.render(
+      createElement(SocialSignIn, {
+        providers: ['google'],
+        busy: false,
+        onSignIn: () => {
+          assert.fail('Unexpected sign-in');
+        },
+      }),
+    );
+  });
+  assert.equal(document.querySelector('details'), null);
+  assert.equal(document.querySelectorAll('button').length, 1);
+  assert.equal(providerScopes('azure'), 'email');
+  assert.equal(providerScopes('github'), 'user:email');
+  assert.equal(providerScopes('custom:telegram'), 'openid profile');
   await reset();
 });

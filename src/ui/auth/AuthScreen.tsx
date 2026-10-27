@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { normalizeCaptainName } from '../../domain/captainName';
 import {
   loadSocialProviders,
-  PROVIDER_LABELS,
+  providerScopes,
 } from '../../infrastructure/supabase/socialProviders';
 import type { SocialProvider } from '../../infrastructure/supabase/socialProviders';
-import { ProviderIcon } from './ProviderIcon';
+import { SocialSignIn } from './SocialSignIn';
 import { GameIcon } from '../components/GameIcon';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../infrastructure/supabase/database.types';
@@ -131,9 +131,13 @@ export function AuthScreen({
     setBusy(true);
     setError(null);
     try {
+      const scopes = providerScopes(provider);
       const { error: failure } = await client.auth.signInWithOAuth({
         provider,
-        options: { redirectTo: authReturnUrl('/') },
+        options: {
+          redirectTo: authReturnUrl('/'),
+          ...(scopes ? { scopes } : {}),
+        },
       });
       if (failure) throw failure;
     } catch {
@@ -188,23 +192,13 @@ export function AuthScreen({
               </span>
               <GameIcon name="arrow" />
             </button>
-            {providers.length > 0 && (
-              <div className="social-signin" aria-label="Continue with">
-                {providers.map((provider) => (
-                  <button
-                    key={provider}
-                    disabled={busy}
-                    onClick={() => {
-                      void socialSignIn(provider);
-                    }}
-                    aria-label={`Continue with ${PROVIDER_LABELS[provider]}`}
-                  >
-                    <ProviderIcon provider={provider} />
-                    <span>{PROVIDER_LABELS[provider]}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+            <SocialSignIn
+              providers={providers}
+              busy={busy}
+              onSignIn={(provider) => {
+                void socialSignIn(provider);
+              }}
+            />
             <div className="auth-divider">
               <span>or with email</span>
             </div>

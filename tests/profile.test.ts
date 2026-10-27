@@ -40,7 +40,7 @@ void test('only explicitly enabled supported OAuth providers appear', () => {
     enabledProviders({
       external: { google: true, apple: false, facebook: true, github: true },
     }),
-    ['google', 'facebook'],
+    ['google', 'github', 'facebook'],
   );
   for (const settings of [
     null,
@@ -49,4 +49,32 @@ void test('only explicitly enabled supported OAuth providers appear', () => {
     { external: { google: 'true' } },
   ])
     assert.deepEqual(enabledProviders(settings), []);
+});
+
+void test('Apple is removed and deployment additions cannot expose arbitrary providers', () => {
+  assert.deepEqual(
+    enabledProviders({
+      external: {
+        apple: true,
+        azure: true,
+        linkedin: true,
+        linkedin_oidc: true,
+        twitter: true,
+        x: true,
+      },
+    }),
+    ['azure', 'x', 'linkedin_oidc'],
+  );
+  assert.deepEqual(
+    enabledProviders({ external: { google: true } }, [
+      'custom:telegram',
+      'custom:steam',
+      'x',
+      'apple',
+      'facebook',
+      'custom:unknown',
+    ]),
+    ['google', 'x', 'custom:telegram', 'custom:steam'],
+  );
+  assert.deepEqual(enabledProviders({}, { 'custom:telegram': true }), []);
 });
