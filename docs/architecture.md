@@ -1,7 +1,5 @@
 # Architecture
 
-The [persistent specification](../ABYSS_CORP_PROJECT_SPEC.md) remains the source of product and engineering requirements.
-
 ## Boundaries
 
 - `src/data`: resource, depth, production, automation and research configuration.
