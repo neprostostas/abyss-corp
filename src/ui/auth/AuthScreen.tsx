@@ -182,8 +182,11 @@ export function AuthScreen({
     reset: 'Save password',
   }[mode];
   return (
-    <main className="account-screen">
-      <section className="auth-card" aria-labelledby="auth-title">
+    <main className="account-screen sign-in-screen">
+      <section
+        className={`auth-card auth-entry auth-entry-${mode}`}
+        aria-labelledby="auth-title"
+      >
         <a href="/" className="auth-brand">
           <Brand />
         </a>

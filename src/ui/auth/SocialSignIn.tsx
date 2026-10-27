@@ -37,7 +37,7 @@ export function SocialSignIn({
     <div className="social-signin" aria-label="Continue with">
       {button(primary, true)}
       {others.length > 0 && (
-        <details className="provider-options">
+        <details className="provider-options" open>
           <summary>
             More sign-in options
             <GameIcon name="arrow" />

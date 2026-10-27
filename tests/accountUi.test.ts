@@ -228,7 +228,7 @@ void test('a broken provider image falls back to a complete nickname initial', a
   await reset();
 });
 
-void test('many sign-in providers stay in a collapsed, labelled list and dispatch the correct provider', async () => {
+void test('many sign-in providers start expanded in a labelled list and dispatch the correct provider', async () => {
   const selected: string[] = [];
   await ui(() => {
     root.render(
@@ -243,7 +243,7 @@ void test('many sign-in providers stay in a collapsed, labelled list and dispatc
   });
   const details = document.querySelector('details');
   assert(details);
-  assert.equal(details.open, false);
+  assert.equal(details.open, true);
   assert.equal(
     document.querySelector('.provider-primary')?.textContent,
     'Continue with Google',
@@ -253,7 +253,10 @@ void test('many sign-in providers stay in a collapsed, labelled list and dispatc
   await ui(() => {
     summary.click();
   });
-  assert.equal(details.open, true);
+  assert.equal(details.open, false);
+  await ui(() => {
+    summary.click();
+  });
   for (const provider of SOCIAL_PROVIDERS.slice(1)) {
     const button = document.querySelector(
       `[aria-label="Continue with ${PROVIDER_LABELS[provider]}"]`,

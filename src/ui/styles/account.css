@@ -898,3 +898,104 @@
 .connection-options[open] summary .game-icon {
   transform: rotate(90deg);
 }
+
+/* Keep every sign-in choice visible without a tall stack of full-width buttons. */
+.sign-in-screen {
+  padding-block: 20px;
+}
+.auth-entry {
+  width: min(100%, 640px);
+  padding: 28px 32px;
+}
+.auth-entry .auth-brand {
+  margin-bottom: 18px;
+}
+.auth-entry h1 {
+  font-size: 28px;
+  margin: 0 0 16px;
+}
+.auth-entry .quick-play {
+  margin-top: 0;
+  padding: 12px 16px;
+}
+.auth-entry .social-signin {
+  margin-top: 12px;
+  gap: 2px;
+}
+.auth-entry .social-signin button {
+  min-height: 44px;
+  padding: 10px 12px;
+}
+.auth-entry .provider-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.auth-entry .provider-options summary {
+  min-height: 34px;
+  padding-block: 8px;
+}
+.auth-entry .auth-divider {
+  margin-top: 16px;
+}
+.auth-entry form {
+  margin-top: 16px;
+  gap: 12px;
+}
+.auth-entry .auth-links {
+  margin-top: 16px;
+  gap: 10px 24px;
+}
+@media (min-width: 560px) {
+  .auth-entry-login form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+  }
+  .auth-entry-login form > button,
+  .auth-entry-login form > p {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 559px) {
+  .sign-in-screen {
+    padding: 14px 12px;
+  }
+  .auth-entry {
+    padding: 22px 20px;
+    border-radius: 20px;
+  }
+  .auth-entry .auth-brand {
+    margin-bottom: 14px;
+  }
+  .auth-entry h1 {
+    font-size: 26px;
+    margin-bottom: 14px;
+  }
+  .auth-entry .provider-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+  .auth-entry .social-signin button {
+    padding: 9px 10px;
+    gap: 8px;
+  }
+  .auth-entry .auth-divider {
+    margin-top: 12px;
+  }
+  .auth-entry form {
+    margin-top: 12px;
+    gap: 10px;
+  }
+  .auth-entry .auth-links {
+    margin-top: 12px;
+  }
+}
+@media (max-height: 720px) and (min-width: 560px) {
+  .sign-in-screen {
+    padding-block: 12px;
+  }
+  .auth-entry {
+    padding-block: 20px;
+  }
+  .auth-entry .auth-brand {
+    margin-bottom: 12px;
+  }
+}
