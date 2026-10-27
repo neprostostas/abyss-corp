@@ -299,13 +299,22 @@ button {
   max-width: 100%;
 }
 .dock-button.active-room {
-  color: #ffe8a0;
-  background: #6d80542b;
-  box-shadow: inset 0 3px #f2cf7c;
-  border-radius: 12px;
+  color: #edf5eb;
+  font-weight: 800;
+}
+.dock-button.active-room .game-icon {
+  stroke-width: 2.25;
+}
+.dock-button.active-room:hover .dock-icon,
+.dock-button.active-room:hover:not(:disabled) {
+  transform: none;
+  filter: none;
 }
 .dock-button.has-opportunity .dock-icon {
   color: #ffe5a0;
+}
+.dock-button.active-room .dock-icon {
+  color: #edf5eb;
 }
 .upgrade-tile.can-upgrade {
   border-color: #ffdc86;
@@ -444,10 +453,6 @@ h3,
 }
 .upgrade-tile.can-upgrade {
   box-shadow: 0 3px #9f8246;
-}
-.dock-button.active-room {
-  background: #a4d9ce12;
-  box-shadow: inset 0 -2px #e8c375;
 }
 @media (max-width: 520px) {
   .game-hud {

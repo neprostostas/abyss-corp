@@ -17,9 +17,9 @@ export function MachinePortrait({
 }) {
   const viewBox = {
     mining: '-100 -170 200 210',
-    transport: '-100 -55 200 110',
-    processing: '-140 -245 280 295',
-    storage: '-100 -215 200 260',
+    transport: '-100 -65 215 125',
+    processing: '-150 -245 300 315',
+    storage: '-100 -215 200 280',
   }[id];
   return (
     <svg className="machine-portrait" viewBox={viewBox} aria-hidden="true">

@@ -1,4 +1,5 @@
 import { useSubmarineMotion } from './useSubmarineMotion';
+import { SUBMARINE_ROUTE, submarinePosition } from './submarineRoute';
 import { UpgradeReveal } from './UpgradeReveal';
 import type { KeyboardEvent } from 'react';
 import { getProductionSummary, getProcessingDuration } from '../../domain/game';
@@ -211,14 +212,14 @@ export function OutpostIllustration({
         fill="url(#rock-top)"
       />
       <path
-        d="m138 574 106 50 104-24 113 41 132-32 148 30 150-48"
+        d="M138 574 344 624 448 600 561 641 693 609 841 639 991 591"
         fill="none"
         stroke="#78a591"
         strokeWidth="8"
         opacity=".5"
       />
       <path
-        d="m244 624 14 57 61-5 29-76m113 41 28 91 104-44v-79m148 30 10 56 60-48m-113 48-9 64"
+        d="M344 624 368 702M448 600 490 761M561 641 582 732M693 609 729 759M841 639 820 695"
         fill="none"
         stroke="#0e3446"
         strokeWidth="7"
@@ -357,12 +358,12 @@ export function OutpostIllustration({
         </g>
       </g>
       <path
-        d="M370 400Q500 310 655 365"
+        d={SUBMARINE_ROUTE}
         className={`sub-route${running ? ' active' : ''}`}
       />
       <g
         ref={submarineRef}
-        transform="translate(370 400)"
+        transform={`translate(${submarinePosition(0).x} ${submarinePosition(0).y})`}
         {...hit('transport', 'Submarine')}
       >
         <ellipse className="selection-ring" cy="20" rx="86" ry="33" />

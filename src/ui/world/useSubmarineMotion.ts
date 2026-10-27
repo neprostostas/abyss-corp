@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import type { Phase } from '../../domain/game';
+import { submarinePosition } from './submarineRoute';
 
 function position(phase: Phase, progress: number): number {
   return phase === 'delivering'
@@ -56,8 +57,7 @@ export function useSubmarineMotion(
         ? 1
         : Math.min(1, Math.max(0, (now - state.started) / state.duration));
       const travel = state.from + (state.to - state.from) * t;
-      const x = 370 + travel * 285;
-      const y = 400 - Math.sin(travel * Math.PI) * 45 - travel * 35;
+      const { x, y } = submarinePosition(travel);
       ref.current?.setAttribute(
         'transform',
         `translate(${String(x)} ${String(y)})`,

@@ -60,7 +60,12 @@ export function MiningRig({
   level: number;
 }) {
   return (
-    <g stroke="#10384b" strokeWidth="3" strokeLinejoin="round">
+    <g
+      stroke="#10384b"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <ellipse
         cx="0"
         cy="18"
@@ -105,20 +110,24 @@ export function MiningRig({
       {level >= 4 && (
         <g>
           <path
-            d="M-17-108 77-137v52"
+            d="M-17-108 77-137v54"
             fill="none"
             stroke="#183e4d"
             strokeWidth="17"
           />
           <path
-            d="M-17-108 77-137v52"
+            d="M-17-108 77-137v54"
             fill="none"
             stroke="#f5cb68"
             strokeWidth="10"
           />
           <g className={active ? 'rig-drilling' : undefined}>
             <path d="M64-83h26v34L77-29 64-49Z" fill="#b7ddd6" />
-            <path d="m65-72 23 9m-23 5 19 8" stroke="#527f8c" strokeWidth="5" />
+            <path
+              d="M69-70 84-64M69-57 80-52"
+              stroke="#527f8c"
+              strokeWidth="5"
+            />
           </g>
         </g>
       )}
@@ -131,7 +140,7 @@ export function MiningRig({
       <g className={active ? 'rig-drilling' : undefined}>
         <path d="M25-73h45v30L47-10 25-43Z" fill="#6b929a" />
         <path
-          d="m25-65 45 15m-42 0 31 11m-24 0 16 6"
+          d="M30-63 65-51M33-48 57-40M39-37 49-33"
           stroke="#dceee2"
           strokeWidth="7"
         />
@@ -194,7 +203,12 @@ export function RefineryModel({
   level: number;
 }) {
   return (
-    <g stroke="#103a4c" strokeWidth="3" strokeLinejoin="round">
+    <g
+      stroke="#103a4c"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <ellipse
         cx="0"
         cy="36"
@@ -217,6 +231,7 @@ export function RefineryModel({
           <ellipse cx="-100" cy="-139" rx="16" ry="7" fill="#e0eddb" />
           <path d="M-116-113h31m-31 54h31" stroke="#f5c45e" strokeWidth="6" />
           <path d="M-101-122v46" stroke="#a2ffdf" strokeWidth="5" />
+          <path d="M-108-25v13h16v-13" fill="#528591" />
         </g>
       )}
       {level >= 3 && (
@@ -227,10 +242,10 @@ export function RefineryModel({
           <path d="M79-194h27" stroke="#f9d174" strokeWidth="7" />
         </g>
       )}
-      <path d="M-80-5v64l18 5 5-66M58-2l5 66 18-5V-5" fill="#5b8b93" />
+      <path d="M-80-5v64l18 5 5-66ZM58-2l5 66 18-5V-5Z" fill="#5b8b93" />
       <path d="m-71 23 141 0" stroke="#b0d9cf" strokeWidth="6" />
       <path d="m-110-14 110-32 110 32v34L0 51-110 20Z" fill="#e7a442" />
-      <path d="M0 15v36l110-31v-34Z" fill="#c58133" />
+      <path d="M0 18v33l110-31v-34Z" fill="#c58133" />
       <path d="m-110-14 110-32 110 32L0 18Z" fill="#ffdb72" />
       <rect
         x="-89"
@@ -308,12 +323,12 @@ export function RefineryModel({
       {level >= 5 && (
         <g>
           <path
-            d="M-67-173-15-220 42-190"
+            d="M-69-122v-51L0-220 69-173v51"
             fill="none"
             stroke="#edcb76"
             strokeWidth="6"
           />
-          <circle cx="-15" cy="-220" r="11" fill="#b2ffe0" />
+          <circle cx="0" cy="-220" r="11" fill="#b2ffe0" />
           <rect x="-111" y="-25" width="29" height="60" rx="8" fill="#e8d6a1" />
           <rect x="81" y="-25" width="29" height="60" rx="8" fill="#e8d6a1" />
           <path d="M-102-14v34M94-14v34" stroke="#2e9c9f" strokeWidth="8" />
@@ -371,13 +386,13 @@ export function RefineryModel({
         strokeWidth="12"
       />
       <path
-        d="M78-125v-40h18v32"
+        d="M78-107v-58h18v32"
         fill="none"
         stroke="#d4eee1"
         strokeWidth="10"
       />
       <path
-        d="M11-202v-33m0 0 32 9-32 9"
+        d="M11-194v-41m0 0 32 9-32 9"
         fill="#ff8a6a"
         stroke="#d0e8db"
         strokeWidth="3"
@@ -400,7 +415,12 @@ export function WarehouseModel({
   color: string;
 }) {
   return (
-    <g stroke="#10384b" strokeWidth="3" strokeLinejoin="round">
+    <g
+      stroke="#10384b"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <ellipse
         cy="35"
         rx="78"
@@ -409,8 +429,8 @@ export function WarehouseModel({
         opacity=".4"
         stroke="none"
       />
-      <path d="m-71-70 80-26 64 30V23L-5 51-71 20Z" fill="#dfe9da" />
-      <path d="m-5-43 78-23V23L-5 51Z" fill="#86aaa7" />
+      <path d="M-71-70 7-96 73-68V22L-5 48-71 20Z" fill="#dfe9da" />
+      <path d="M-5-42 73-68V22L-5 48Z" fill="#86aaa7" />
       <path d="m-80-72 89-30 72 33-86 30Z" fill="#ffd06a" />
       <path d="m-5-39 86-30v13L-5-24Z" fill="#c48b39" />
       <path d="m-80-72 75 33v15l-75-34Z" fill="#f6ba4b" />
@@ -427,7 +447,7 @@ export function WarehouseModel({
         fill={color}
         stroke="none"
       />
-      <path d="M-61 17v13m49 3v12m72-25v12" stroke="#f5c45e" strokeWidth="7" />
+      <path d="M-61 24v13M-5 48v12M60 27v13" stroke="#f5c45e" strokeWidth="7" />
       <path
         d="m-63-78 68 29 63-21"
         fill="none"
@@ -458,9 +478,12 @@ export function WarehouseModel({
       )}
       {level >= 4 && (
         <g>
-          <path d="m-48-116 37-13 38 17v31l-38 14-37-16Z" fill="#478b92" />
-          <path d="m-48-116 37 17 38-13-38-17Z" fill="#b7f1d9" />
-          <path d="M-11-99v32m-25-42v23m12-18v23M5-99v23" stroke="#dfd5a2" />
+          <path d="M-65-114-23-129 16-112v31l-41 15-40-17Z" fill="#478b92" />
+          <path d="M-65-114-25-97 16-112-23-129Z" fill="#b7f1d9" />
+          <path
+            d="M-25-97v31M-53-108v22M-39-102v22M2-102v23"
+            stroke="#dfd5a2"
+          />
           <path d="M-72-58v80M76-56v79" stroke="#f1cd79" strokeWidth="7" />
         </g>
       )}
@@ -513,6 +536,7 @@ export function SubmarineModel({
       transform={`scale(${facingLeft ? -1 : 1} 1)`}
       stroke="#123c4b"
       strokeWidth="3"
+      strokeLinecap="round"
       strokeLinejoin="round"
     >
       <ellipse
@@ -542,7 +566,7 @@ export function SubmarineModel({
         </g>
       )}
       <path d="m-49-6-23-15v39l23-9" fill="#b9d9d3" />
-      <path d="m-69-15-7 31" stroke="#82a8ab" strokeWidth="5" />
+      <path d="M-74-13v28" stroke="#82a8ab" strokeWidth="5" />
       <path
         d="M-31-25h57q40 0 42 27-2 29-42 29h-57q-29 0-30-28 1-28 30-28Z"
         fill="url(#sub-shell)"
@@ -556,9 +580,9 @@ export function SubmarineModel({
       <path d="M-5-40v-13h15" fill="none" stroke="#cbe9db" strokeWidth="5" />
       <circle cx="36" cy="1" r="21" fill="#e2ead8" />
       <circle cx="36" cy="1" r="15" fill="url(#glass-dome)" />
-      <path d="M28-7q4-5 10-4" stroke="#ecfff3" strokeWidth="4" />
+      <path d="M28-7q4-5 10-4" fill="none" stroke="#ecfff3" strokeWidth="4" />
       <path d="M-35-11h23m-23 8h17" stroke="#aa8039" strokeWidth="3" />
-      <path d="M-23 35H29" stroke="#c9e8dd" strokeWidth="5" />
+      <path d="M-15 28v9M22 29v8M-23 37H29" stroke="#c9e8dd" strokeWidth="5" />
       <circle cx="-36" cy="13" r="5" fill="#fdf4bd" stroke="none" />
       {level >= 3 && (
         <g>
