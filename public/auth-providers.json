@@ -1,1 +1,1 @@
-{ "providers": ["custom:telegram"] }
+{ "providers": ["custom:telegram", "custom:steam"] }

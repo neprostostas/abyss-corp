@@ -2,17 +2,17 @@
 
 All native OAuth applications use `https://qduhqhhhsboljuipruvy.supabase.co/auth/v1/callback`. The website callback stays `https://abysscorp.us.ci/`. Secrets belong only in Supabase provider settings, never VITE variables, Git, or public/auth-providers.json.
 
-| Display name | Supabase ID       | Setup                                                                                                                                     |
-| ------------ | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Google       | `google`          | Configured and verified on production                                                                                                     |
-| Discord      | `discord`         | App `1564692722789515396`; enabled in Supabase; full player sign-in verification pending                                                  |
-| GitHub       | `github`          | OAuth app `3969507`; enabled in Supabase; full player sign-in verification pending                                                        |
-| Twitch       | `twitch`          | App `y6yltmiwz2g6zpvzmh65pbxb02sqn0`; enabled in Supabase; full player sign-in verification pending                                       |
-| Microsoft    | `azure`           | Entra app `5f5f27ee-c665-4dac-8130-1a5ef7b378d1`; all Microsoft account types; Supabase fields prepared; secret creation/transfer pending |
-| X / Twitter  | `x`               | OAuth 2.0 app; request confirmed email; developer onboarding pending                                                                      |
-| LinkedIn     | `linkedin_oidc`   | Excluded at the owner’s request                                                                                                           |
-| Telegram     | `custom:telegram` | OIDC enabled; bot `abysscorp_login_bot`; email optional; profile migration applied; production sign-in reached nickname onboarding        |
-| Steam        | `custom:steam`    | OpenID-to-OAuth bridge implemented; Netlify secret configured; Supabase credential transfer and end-to-end verification pending           |
+| Display name | Supabase ID       | Setup                                                                                                                                                            |
+| ------------ | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Google       | `google`          | Configured and verified on production                                                                                                                            |
+| Discord      | `discord`         | App `1564692722789515396`; enabled in Supabase; full player sign-in verification pending                                                                         |
+| GitHub       | `github`          | OAuth app `3969507`; enabled in Supabase; full player sign-in verification pending                                                                               |
+| Twitch       | `twitch`          | App `y6yltmiwz2g6zpvzmh65pbxb02sqn0`; enabled in Supabase; full player sign-in verification pending                                                              |
+| Microsoft    | `azure`           | Entra app `5f5f27ee-c665-4dac-8130-1a5ef7b378d1`; all Microsoft account types; enabled in Supabase; authorization redirect verified; full player sign-in pending |
+| X / Twitter  | `x`               | OAuth 2.0 app; request confirmed email; developer onboarding pending                                                                                             |
+| LinkedIn     | `linkedin_oidc`   | Excluded at the owner’s request                                                                                                                                  |
+| Telegram     | `custom:telegram` | OIDC enabled; bot `abysscorp_login_bot`; email optional; profile migration applied; production sign-in reached nickname onboarding                               |
+| Steam        | `custom:steam`    | OpenID-to-OAuth bridge implemented; Netlify secret configured; Supabase enabled; redirect to Steam verified; full player sign-in pending                         |
 
 Apple is excluded from the frontend catalog. Facebook remains disabled because the owner's account lacks the business verification required by Meta's current setup flow.
 
