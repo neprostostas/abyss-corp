@@ -92,3 +92,7 @@ export async function loadSocialProviders(): Promise<SocialProvider[]> {
   }
   return enabledProviders(settings, additional);
 }
+
+export function providerLabel(provider: SocialProvider | 'email') {
+  return provider === 'email' ? 'Email' : PROVIDER_LABELS[provider];
+}

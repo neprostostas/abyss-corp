@@ -1,3 +1,7 @@
+import {
+  beginProviderSignIn,
+  clearPendingProvider,
+} from '../../infrastructure/supabase/sessionProvider';
 import { Brand } from '../components/Brand';
 import { authReturnUrl } from '../../infrastructure/supabase/authRedirect';
 import { useEffect, useState } from 'react';
@@ -131,6 +135,7 @@ export function AuthScreen({
     setBusy(true);
     setError(null);
     try {
+      beginProviderSignIn(provider);
       const scopes = providerScopes(provider);
       const { error: failure } = await client.auth.signInWithOAuth({
         provider,
@@ -141,6 +146,7 @@ export function AuthScreen({
       });
       if (failure) throw failure;
     } catch {
+      clearPendingProvider();
       setError('Could not connect. Try again or use email.');
     } finally {
       setBusy(false);

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  accountProfileDetails,
   needsCaptainName,
   profileDetails,
   requestedCaptainName,
@@ -77,4 +78,34 @@ void test('Apple is removed and deployment additions cannot expose arbitrary pro
     ['google', 'x', 'custom:telegram', 'custom:steam'],
   );
   assert.deepEqual(enabledProviders({}, { 'custom:telegram': true }), []);
+});
+
+void test('linked provider photos fill missing account avatars and the current provider takes priority', () => {
+  const user = {
+    user_metadata: { name: 'Email captain' },
+    identities: [
+      {
+        provider: 'google',
+        identity_data: {
+          picture: 'https://images.example/google',
+          full_name: 'Google captain',
+        },
+      },
+      {
+        provider: 'custom:telegram',
+        identity_data: {
+          picture: 'https://images.example/telegram',
+          name: 'Telegram captain',
+        },
+      },
+    ],
+  };
+  assert.deepEqual(accountProfileDetails(user, 'email'), {
+    avatar: 'https://images.example/google',
+    fullName: 'Email captain',
+  });
+  assert.deepEqual(accountProfileDetails(user, 'custom:telegram'), {
+    avatar: 'https://images.example/telegram',
+    fullName: 'Telegram captain',
+  });
 });

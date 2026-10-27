@@ -706,3 +706,195 @@
     font-size: 26px;
   }
 }
+
+.profile-trigger-avatar {
+  position: relative;
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+.settings-trigger:has(.profile-trigger-avatar) {
+  padding: 4px;
+  overflow: visible;
+}
+.profile-trigger-avatar .account-avatar {
+  width: 32px;
+  height: 32px;
+  font-size: 13px;
+}
+.provider-badge {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  color: #fff;
+  background: #365a65;
+}
+.provider-badge svg {
+  width: 17px;
+  height: 17px;
+}
+.provider-google {
+  background: #fff;
+  color: #4285f4;
+}
+.provider-discord {
+  background: #5865f2;
+}
+.provider-github {
+  background: #24292f;
+}
+.provider-twitch {
+  background: #9146ff;
+}
+.provider-telegram {
+  background: #229ed9;
+}
+.provider-azure {
+  background: #0078d4;
+}
+.provider-linkedin_oidc {
+  background: #0a66c2;
+}
+.provider-x,
+.provider-steam {
+  background: #101820;
+}
+.provider-facebook {
+  background: #1877f2;
+}
+.provider-email {
+  background: #3e7068;
+}
+.profile-trigger-avatar > .provider-badge {
+  position: absolute;
+  right: -5px;
+  bottom: -4px;
+  width: 17px;
+  height: 17px;
+  border: 2px solid #173e4b;
+  border-radius: 50%;
+}
+.profile-trigger-avatar > .provider-badge svg {
+  width: 10px;
+  height: 10px;
+}
+.connected-accounts {
+  padding: 18px 0;
+  border-block: 1px solid #9cb7a42b;
+}
+.connections-heading {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.connections-heading h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.connections-heading > span {
+  color: #a6bcb9;
+  font-size: 11px;
+}
+.connection-list {
+  display: grid;
+  gap: 4px;
+}
+.connection-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 53px;
+  padding: 6px 0;
+}
+.connection-name {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+.connection-name strong {
+  font-size: 12px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.connection-name small {
+  color: #94acae;
+  font-size: 10px;
+}
+.is-connected .connection-name small {
+  color: #a7d2b8;
+}
+.connection-connect {
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border: 1px solid #9cb7a43b;
+  border-radius: 7px;
+  background: transparent;
+  color: #e3d4ad;
+  box-shadow: none;
+  font-size: 11px;
+}
+.connection-connect:hover {
+  background: #b9d1c510;
+}
+.connection-check {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  color: #a7d2b8;
+}
+.connection-check .game-icon {
+  width: 17px;
+  height: 17px;
+}
+.connection-email {
+  display: grid;
+  gap: 10px;
+  padding-top: 12px;
+}
+.connection-email label {
+  display: grid;
+  gap: 7px;
+  font-size: 12px;
+}
+.connection-email input {
+  width: 100%;
+  min-width: 0;
+}
+.connection-email button {
+  font-size: 12px;
+}
+.connection-notice {
+  color: #b6d6bf;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.connection-options summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0 4px;
+  color: #dfd2ae;
+  font-size: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+.connection-options summary::-webkit-details-marker {
+  display: none;
+}
+.connection-options summary .game-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 160ms ease;
+}
+.connection-options[open] summary {
+  padding-bottom: 12px;
+}
+.connection-options[open] summary .game-icon {
+  transform: rotate(90deg);
+}

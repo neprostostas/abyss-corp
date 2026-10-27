@@ -21,3 +21,7 @@ GoTrue's public `/settings` currently omits custom provider registrations and so
 Profile names supplied by identity providers stay private. Public captain names are always chosen by the player. Telegram profiles and progress use server-owned `auth.identities` rows with provider `custom:telegram`. Editable user metadata cannot provision players. Anonymous and banned accounts are excluded. Administrator access still requires a confirmed email. No placeholder email is invented. Other email-less providers must receive an explicit backend review before activation.
 
 Provider icon paths for Discord, GitHub, Telegram, Steam, Twitch and X come from [Simple Icons](https://github.com/simple-icons/simple-icons), under CC0. SVGs are rendered locally without third-party icon requests.
+
+Manual identity linking is enabled in Supabase. The profile lists connected identities and offers enabled providers under “Connect another account”. Linking uses `auth.linkIdentity`, flushes the current save before redirecting and keeps the same player account. An identity already owned by another player is rejected rather than merging saves. Email association requires email confirmation.
+
+The header avatar carries a session provider badge. Its local session label is cosmetic only and never authorizes access; linked identities are read from Supabase Auth.

@@ -1,3 +1,8 @@
+import { sessionProvider } from '../infrastructure/supabase/sessionProvider';
+import type { LoginProvider } from '../infrastructure/supabase/sessionProvider';
+import { accountProfileDetails } from '../domain/profile';
+import { ProfileAvatar } from '../ui/account/ProfileAvatar';
+import { ProviderBadge } from '../ui/account/ProviderBadge';
 import { GuestGame } from './GuestGame';
 import { GuestSaveRepository } from '../infrastructure/persistence/GuestSaveRepository';
 import { ProfileGate } from '../ui/account/ProfileGate';
@@ -42,10 +47,12 @@ function AccountGame({
   user,
   captainName,
   onRename,
+  loginProvider,
 }: {
   client: SupabaseClient<Database>;
   user: User;
   captainName: string;
+  loginProvider: LoginProvider | null;
   onRename: (name: string) => Promise<void>;
 }) {
   const [runtime] = useState(() => {
@@ -111,6 +118,8 @@ function AccountGame({
   const account = (
     <AccountPanel
       isAdmin={isAdmin}
+      client={client}
+      currentProvider={loginProvider}
       user={user}
       captainName={captainName}
       onRename={onRename}
@@ -139,6 +148,15 @@ function AccountGame({
       <GameScreen
         session={session}
         accountPanel={account}
+        profileTrigger={
+          <span className="profile-trigger-avatar">
+            <ProfileAvatar
+              name={captainName}
+              url={accountProfileDetails(user, loginProvider).avatar}
+            />
+            {loginProvider && <ProviderBadge provider={loginProvider} />}
+          </span>
+        }
         cloud={cloud}
         leaderboardPanel={
           <LeaderboardPanel
@@ -178,6 +196,9 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
     }
   };
   const [user, setUser] = useState<User | null>(null);
+  const [loginProvider, setLoginProvider] = useState<LoginProvider | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(() =>
     new URLSearchParams(window.location.hash.slice(1)).has('error_description')
@@ -196,6 +217,7 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
       if (!live) return;
       if (event === 'PASSWORD_RECOVERY') setRecovery(true);
       setUser(session?.user ?? null);
+      setLoginProvider(session ? sessionProvider(session) : null);
       if (session?.user) {
         setGuest(false);
         try {
@@ -297,16 +319,32 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
       </Suspense>
     );
   return (
-    <ProfileGate key={user.id} client={client} user={user}>
-      {(captainName, onRename) => (
-        <AccountGame
-          client={client}
-          user={user}
-          captainName={captainName}
-          onRename={onRename}
-        />
+    <>
+      {error && (
+        <div className="auth-banner" role="alert">
+          {error}
+          <button
+            className="text-button"
+            onClick={() => {
+              setError(null);
+            }}
+          >
+            Dismiss
+          </button>
+        </div>
       )}
-    </ProfileGate>
+      <ProfileGate key={user.id} client={client} user={user}>
+        {(captainName, onRename) => (
+          <AccountGame
+            client={client}
+            user={user}
+            loginProvider={loginProvider}
+            captainName={captainName}
+            onRename={onRename}
+          />
+        )}
+      </ProfileGate>
+    </>
   );
 }
 

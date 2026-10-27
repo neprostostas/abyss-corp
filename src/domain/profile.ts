@@ -40,3 +40,36 @@ export function profileDetails(metadata: Record<string, unknown>) {
     fullName: typeof name === 'string' ? name.slice(0, 150) : null,
   };
 }
+
+export function accountProfileDetails(
+  user: {
+    user_metadata: Record<string, unknown>;
+    identities?: {
+      provider: string;
+      identity_data?: Record<string, unknown>;
+    }[];
+  },
+  current: string | null,
+) {
+  const identities = user.identities ?? [];
+  const active = profileDetails(
+    identities.find((identity) => identity.provider === current)
+      ?.identity_data ?? {},
+  );
+  const primary = profileDetails(user.user_metadata);
+  const others = identities.map((identity) =>
+    profileDetails(identity.identity_data ?? {}),
+  );
+  return {
+    avatar:
+      active.avatar ??
+      primary.avatar ??
+      others.find((details) => details.avatar)?.avatar ??
+      null,
+    fullName:
+      active.fullName ??
+      primary.fullName ??
+      others.find((details) => details.fullName)?.fullName ??
+      null,
+  };
+}

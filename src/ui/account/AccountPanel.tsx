@@ -1,5 +1,9 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../infrastructure/supabase/database.types';
+import type { LoginProvider } from '../../infrastructure/supabase/sessionProvider';
+import { ConnectedAccounts } from './ConnectedAccounts';
 import type { User } from '@supabase/supabase-js';
-import { profileDetails } from '../../domain/profile';
+import { accountProfileDetails } from '../../domain/profile';
 import { ProfileAvatar } from './ProfileAvatar';
 import { visitorAnalytics } from '../../infrastructure/analytics/VisitorAnalytics';
 import { useState, useSyncExternalStore } from 'react';
@@ -8,6 +12,8 @@ import { GameIcon } from '../components/GameIcon';
 
 export function AccountPanel({
   user,
+  client,
+  currentProvider,
   captainName,
   onRename,
   repository,
@@ -16,6 +22,8 @@ export function AccountPanel({
   isAdmin,
 }: {
   user: User;
+  client: SupabaseClient<Database>;
+  currentProvider: LoginProvider | null;
   captainName: string;
   onRename: (name: string) => Promise<void>;
   isAdmin: boolean;
@@ -23,7 +31,7 @@ export function AccountPanel({
   onSave: () => Promise<void>;
   onSignOut: () => Promise<void>;
 }) {
-  const details = profileDetails(user.user_metadata);
+  const details = accountProfileDetails(user, currentProvider);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(captainName);
   const cloud = useSyncExternalStore(
@@ -53,7 +61,7 @@ export function AccountPanel({
         <div className="profile-identity">
           <strong>{captainName}</strong>
           {details.fullName && <span>{details.fullName}</span>}
-          <small>{user.email ?? 'Connected account'}</small>
+          {user.email && <small>{user.email}</small>}
         </div>
         <button
           className={`account-sync${failed ? ' sync-failed' : ''}`}
@@ -127,6 +135,12 @@ export function AccountPanel({
           {failed}
         </p>
       )}
+      <ConnectedAccounts
+        client={client}
+        user={user}
+        current={currentProvider}
+        onSave={onSave}
+      />
       <nav className="settings-actions" aria-label="Account">
         <a href="/reset-password">
           <GameIcon name="lock" />

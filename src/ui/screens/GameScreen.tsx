@@ -55,6 +55,7 @@ const phaseNames = {
 interface GameScreenProps {
   session: GameSession;
   accountPanel: ReactNode;
+  profileTrigger?: ReactNode;
   leaderboardPanel: ReactNode;
   cloud: AccountSaveSnapshot;
 }
@@ -67,6 +68,7 @@ export function GameScreen(props: GameScreenProps) {
 function GameBoard({
   session,
   accountPanel,
+  profileTrigger,
   leaderboardPanel,
   cloud,
   snapshot,
@@ -77,7 +79,25 @@ function GameBoard({
     sellRef,
     play: playSaleFeedback,
   } = useSaleFeedback(world.selectedLayerId);
-  const drawer = useGameDrawer<WindowName>();
+  const drawer = useGameDrawer<WindowName>(
+    (() => {
+      try {
+        return window.sessionStorage.getItem('abyss-corp.show-connections') ===
+          '1'
+          ? 'settings'
+          : undefined;
+      } catch {
+        return undefined;
+      }
+    })(),
+  );
+  useEffect(() => {
+    try {
+      window.sessionStorage.removeItem('abyss-corp.show-connections');
+    } catch {
+      /* Optional return navigation. */
+    }
+  }, []);
   const windowName = drawer.name;
   const [selected, setSelected] = useState<UpgradeId | null>(null);
   const [saleFlash, setSaleFlash] = useState<{
@@ -193,7 +213,7 @@ function GameBoard({
             drawer.toggle('settings');
           }}
         >
-          <GameIcon name="profile" />
+          {profileTrigger ?? <GameIcon name="profile" />}
         </button>
       </header>
       <section className="ocean-stage" aria-label={layer.name}>

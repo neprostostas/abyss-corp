@@ -6,8 +6,10 @@ interface DrawerState<Name extends string> {
   phase: 'opening' | 'open' | 'closing';
 }
 
-export function useGameDrawer<Name extends string>() {
-  const [state, setState] = useState<DrawerState<Name> | null>(null);
+export function useGameDrawer<Name extends string>(initialName?: Name) {
+  const [state, setState] = useState<DrawerState<Name> | null>(() =>
+    initialName ? { name: initialName, phase: 'opening' } : null,
+  );
   useEffect(() => {
     if (!state) return undefined;
     if (state.phase === 'opening') {

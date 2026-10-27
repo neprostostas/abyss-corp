@@ -299,3 +299,39 @@ void test('a single active provider does not expose an empty extra-options contr
   assert.equal(providerScopes('custom:telegram'), 'openid profile');
   await reset();
 });
+
+void test('linked providers remain visible when disabled for new sign-ins, with the current session clearly marked', async () => {
+  const { ConnectedAccounts } =
+    await import('../src/ui/account/ConnectedAccounts');
+  const user = {
+    id: 'player',
+    identities: [{ provider: 'custom:telegram', identity_id: 'tg' }],
+    user_metadata: {},
+    app_metadata: {},
+  } as unknown as User;
+  const client = {
+    auth: {
+      getUserIdentities: () =>
+        Promise.resolve({ data: { identities: user.identities }, error: null }),
+    },
+  } as unknown as SupabaseClient<Database>;
+  await ui(() => {
+    root.render(
+      createElement(ConnectedAccounts, {
+        client,
+        user,
+        current: 'custom:telegram',
+        onSave: () => Promise.resolve(),
+      }),
+    );
+  });
+  assert(document.querySelector('.provider-telegram svg'));
+  assert(document.querySelector('[aria-label="Telegram connected"]'));
+  assert.equal(document.querySelector('[aria-label="Connect Telegram"]'), null);
+  assert.match(
+    document.querySelector('.connection-list')?.textContent ?? '',
+    /TelegramCurrent session/,
+  );
+  assert(document.querySelector('[aria-label="Connect Email"]'));
+  await reset();
+});
