@@ -4,10 +4,10 @@
 
 - Supabase: **abyss-corp**, регіон Frankfurt, ID `qduhqhhhsboljuipruvy`.
 - PostgreSQL: профілі, збереження за акаунтом, ревізії, правила доступу й адмінські дозволи. Міграції у `supabase/migrations` вже застосовані до цього проєкту.
-- Netlify: **abyss-corp**, адреса `https://abyss-corp.netlify.app`.
+- Netlify: **abyss-corp**, основна адреса `https://abysscorp.us.ci` (резервна `https://abyss-corp.netlify.app`).
 - GitHub-підключення: `neprostostas/abyss-corp`, гілка `main`, build `npm run build`, publish `dist`.
 - Preview для перевірки: [account-preview--abyss-corp.netlify.app](https://account-preview--abyss-corp.netlify.app), з тією ж акаунтною базою.
-- Supabase Site URL: `https://abyss-corp.netlify.app`; дозволені тільки точні `/` та `/reset-password` на основному сайті й account-preview. Localhost і wildcard-адреси видалено.
+- Supabase Site URL: `https://abysscorp.us.ci`; дозволені тільки точні `/` та `/reset-password` на основному сайті, старій Netlify-адресі й account-preview. Localhost і wildcard-адреси видалено.
 
 Основний сайт оновлюється через commit/push у `main` та автоматичну збірку Netlify. Preview використовується для перевірки перед основною публікацією.
 

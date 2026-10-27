@@ -75,6 +75,7 @@ export class VisitorAnalytics {
     if (
       this.state.consent !== 'accepted' ||
       ![
+        'abysscorp.us.ci',
         'abyss-corp.netlify.app',
         'account-preview--abyss-corp.netlify.app',
       ].includes(location.hostname)
@@ -113,10 +114,11 @@ export class VisitorAnalytics {
           ? 'Mobile'
           : 'Desktop',
         app: 'abyss-corp',
-        environment:
-          location.hostname === 'abyss-corp.netlify.app'
-            ? 'production'
-            : 'preview',
+        environment: ['abysscorp.us.ci', 'abyss-corp.netlify.app'].includes(
+          location.hostname,
+        )
+          ? 'production'
+          : 'preview',
         consent_version: 1,
       },
     });

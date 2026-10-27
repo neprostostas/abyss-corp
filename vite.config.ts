@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 const functionsProxy = {
   '/.netlify/functions': {
-    target: 'https://abyss-corp.netlify.app',
+    target: 'https://abysscorp.us.ci',
     changeOrigin: true,
     secure: true,
   },

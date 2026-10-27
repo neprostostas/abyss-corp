@@ -1,5 +1,6 @@
 const previewOrigin = 'https://account-preview--abyss-corp.netlify.app';
 const allowedOrigins = new Set([
+  'https://abysscorp.us.ci',
   'https://abyss-corp.netlify.app',
   previewOrigin,
 ]);
