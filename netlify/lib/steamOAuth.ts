@@ -21,7 +21,7 @@ const flowSchema = z.object({
   used: z.boolean(),
 });
 const profileSchema = z.object({
-  sub: z.string().regex(/^7656119\d{10}$/),
+  sub: z.string().regex(/^\d{17}$/),
   name: z.string(),
   picture: z.string().optional(),
 });
@@ -176,7 +176,7 @@ export function createSteamHandler(deps: Dependencies) {
         }
         const claimed = params.get('openid.claimed_id') ?? '';
         const steamId =
-          /^https:\/\/steamcommunity\.com\/openid\/id\/(7656119\d{10})$/.exec(
+          /^https:\/\/steamcommunity\.com\/openid\/id\/(\d{17})$/.exec(
             claimed,
           )?.[1];
         const nonce = params.get('openid.response_nonce') ?? '';
