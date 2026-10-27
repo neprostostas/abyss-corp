@@ -18,3 +18,5 @@ createRoot(root).render(
 );
 
 import '../ui/styles/analytics.css';
+
+import '../ui/styles/polish.css';

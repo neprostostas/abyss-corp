@@ -48,11 +48,6 @@ const compact = new Intl.NumberFormat('en-US', {
   notation: 'compact',
   maximumFractionDigits: 1,
 });
-const phaseNames = {
-  mining: 'Mining',
-  delivering: 'Delivering',
-  returning: 'Returning',
-};
 interface GameScreenProps {
   session: GameSession;
   accountPanel: ReactNode;
@@ -170,8 +165,7 @@ function GameBoard({
           : null;
   const stateLabel = !game.running
     ? 'Paused'
-    : (firstStepLabel ??
-      (bottleneck ? bottleneckLabels[bottleneck] : phaseNames[game.phase]));
+    : (firstStepLabel ?? (bottleneck ? bottleneckLabels[bottleneck] : null));
   const guidedUpgrade =
     firstStep?.kind === 'upgrade' ? firstStep.upgradeId : null;
   const sell = () => {
@@ -223,22 +217,13 @@ function GameBoard({
       <section className="ocean-stage" aria-label={layer.name}>
         {status === 'ready' && (
           <>
-            <div className="location-hud">
-              <span className="location-marker" />
-              <div>
-                <h1>{layer.name}</h1>
-                <span
-                  id="production-status"
-                  className={
-                    bottleneck || firstStep ? 'production-limited' : undefined
-                  }
-                  role={firstStep ? 'status' : undefined}
-                >
-                  <i className={game.running ? 'running-dot' : ''} />
+            {stateLabel && (
+              <div className="location-hud production-hint">
+                <span id="production-status" role="status">
                   {stateLabel}
                 </span>
               </div>
-            </div>
+            )}
             <DepthNavigation
               world={world}
               onSelect={session.select}
@@ -256,13 +241,15 @@ function GameBoard({
               bottleneck={guidedUpgrade ?? bottleneck}
               onSelect={setSelected}
             />
-            {offlineReport && (
-              <div className="offline-toast" role="status">
+            {offlineReport && offlineReport.credits > 0 && (
+              <div
+                className="offline-toast"
+                role="status"
+                aria-label={`${compact.format(offlineReport.credits)} credits earned while away`}
+                title="Offline earnings"
+              >
                 <GameIcon name="coin" />
-                <div>
-                  <strong>+{compact.format(offlineReport.credits)} CR</strong>
-                  <span>While you were away</span>
-                </div>
+                <strong>+{compact.format(offlineReport.credits)}</strong>
                 <button
                   className="icon-button"
                   aria-label="Dismiss offline report"
@@ -346,6 +333,7 @@ function GameBoard({
               key={name}
               className={`dock-button${drawer.open && windowName === name ? ' active-room' : ''}${badges[name] ? ' has-opportunity' : ''}${name === 'crew' && automation?.enabled ? ' crew-active' : ''}`}
               aria-expanded={drawer.open && windowName === name}
+              aria-label={windows[name].title}
               title={
                 badges[name]
                   ? `${windows[name].title}: ${String(badges[name])} available`
@@ -366,7 +354,9 @@ function GameBoard({
                   </b>
                 )}
               </span>
-              <span>{windows[name].title}</span>
+              <span className="dock-label" aria-hidden="true">
+                {windows[name].title}
+              </span>
             </button>
           ),
         )}

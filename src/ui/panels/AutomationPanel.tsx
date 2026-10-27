@@ -29,7 +29,7 @@ export function AutomationPanel({
           <h3>Cargo pilot</h3>
           <p>
             Auto-sells cargo<span className="crew-offline">, even offline</span>
-            . Higher levels sell more often to keep small warehouses clear.
+            .
           </p>
         </div>
       </div>

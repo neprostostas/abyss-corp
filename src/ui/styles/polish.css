@@ -1,0 +1,355 @@
+/* Shared panel rhythm and quiet, stationary controls. */
+.game-panel .panel-heading {
+  padding: 16px 16px 10px;
+  gap: 10px;
+}
+.game-panel .panel-content {
+  padding: 12px 16px 20px;
+}
+.game-panel .panel-heading h2 {
+  font-size: 23px;
+  letter-spacing: -0.4px;
+}
+.game-panel .panel-heading > .game-icon {
+  width: 26px;
+  height: 26px;
+}
+.game-panel .panel-heading .icon-button {
+  width: 44px;
+  height: 44px;
+  padding: 12px;
+  border: 0;
+  box-shadow: none;
+}
+.game-panel
+  :is(
+    .settings-control,
+    .profile-rename,
+    .settings-signout,
+    .settings-actions a,
+    .settings-actions button
+  ) {
+  min-height: 46px;
+  padding: 11px 12px;
+  gap: 12px;
+  border-radius: 11px;
+  box-shadow: none;
+}
+.game-panel :is(.profile-edit, .connection-email) button {
+  min-height: 44px;
+  box-shadow: none;
+  text-decoration: none;
+}
+.game-panel .profile-edit > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.game-panel
+  :is(
+    .profile-section-content,
+    .connection-list,
+    .leaderboard-panel,
+    .mission-list
+  ) {
+  gap: 10px;
+}
+.game-panel .connection-row {
+  min-height: 60px;
+  padding: 8px 12px;
+  gap: 10px;
+  border-radius: 11px;
+}
+.game-panel .connection-name {
+  gap: 3px;
+}
+.game-panel .connection-name strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.game-panel .connection-name small {
+  font-size: 10px;
+  color: var(--ocean-panel-accent);
+}
+.game-panel .connection-connect {
+  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.game-panel .connection-options {
+  min-width: 0;
+}
+.game-panel .connection-options summary {
+  min-height: 46px;
+  padding: 12px;
+  border-radius: 11px;
+  font-size: 12px;
+  color: #c7d9d5;
+  background: color-mix(
+    in srgb,
+    var(--ocean-panel-bottom) 68%,
+    var(--ocean-panel-top)
+  );
+}
+.game-panel .connection-available {
+  display: grid;
+  gap: 8px;
+  padding-top: 8px;
+}
+.game-panel .connection-options[open] summary {
+  padding: 12px;
+}
+.game-panel .research-card {
+  padding: 14px;
+  gap: 8px 12px;
+}
+.game-panel .mission-row {
+  padding: 14px;
+}
+.game-panel button:hover:not(:disabled),
+.game-panel button:active:not(:disabled) {
+  transform: none;
+}
+.game-panel .profile-edit .text-button {
+  padding-inline: 12px;
+}
+.game-panel :is(.form-error, .connection-notice, .crew-description p) {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* A small receipt rather than a second information panel. */
+.game-shell .offline-toast {
+  top: 12px;
+  left: auto;
+  right: 16px;
+  transform: none;
+  gap: 8px;
+  max-width: calc(100% - 32px);
+  min-height: 44px;
+  padding: 0 0 0 12px;
+  border: 1px solid
+    color-mix(in srgb, var(--ocean-panel-accent) 20%, transparent);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 92%, transparent);
+  color: #f4dda3;
+  box-shadow: 0 4px 18px #051c2820;
+}
+.game-shell .offline-toast > .game-icon {
+  width: 18px;
+  height: 18px;
+  color: #edcd82;
+}
+.game-shell .offline-toast strong {
+  font: 650 15px var(--font-body);
+  font-variant-numeric: tabular-nums;
+}
+.game-shell .offline-toast .icon-button {
+  width: 44px;
+  height: 44px;
+  padding: 14px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #b6cdcc;
+  box-shadow: none;
+}
+.game-shell .production-hint {
+  top: 16px;
+  max-width: min(280px, calc(100% - 115px));
+  color: #d4e5df;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 75%, transparent);
+}
+
+/* Editorial wordmark; the emblem provides the game character. */
+.brand-lockup .brand-name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-body);
+  line-height: 1;
+  white-space: nowrap;
+}
+.brand-lockup .brand-name > span {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
+.brand-lockup .brand-name > small {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #b5cec9;
+}
+.game-hud .brand-name > span {
+  font-size: 16px;
+  letter-spacing: -0.55px;
+}
+.game-hud .brand-name > small {
+  font-size: 8px;
+  letter-spacing: 1.2px;
+}
+
+/* Compact horizontal navigation; only the selected destination gets a marker. */
+.game-shell > .game-dock {
+  container: dock / inline-size;
+  gap: 6px;
+  padding-inline: 12px;
+}
+.game-dock .dock-button {
+  flex-direction: row;
+  gap: 8px;
+  width: auto;
+  min-width: 100px;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  color: #a9c4c7;
+  font: 600 12px var(--font-body);
+  letter-spacing: 0;
+  text-shadow: none;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+.game-dock .dock-icon {
+  width: 22px;
+  height: 22px;
+  color: inherit;
+  transform: none;
+  filter: none;
+}
+.game-dock .dock-icon .game-icon {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.8;
+}
+.game-dock .dock-button.active-room {
+  color: #f3e2b4;
+  background: transparent;
+  font-weight: 600;
+}
+.game-dock .dock-button.active-room .dock-icon {
+  color: inherit;
+}
+.game-dock .dock-button.active-room::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: calc(50% - 2px);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.game-dock .dock-button.has-opportunity .dock-icon {
+  color: #d4e5df;
+}
+.game-dock .notification-badge {
+  top: -7px;
+  right: -6px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 5px;
+  font-size: 8px;
+  box-shadow: none;
+}
+.game-dock .dock-button:hover .dock-icon {
+  transform: none;
+  filter: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  button:hover:not(:disabled) {
+    transform: none;
+    filter: brightness(1.06);
+  }
+  .game-panel button:hover:not(:disabled) {
+    filter: brightness(1.06);
+  }
+  .game-dock .dock-button:hover:not(:disabled) {
+    transform: none;
+    filter: none;
+    color: #edf1e6;
+    background: #c7ebe80c;
+  }
+  .game-panel .connection-options summary:hover {
+    background: var(--ocean-panel-top);
+  }
+}
+@media (hover: none) {
+  .game-panel button:hover:not(:disabled),
+  .game-dock .dock-button:hover:not(:disabled) {
+    transform: none;
+    filter: none;
+  }
+}
+@media (max-width: 520px) {
+  .game-hud .brand-name {
+    gap: 4px;
+  }
+  .game-hud .brand-name > span {
+    font-size: 15px;
+  }
+  .game-hud .brand-name > small {
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+  .game-shell > .game-dock {
+    gap: 0;
+    padding-inline: 8px;
+    justify-content: space-evenly;
+  }
+  .game-dock .dock-button {
+    min-width: 0;
+    min-height: 46px;
+    padding: 10px 4px;
+    gap: 5px;
+    font-size: 10px;
+  }
+  .game-dock .dock-icon,
+  .game-dock .dock-icon .game-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .game-shell .offline-toast {
+    right: 12px;
+    top: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-dock .dock-button {
+    transition: none;
+  }
+}
+
+@container dock (max-width: 540px) {
+  .game-dock .dock-button {
+    min-width: 0;
+    padding-inline: 6px;
+    gap: 6px;
+    font-size: 11px;
+  }
+}
+@container dock (max-width: 360px) {
+  .game-dock .dock-button {
+    min-width: 0;
+    padding-inline: 4px;
+    gap: 5px;
+    font-size: 10px;
+  }
+  .game-dock .dock-icon,
+  .game-dock .dock-icon .game-icon {
+    width: 18px;
+    height: 18px;
+  }
+}

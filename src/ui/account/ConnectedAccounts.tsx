@@ -101,17 +101,7 @@ export function ConnectedAccounts({
         <ProviderBadge provider={value} />
         <div className="connection-name">
           <strong>{providerLabel(value)}</strong>
-          {(active || linked || value === 'email') && (
-            <small>
-              {active
-                ? 'Current session'
-                : linked
-                  ? 'Connected'
-                  : value === 'email'
-                    ? 'Email & password'
-                    : ''}
-            </small>
-          )}
+          {active && <small>Current</small>}
         </div>
         {linked ? (
           <span
@@ -140,9 +130,6 @@ export function ConnectedAccounts({
     value === 'email' ? emailConnected : connected.has(value);
   return (
     <section className="connected-accounts" aria-label="Sign-in methods">
-      <div className="connections-heading">
-        <h3>Sign-in methods</h3>
-      </div>
       <div className="connection-list">
         {methods.filter(isLinked).map(row)}
         {methods.some((value) => !isLinked(value)) && (
@@ -153,9 +140,11 @@ export function ConnectedAccounts({
             }}
           >
             <summary>
-              Connect another account <GameIcon name="arrow" />
+              Add sign-in method <GameIcon name="arrow" />
             </summary>
-            {methods.filter((value) => !isLinked(value)).map(row)}
+            <div className="connection-available">
+              {methods.filter((value) => !isLinked(value)).map(row)}
+            </div>
           </details>
         )}
       </div>

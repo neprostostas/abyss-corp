@@ -337,7 +337,7 @@ void test('linked providers remain visible when disabled for new sign-ins, with 
   assert.equal(document.querySelector('[aria-label="Connect Telegram"]'), null);
   assert.match(
     document.querySelector('.connection-list')?.textContent ?? '',
-    /TelegramCurrent session/,
+    /TelegramCurrent/,
   );
   assert(document.querySelector('[aria-label="Connect Email"]'));
   await reset();
