@@ -43,6 +43,7 @@ export class AccountSaveRepository implements AccountSavePort {
     private readonly client: SupabaseClient<Database>,
     readonly userId: string,
     private readonly storage: () => Storage,
+    private readonly initialSave?: () => Promise<GameSave | null>,
   ) {
     this.key = `abyss-corp.account.${userId}`;
   }
@@ -164,7 +165,9 @@ export class AccountSaveRepository implements AccountSavePort {
       if (local?.pendingWrite && remote?.write_id === local.pendingWrite.id) {
         local = {
           revision: remote.revision,
-          dirty: local.dirty,
+          dirty:
+            JSON.stringify(local.save) !==
+            JSON.stringify(local.pendingWrite.save),
           save: local.save,
         };
       }
@@ -190,6 +193,11 @@ export class AccountSaveRepository implements AccountSavePort {
         );
         if (save !== selected.save)
           selected = { save, revision: selected.revision, dirty: true };
+      }
+      if (!selected && this.initialSave) {
+        const initial = await this.initialSave();
+        if (initial)
+          selected = { save: validateSave(initial), revision: 0, dirty: true };
       }
       if (selected) this.store(selected);
       else {

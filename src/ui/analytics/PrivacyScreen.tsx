@@ -6,14 +6,23 @@ export function PrivacyScreen() {
       <h1>Privacy & cookies</h1>
       <p>
         Abyss Corp uses Supabase for accounts and saved progress. Email, account
-        ID and game saves are stored there. Passwords are handled by Supabase
-        Auth; they are never included in analytics.
+        ID, nickname and game saves are stored there. Passwords are handled by
+        Supabase Auth; they are never included in analytics.
       </p>
       <h2>Essential storage</h2>
       <p>
-        Browser storage keeps your sign-in session, account-specific progress
-        and cookie choice. It is required for those features. Transactional
-        confirmation and recovery emails are delivered through Brevo.
+        Browser storage keeps guest progress, a guest transfer backup, your
+        sign-in session, account-specific progress and cookie choice. It is
+        required for those features. Transactional confirmation and recovery
+        emails are delivered through Brevo.
+      </p>
+      <h2>Profile</h2>
+      <p>
+        Your nickname is visible on the leaderboard. When you use a connected
+        social sign-in provider, we display the name and photo it supplies in
+        your private profile. Loading that photo contacts the provider’s image
+        server. Email sign-in does not give us access to your email account’s
+        photo.
       </p>
       <h2>Optional analytics</h2>
       <p>

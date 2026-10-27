@@ -60,5 +60,10 @@ export class PlayerClient implements PlayerGateway {
       .select('id')
       .single();
     if (error) throw new Error('Could not save your captain name. Try again.');
+    const { error: profileError } = await this.client.auth.updateUser({
+      data: { captain_name: captainName, captain_name_confirmed: true },
+    });
+    if (profileError)
+      throw new Error('Nickname saved. Retry to finish updating your profile.');
   }
 }

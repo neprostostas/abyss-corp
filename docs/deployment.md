@@ -21,7 +21,7 @@ Netlify віддає статичну гру. Supabase Auth перевіряє �
 
 Для початкового завантаження акаунта потрібен інтернет. Уже завантажена гра працює під час тимчасової втрати зв'язку та відновлює синхронізацію при поверненні мережі. Не очищуйте сховище браузера, доки є несинхронізований прогрес.
 
-Старе браузерне збереження не видалене. В **Settings → Import previous device progress** можна явно перенести його в поточний акаунт. Перед заміною створюється резервна копія. Інший акаунт не отримує цей прогрес автоматично.
+**Quick play** запускає гру без реєстрації й зберігає прогрес у браузері. При вході в акаунт без власного save гостьовий прогрес переноситься зі збереженням локальної копії. Існуючий акаунт завантажує свій cloud save. Перенесення прив’язується до одного акаунта; повторний вхід не дублює валюту. Для перенесення грайте й авторизуйтесь на основному домені в одному браузері.
 
 ## Перегляд бази
 
@@ -120,3 +120,15 @@ docker run --rm -p 5173:80 ghcr.io/neprostostas/abyss-corp:latest
 ```
 
 The image contains the frontend and Nginx. Public frontend settings come from `netlify.toml` during the build; local `.env` files are excluded. Accounts and saves use the existing Supabase project. Private analytics requests pass through to the existing Netlify function with its normal administrator checks. No database or private provider keys are bundled. Email links use the configured Supabase redirect destinations. Container hosting does not replace those external services.
+
+## Google, Apple і Facebook
+
+Стан перевірено через `/auth/v1/settings`: усі три провайдери вимкнені. Код підтримує їх і показує кнопки лише після активації в [Supabase Providers](https://supabase.com/dashboard/project/qduhqhhhsboljuipruvy/auth/providers). Наявність кнопки означає увімкнений провайдер, але працездатність його credentials потребує реального тестового входу.
+
+Для кожного OAuth-застосунку callback: `https://qduhqhhhsboljuipruvy.supabase.co/auth/v1/callback`. Після успіху гра повертає на `https://abysscorp.us.ci/`.
+
+- [Google](https://supabase.com/docs/guides/auth/social-sign-in/auth-google): налаштувати OAuth consent screen і Web client, додати callback, записати client ID/secret в Supabase; перевести застосунок у відповідний production-режим.
+- [Apple](https://supabase.com/docs/guides/auth/social-sign-in/auth-apple): потрібні Apple Developer налаштування, Services ID, Team ID і signing key; web client secret потрібно поновлювати кожні 6 місяців. Apple OAuth не передає аватар і повне ім’я.
+- [Facebook](https://supabase.com/docs/guides/auth/social-sign-in/auth-facebook): налаштувати Meta app, Facebook Login, callback та email/public_profile permissions; записати app ID/secret у Supabase і забезпечити доступ для звичайних користувачів, не лише тестерів.
+
+Секрети вводяться тільки в панелі провайдерів/Supabase, ніколи в Git чи VITE-змінні. Email-реєстрація вимагає nickname; social та старі акаунти без обраного nickname проходять короткий onboarding. Профіль і рейтинг використовують один captain_name. Фото підтягується тільки коли провайдер його надає; email-логін не має доступу до фото поштового профілю.

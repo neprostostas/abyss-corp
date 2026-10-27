@@ -1,21 +1,31 @@
+import type { User } from '@supabase/supabase-js';
+import { profileDetails } from '../../domain/profile';
+import { ProfileAvatar } from './ProfileAvatar';
 import { visitorAnalytics } from '../../infrastructure/analytics/VisitorAnalytics';
 import { useState, useSyncExternalStore } from 'react';
 import type { AccountSaveRepository } from '../../application/accountPorts';
 import { GameIcon } from '../components/GameIcon';
 
 export function AccountPanel({
-  email,
+  user,
+  captainName,
+  onRename,
   repository,
   onSave,
   onSignOut,
   isAdmin,
 }: {
-  email: string;
+  user: User;
+  captainName: string;
+  onRename: (name: string) => Promise<void>;
   isAdmin: boolean;
   repository: AccountSaveRepository;
   onSave: () => Promise<void>;
   onSignOut: () => Promise<void>;
 }) {
+  const details = profileDetails(user.user_metadata);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(captainName);
   const cloud = useSyncExternalStore(
     repository.subscribe,
     repository.getSnapshot,
@@ -39,10 +49,12 @@ export function AccountPanel({
   return (
     <section className="account-settings" aria-label="Account settings">
       <div className="account-summary" aria-busy={syncing}>
-        <span className="account-avatar">
-          <GameIcon name="profile" />
-        </span>
-        <strong>{email}</strong>
+        <ProfileAvatar name={captainName} url={details.avatar} />
+        <div className="profile-identity">
+          <strong>{captainName}</strong>
+          {details.fullName && <span>{details.fullName}</span>}
+          <small>{user.email ?? 'Connected account'}</small>
+        </div>
         <button
           className={`account-sync${failed ? ' sync-failed' : ''}`}
           aria-label={failed ? 'Retry sync' : 'Sync progress'}
@@ -58,6 +70,58 @@ export function AccountPanel({
           )}
         </button>
       </div>
+      {editing ? (
+        <form
+          className="profile-edit"
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (busy) return;
+            void run(async () => {
+              await onRename(draft);
+              setEditing(false);
+            });
+          }}
+        >
+          <label htmlFor="profile-nickname">Nickname</label>
+          <input
+            id="profile-nickname"
+            autoComplete="nickname"
+            required
+            maxLength={48}
+            value={draft}
+            disabled={busy}
+            onChange={(event) => {
+              setDraft(event.target.value);
+            }}
+          />
+          <small>3–24 characters</small>
+          <div>
+            <button disabled={busy}>Save</button>
+            <button
+              type="button"
+              className="text-button"
+              disabled={busy}
+              onClick={() => {
+                setEditing(false);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button
+          className="profile-rename"
+          onClick={() => {
+            setDraft(captainName);
+            setEditing(true);
+          }}
+        >
+          <GameIcon name="profile" />
+          Edit nickname
+          <GameIcon name="arrow" />
+        </button>
+      )}
       {failed && (
         <p className="form-error" role="alert">
           {failed}

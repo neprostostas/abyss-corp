@@ -1,6 +1,14 @@
 import { Brand } from '../components/Brand';
 import { authReturnUrl } from '../../infrastructure/supabase/authRedirect';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { normalizeCaptainName } from '../../domain/captainName';
+import {
+  loadSocialProviders,
+  PROVIDER_LABELS,
+} from '../../infrastructure/supabase/socialProviders';
+import type { SocialProvider } from '../../infrastructure/supabase/socialProviders';
+import { ProviderIcon } from './ProviderIcon';
+import { GameIcon } from '../components/GameIcon';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../infrastructure/supabase/database.types';
 
@@ -10,13 +18,30 @@ export function AuthScreen({
   recovery,
   signedIn,
   onPasswordUpdated,
+  onGuest,
 }: {
   client: SupabaseClient<Database>;
   recovery: boolean;
   signedIn: boolean;
   onPasswordUpdated: () => void;
+  onGuest: () => void;
 }) {
   const [mode, setMode] = useState<Mode>(recovery ? 'reset' : 'login');
+  const [nickname, setNickname] = useState('');
+  const [providers, setProviders] = useState<SocialProvider[]>([]);
+  useEffect(() => {
+    let active = true;
+    void loadSocialProviders()
+      .then((value) => {
+        if (active) setProviders(value);
+      })
+      .catch(() => {
+        /* Email and guest play remain usable. */
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmation, setConfirmation] = useState('');
@@ -63,7 +88,10 @@ export function AuthScreen({
         const { error: failure } = await client.auth.signUp({
           email: address,
           password,
-          options: { emailRedirectTo: authReturnUrl('/') },
+          options: {
+            emailRedirectTo: authReturnUrl('/'),
+            data: { captain_name: normalizeCaptainName(nickname) },
+          },
         });
         if (failure) throw failure;
         setNotice('Check your email to confirm your account.');
@@ -94,6 +122,22 @@ export function AuthScreen({
           ? failure.message
           : 'Connection failed. Try again.',
       );
+    } finally {
+      setBusy(false);
+    }
+  };
+  const socialSignIn = async (provider: SocialProvider) => {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const { error: failure } = await client.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo: authReturnUrl('/') },
+      });
+      if (failure) throw failure;
+    } catch {
+      setError('Could not connect. Try again or use email.');
     } finally {
       setBusy(false);
     }
@@ -134,6 +178,38 @@ export function AuthScreen({
           <Brand />
         </a>
         <h1 id="auth-title">{title}</h1>
+        {(mode === 'login' || mode === 'register') && (
+          <>
+            <button className="quick-play" disabled={busy} onClick={onGuest}>
+              <GameIcon name="transport" />
+              <span>
+                <strong>Quick play</strong>
+                <small>No account needed</small>
+              </span>
+              <GameIcon name="arrow" />
+            </button>
+            {providers.length > 0 && (
+              <div className="social-signin" aria-label="Continue with">
+                {providers.map((provider) => (
+                  <button
+                    key={provider}
+                    disabled={busy}
+                    onClick={() => {
+                      void socialSignIn(provider);
+                    }}
+                    aria-label={`Continue with ${PROVIDER_LABELS[provider]}`}
+                  >
+                    <ProviderIcon provider={provider} />
+                    <span>{PROVIDER_LABELS[provider]}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="auth-divider">
+              <span>or with email</span>
+            </div>
+          </>
+        )}
         <form
           noValidate
           onSubmit={(event) => {
@@ -157,6 +233,23 @@ export function AuthScreen({
             void submit();
           }}
         >
+          {mode === 'register' && (
+            <label>
+              Nickname
+              <input
+                name="nickname"
+                autoComplete="nickname"
+                required
+                maxLength={48}
+                value={nickname}
+                disabled={busy}
+                onChange={(event) => {
+                  setNickname(event.target.value);
+                }}
+              />
+              <small>3–24 characters · shown to other players</small>
+            </label>
+          )}
           {mode !== 'reset' && (
             <label>
               Email

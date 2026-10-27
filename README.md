@@ -17,7 +17,7 @@ Build your underwater empire. Mine crystals, automate your outposts, and explore
 - **Put your crew to work.** Hire cargo pilots and keep earning while you are away.
 - **Reach the abyss beacon.** Complete research, grow your outposts, and supply three expeditions.
 
-Your progress follows your account. Play on your phone or settle in on a bigger screen.
+Jump into Quick play without an account, or sign in to keep your progress across devices. Choose your captain name and manage your profile in-game. Play on your phone or settle in on a bigger screen.
 
 ### Local checks
 

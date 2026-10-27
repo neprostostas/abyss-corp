@@ -1,3 +1,6 @@
+import { GuestGame } from './GuestGame';
+import { GuestSaveRepository } from '../infrastructure/persistence/GuestSaveRepository';
+import { ProfileGate } from '../ui/account/ProfileGate';
 import { AdminAnalyticsClient } from '../infrastructure/analytics/AdminAnalyticsClient';
 import { CookieConsent } from '../ui/analytics/CookieConsent';
 import { PrivacyScreen } from '../ui/analytics/PrivacyScreen';
@@ -37,15 +40,20 @@ const loadingScreen = (
 function AccountGame({
   client,
   user,
+  captainName,
+  onRename,
 }: {
   client: SupabaseClient<Database>;
   user: User;
+  captainName: string;
+  onRename: (name: string) => Promise<void>;
 }) {
   const [runtime] = useState(() => {
     const repository = new AccountSaveRepository(
       client,
       user.id,
       () => window.localStorage,
+      () => new GuestSaveRepository(() => window.localStorage).claim(user.id),
     );
     const session = new GameSession(repository, browserClock);
     repository.subscribe(() => {
@@ -103,7 +111,9 @@ function AccountGame({
   const account = (
     <AccountPanel
       isAdmin={isAdmin}
-      email={user.email ?? 'Account'}
+      user={user}
+      captainName={captainName}
+      onRename={onRename}
       repository={repository}
       onSave={save}
       onSignOut={async () => {
@@ -132,7 +142,10 @@ function AccountGame({
         cloud={cloud}
         leaderboardPanel={
           <LeaderboardPanel
-            gateway={runtime.players}
+            gateway={{
+              loadLeaderboard: (page) => runtime.players.loadLeaderboard(page),
+              renameCaptain: onRename,
+            }}
             synchronize={runtime.synchronize}
           />
         }
@@ -148,11 +161,27 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
   const [adminClient] = useState(() =>
     client ? new AdminDatabaseClient(client) : null,
   );
+  const [guest, setGuest] = useState(() => {
+    try {
+      return window.sessionStorage.getItem('abyss-corp.play-mode') === 'guest';
+    } catch {
+      return false;
+    }
+  });
+  const changeGuest = (value: boolean) => {
+    setGuest(value);
+    try {
+      if (value) window.sessionStorage.setItem('abyss-corp.play-mode', 'guest');
+      else window.sessionStorage.removeItem('abyss-corp.play-mode');
+    } catch {
+      /* GameSession reports unavailable persistent storage. */
+    }
+  };
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(() =>
     new URLSearchParams(window.location.hash.slice(1)).has('error_description')
-      ? 'This email link has expired or is invalid. Request a new one.'
+      ? 'The sign-in link failed or expired. Please try again.'
       : null,
   );
   const [recovery, setRecovery] = useState(
@@ -167,6 +196,14 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
       if (!live) return;
       if (event === 'PASSWORD_RECOVERY') setRecovery(true);
       setUser(session?.user ?? null);
+      if (session?.user) {
+        setGuest(false);
+        try {
+          window.sessionStorage.removeItem('abyss-corp.play-mode');
+        } catch {
+          /* Session can still continue. */
+        }
+      }
       setLoading(false);
     });
     void client.auth
@@ -193,14 +230,30 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
       subscription.unsubscribe();
     };
   }, [client]);
+  if (guest && !user && !recovery)
+    return (
+      <GuestGame
+        onSignIn={() => {
+          changeGuest(false);
+        }}
+      />
+    );
   if (!client)
     return (
       <main className="account-screen">
         <section className="auth-card">
-          <h1>Connect Abyss Corp</h1>
+          <h1>Dive into Abyss Corp</h1>
+          <button
+            className="wide-button"
+            onClick={() => {
+              changeGuest(true);
+            }}
+          >
+            Quick play
+          </button>
           <p>
-            Supabase configuration is missing. Follow docs/deployment.md, then
-            restart the app.
+            Account sign-in is temporarily unavailable. You can still play on
+            this device.
           </p>
         </section>
       </main>
@@ -224,6 +277,9 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
           client={client}
           recovery={recovery}
           signedIn={user !== null}
+          onGuest={() => {
+            changeGuest(true);
+          }}
           onPasswordUpdated={() => {
             setRecovery(false);
             setError(null);
@@ -240,7 +296,18 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
         <DatabaseScreen gateway={adminClient} />
       </Suspense>
     );
-  return <AccountGame key={user.id} client={client} user={user} />;
+  return (
+    <ProfileGate key={user.id} client={client} user={user}>
+      {(captainName, onRename) => (
+        <AccountGame
+          client={client}
+          user={user}
+          captainName={captainName}
+          onRename={onRename}
+        />
+      )}
+    </ProfileGate>
+  );
 }
 
 export function App({ client }: { client: SupabaseClient<Database> | null }) {

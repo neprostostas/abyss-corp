@@ -164,8 +164,10 @@ export function cloudFixture() {
   } as unknown as SupabaseClient<Database>;
   return {
     storage,
-    repository: (userId = 'captain') =>
-      new AccountSaveRepository(client, userId, () => storage),
+    repository: (
+      userId = 'captain',
+      initialSave?: () => Promise<GameSave | null>,
+    ) => new AccountSaveRepository(client, userId, () => storage, initialSave),
     get remote() {
       return remote;
     },

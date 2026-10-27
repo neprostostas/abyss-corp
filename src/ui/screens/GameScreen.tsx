@@ -41,7 +41,7 @@ const windows: Record<WindowName, { title: string; icon: IconName }> = {
   research: { title: 'Research', icon: 'research' },
   missions: { title: 'Missions', icon: 'missions' },
   crew: { title: 'Crew', icon: 'robot' },
-  settings: { title: 'Settings', icon: 'settings' },
+  settings: { title: 'Profile', icon: 'profile' },
 };
 const compact = new Intl.NumberFormat('en-US', {
   notation: 'compact',
@@ -187,13 +187,13 @@ function GameBoard({
         </div>
         <button
           className={`icon-button settings-trigger${saveStatus === 'error' || cloud.status === 'error' ? ' has-error' : ''}`}
-          aria-label="Settings"
+          aria-label="Profile"
           aria-expanded={drawer.open && windowName === 'settings'}
           onClick={() => {
             drawer.toggle('settings');
           }}
         >
-          <GameIcon name="settings" />
+          <GameIcon name="profile" />
         </button>
       </header>
       <section className="ocean-stage" aria-label={layer.name}>

@@ -494,3 +494,173 @@
     font-size: 11px;
   }
 }
+
+/* Account entry and profile share the quiet, compact in-game controls. */
+.quick-play {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  margin-top: 24px;
+  padding: 16px;
+  text-align: left;
+  color: #f4e6bd;
+  background: #1a4b54;
+  border: 1px solid #638f85;
+  border-radius: 12px;
+  box-shadow: none;
+}
+.quick-play > span {
+  flex: 1;
+  display: grid;
+  gap: 4px;
+}
+.quick-play small {
+  color: #acc8bf;
+  font-weight: 400;
+  font-size: 12px;
+}
+.quick-play .game-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.social-signin {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.social-signin button {
+  flex: 1 1 90px;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  background: #0c2c38;
+  border: 1px solid #71988f55;
+  color: #e2ede1;
+  box-shadow: none;
+  border-radius: 10px;
+  font-size: 12px;
+}
+.social-signin svg {
+  flex-shrink: 0;
+}
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  color: #92afa9;
+  font-size: 12px;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #9cb7a42b;
+}
+.account-avatar {
+  overflow: hidden;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+}
+.account-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.profile-identity {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.profile-identity strong {
+  font-size: 16px;
+}
+.profile-identity span,
+.profile-identity small {
+  color: #a1bfb5;
+  font-size: 12px;
+}
+.profile-rename {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #0d303b66;
+  color: #dce9e0;
+  box-shadow: none;
+  text-align: left;
+}
+.profile-rename .game-icon {
+  width: 20px;
+  height: 20px;
+}
+.profile-rename .game-icon:last-child {
+  margin-left: auto;
+}
+.profile-edit {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.profile-edit input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #9dbfb266;
+  border-radius: 10px;
+  background: #082a36;
+  color: #f3f5e9;
+  font: inherit;
+  font-size: 16px;
+}
+.profile-edit label {
+  font-size: 13px;
+}
+.profile-edit small {
+  color: #a1bfb5;
+  font-size: 12px;
+}
+.profile-edit > div {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.guest-profile {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+.guest-profile h2 {
+  font-size: 20px;
+}
+.guest-profile p,
+.guest-profile small {
+  color: #acc8bf;
+  line-height: 1.6;
+}
+.guest-profile small {
+  font-size: 12px;
+}
+@media (max-width: 420px) {
+  .auth-card {
+    padding: 24px 18px;
+    border-radius: 18px;
+  }
+  .account-screen {
+    padding: 18px 12px;
+  }
+  .auth-card h1 {
+    font-size: 26px;
+  }
+}
