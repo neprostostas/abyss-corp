@@ -1345,3 +1345,56 @@
   transform: none;
   filter: none;
 }
+
+.profile-sections {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: #082a365c;
+}
+.profile-sections button {
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 4px;
+  border-radius: 9px;
+  background: transparent;
+  box-shadow: none;
+  color: #9ebbbd;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.profile-sections button[aria-pressed='true'] {
+  background: #315a64;
+  color: #f0efe2;
+}
+.profile-sections button:hover:not(:disabled) {
+  transform: none;
+  filter: none;
+  color: #f0efe2;
+}
+.profile-section-content {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.profile-section-content .connected-accounts {
+  padding: 0;
+  border: 0;
+}
+.profile-section-content .account-danger {
+  margin-top: 4px;
+}
+.game-panel-profile .account-summary {
+  margin: 0;
+  padding-bottom: 12px;
+}
+.game-panel-profile .profile-identity strong {
+  overflow-wrap: anywhere;
+}
+.game-panel-profile .account-avatar {
+  width: 42px;
+  height: 42px;
+}

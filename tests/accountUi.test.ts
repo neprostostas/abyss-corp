@@ -1,3 +1,4 @@
+import { AccountPanel } from '../src/ui/account/AccountPanel';
 import { AvatarPicker } from '../src/ui/account/AvatarPicker';
 import { AccountDangerActions } from '../src/ui/account/AccountDangerActions';
 import { deferred } from './fixtures';
@@ -547,5 +548,62 @@ void test('password recovery requires matching passwords and updates the authent
   await click('Save password');
   assert.deepEqual(request, { password: 'test-password-123' });
   assert.equal(done, true);
+  await reset();
+});
+
+void test('profile sections keep photo, sign-in and destructive account controls separate', async () => {
+  const user = {
+    id: 'captain',
+    email: 'captain@example.com',
+    user_metadata: {},
+    identities: [],
+  } as unknown as User;
+  const client = {
+    auth: {
+      getUserIdentities: () =>
+        Promise.resolve({ data: { identities: [] }, error: null }),
+    },
+  } as unknown as SupabaseClient<Database>;
+  const cloud = { status: 'saved' as const, error: null, syncedAt: null };
+  const repository = {
+    getSnapshot: () => cloud,
+    subscribe: () => () => undefined,
+    flush: () => Promise.resolve(),
+    takeRemoteUpdate: () => null,
+    load: () => Promise.resolve(null),
+    save: () => Promise.resolve(),
+  };
+  const unexpected = () =>
+    Promise.reject(new Error('Unexpected account mutation'));
+  await ui(() => {
+    root.render(
+      createElement(AccountPanel, {
+        user,
+        client,
+        currentProvider: 'google',
+        captainName: 'Captain',
+        onRename: unexpected,
+        repository,
+        onSave: unexpected,
+        onSignOut: unexpected,
+        onReset: unexpected,
+        onDelete: unexpected,
+        isAdmin: false,
+      }),
+    );
+  });
+  assert.match(container.textContent, /Change photo/);
+  assert(!container.textContent.includes('Delete account'));
+  await click('Sign-in');
+  assert(document.querySelector('[aria-label="Sign-in methods"]'));
+  assert(!container.textContent.includes('Change photo'));
+  await click('Account');
+  assert.match(container.textContent, /Start a new game/);
+  assert.match(container.textContent, /Delete account/);
+  await click('Start a new game');
+  assert(document.querySelector('.danger-confirm'));
+  await click('Profile');
+  assert(!document.querySelector('.danger-confirm'));
+  assert.match(container.textContent, /Change photo/);
   await reset();
 });

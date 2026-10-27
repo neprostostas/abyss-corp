@@ -11,6 +11,7 @@ export function GamePanel({
   icon,
   onClose,
   children,
+  profile = false,
 }: {
   title: string;
   open: boolean;
@@ -18,6 +19,7 @@ export function GamePanel({
   icon: IconName;
   onClose: () => void;
   children: ReactNode;
+  profile?: boolean;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
@@ -53,7 +55,7 @@ export function GamePanel({
   return (
     <aside
       ref={panelRef}
-      className="game-panel"
+      className={`game-panel${profile ? ' game-panel-profile' : ''}`}
       aria-labelledby="panel-title"
       aria-hidden={!open}
       inert={!open}

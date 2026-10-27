@@ -38,6 +38,18 @@ export function AccountPanel({
   onDelete: () => Promise<void>;
 }) {
   const details = accountProfileDetails(user, currentProvider);
+  const [section, setSection] = useState<'profile' | 'connections' | 'account'>(
+    () => {
+      try {
+        return window.sessionStorage.getItem('abyss-corp.show-connections') ===
+          '1'
+          ? 'connections'
+          : 'profile';
+      } catch {
+        return 'profile';
+      }
+    },
+  );
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(captainName);
   const cloud = useSyncExternalStore(
@@ -84,107 +96,142 @@ export function AccountPanel({
           )}
         </button>
       </div>
-      <AvatarPicker user={user} client={client} />
-      {editing ? (
-        <form
-          className="profile-edit"
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (busy) return;
-            void run(async () => {
-              await onRename(draft);
-              setEditing(false);
-            });
-          }}
-        >
-          <label htmlFor="profile-nickname">Nickname</label>
-          <input
-            id="profile-nickname"
-            autoComplete="nickname"
-            required
-            maxLength={48}
-            value={draft}
-            disabled={busy}
-            onChange={(event) => {
-              setDraft(event.target.value);
+      <nav className="profile-sections" aria-label="Profile sections">
+        {(
+          [
+            ['profile', 'Profile'],
+            ['connections', 'Sign-in'],
+            ['account', 'Account'],
+          ] as const
+        ).map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            aria-pressed={section === id}
+            onClick={() => {
+              setSection(id);
             }}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+      <div className="profile-section-content">
+        {section === 'profile' && (
+          <>
+            <AvatarPicker user={user} client={client} />
+            {editing ? (
+              <form
+                className="profile-edit"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (busy) return;
+                  void run(async () => {
+                    await onRename(draft);
+                    setEditing(false);
+                  });
+                }}
+              >
+                <label htmlFor="profile-nickname">Nickname</label>
+                <input
+                  id="profile-nickname"
+                  autoComplete="nickname"
+                  required
+                  maxLength={48}
+                  value={draft}
+                  disabled={busy}
+                  onChange={(event) => {
+                    setDraft(event.target.value);
+                  }}
+                />
+                <small>3–24 characters</small>
+                <div>
+                  <button disabled={busy}>Save</button>
+                  <button
+                    type="button"
+                    className="text-button"
+                    disabled={busy}
+                    onClick={() => {
+                      setEditing(false);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <button
+                className="profile-rename"
+                onClick={() => {
+                  setDraft(captainName);
+                  setEditing(true);
+                }}
+              >
+                <GameIcon name="profile" />
+                Edit nickname
+                <GameIcon name="arrow" />
+              </button>
+            )}
+          </>
+        )}
+        {failed && (
+          <p className="form-error" role="alert">
+            {failed}
+          </p>
+        )}
+        {section === 'connections' && (
+          <ConnectedAccounts
+            client={client}
+            user={user}
+            current={currentProvider}
+            onSave={onSave}
           />
-          <small>3–24 characters</small>
-          <div>
-            <button disabled={busy}>Save</button>
+        )}
+        {section === 'account' && (
+          <>
+            <nav className="settings-actions" aria-label="Account">
+              <a href="/reset-password">
+                <GameIcon name="lock" />
+                <span>Change password</span>
+                <GameIcon name="arrow" />
+              </a>
+              <button onClick={visitorAnalytics.openPreferences}>
+                <GameIcon name="cookie" />
+                <span>Cookies</span>
+                <GameIcon name="arrow" />
+              </button>
+            </nav>
+            {isAdmin && (
+              <nav
+                className="settings-actions admin-actions"
+                aria-label="Admin"
+              >
+                <a href="/database">
+                  <GameIcon name="database" />
+                  <span>Database</span>
+                  <GameIcon name="arrow" />
+                </a>
+                <a href="/analytics">
+                  <GameIcon name="analytics" />
+                  <span>Analytics</span>
+                  <GameIcon name="arrow" />
+                </a>
+              </nav>
+            )}
+            <AccountDangerActions onReset={onReset} onDelete={onDelete} />
             <button
-              type="button"
-              className="text-button"
+              className="settings-signout"
               disabled={busy}
               onClick={() => {
-                setEditing(false);
+                void run(onSignOut);
               }}
             >
-              Cancel
+              <GameIcon name="logout" />
+              <span>Sign out</span>
             </button>
-          </div>
-        </form>
-      ) : (
-        <button
-          className="profile-rename"
-          onClick={() => {
-            setDraft(captainName);
-            setEditing(true);
-          }}
-        >
-          <GameIcon name="profile" />
-          Edit nickname
-          <GameIcon name="arrow" />
-        </button>
-      )}
-      {failed && (
-        <p className="form-error" role="alert">
-          {failed}
-        </p>
-      )}
-      <ConnectedAccounts
-        client={client}
-        user={user}
-        current={currentProvider}
-        onSave={onSave}
-      />
-      <nav className="settings-actions" aria-label="Account">
-        <a href="/reset-password">
-          <GameIcon name="lock" />
-          <span>Change password</span>
-          <GameIcon name="arrow" />
-        </a>
-        <button onClick={visitorAnalytics.openPreferences}>
-          <GameIcon name="cookie" />
-          <span>Cookies</span>
-          <GameIcon name="arrow" />
-        </button>
-      </nav>
-      {isAdmin && (
-        <nav className="settings-actions admin-actions" aria-label="Admin">
-          <a href="/database">
-            <GameIcon name="database" />
-            <span>Database</span>
-            <GameIcon name="arrow" />
-          </a>
-          <a href="/analytics">
-            <GameIcon name="analytics" />
-            <span>Analytics</span>
-            <GameIcon name="arrow" />
-          </a>
-        </nav>
-      )}
-      <AccountDangerActions onReset={onReset} onDelete={onDelete} />
-      <button
-        className="settings-signout"
-        disabled={busy}
-        onClick={() => {
-          void run(onSignOut);
-        }}
-      >
-        <GameIcon name="logout" />
-        <span>Sign out</span>
-      </button>
+          </>
+        )}
+      </div>
     </section>
   );
 }

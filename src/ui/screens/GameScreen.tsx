@@ -197,13 +197,14 @@ function GameBoard({
         <div
           ref={walletRef}
           className="hud-wallet"
-          title="Credits shared across all depths"
+          role="group"
+          aria-label={`Credits: ${world.credits.toLocaleString('en-US')}`}
+          title={`${world.credits.toLocaleString('en-US')} credits`}
         >
           <span className="coin-medallion">
             <GameIcon name="coin" />
           </span>
           <strong>{compact.format(world.credits)}</strong>
-          <small>CR</small>
         </div>
         <button
           className={`icon-button settings-trigger${saveStatus === 'error' || cloud.status === 'error' ? ' has-error' : ''}`}
@@ -371,6 +372,7 @@ function GameBoard({
       {windowName && (
         <GamePanel
           open={drawer.open}
+          profile={windowName === 'settings'}
           title={windows[windowName].title}
           context={
             windowName === 'research' || windowName === 'missions'

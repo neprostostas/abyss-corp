@@ -111,11 +111,6 @@ button:disabled {
   color: #fff2ba;
   font-variant-numeric: tabular-nums;
 }
-.hud-wallet small {
-  font-size: 10px;
-  color: #bba86a;
-  margin-left: auto;
-}
 .settings-trigger.has-error {
   color: #ff9b86;
 }
