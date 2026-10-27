@@ -7,6 +7,7 @@ import type {
   AccountSaveSnapshot,
 } from '../../application/accountPorts';
 import { validateSave } from '../persistence/saveSchema';
+import { createExpedition, getProgression } from '../../domain/progression';
 
 const cacheSchema = z
   .object({
@@ -78,6 +79,41 @@ export class AccountSaveRepository implements AccountSavePort {
     this.storage().setItem(this.key, JSON.stringify(cache));
     this.cache = cache;
   }
+  /** Completed contracts are permanent milestones; never merge money or cargo. */
+  private preserveExpeditions(
+    save: GameSave,
+    ...sources: GameSave[]
+  ): GameSave {
+    const completed = Math.max(
+      save.world.progression?.expedition?.completed ?? 0,
+      ...sources.map(
+        (source) => source.world.progression?.expedition?.completed ?? 0,
+      ),
+    );
+    if (completed === (save.world.progression?.expedition?.completed ?? 0))
+      return save;
+    return validateSave({
+      ...save,
+      version: 7,
+      world: {
+        ...save.world,
+        progression: {
+          ...getProgression(save.world),
+          expedition: { ...createExpedition(), completed },
+        },
+      },
+    });
+  }
+  private readBackup(): GameSave | null {
+    const raw = this.storage().getItem(`${this.key}.backup`);
+    if (!raw) return null;
+    try {
+      return validateSave(JSON.parse(raw));
+    } catch (error) {
+      console.warn('Ignoring an invalid account progress backup.', error);
+      return null;
+    }
+  }
   takeRemoteUpdate(): GameSave | null {
     const update = this.remoteUpdate;
     this.remoteUpdate = null;
@@ -97,6 +133,8 @@ export class AccountSaveRepository implements AccountSavePort {
   async load(): Promise<GameSave | null> {
     try {
       let local = this.readCache();
+      const previous = local?.save;
+      const backup = this.readBackup();
       const remote = await this.remote();
       if (local?.pendingWrite && remote?.write_id === local.pendingWrite.id) {
         local = {
@@ -109,7 +147,7 @@ export class AccountSaveRepository implements AccountSavePort {
         await this.backup(local.save);
         local = null;
       }
-      const selected = local?.dirty
+      let selected = local?.dirty
         ? local
         : remote
           ? {
@@ -118,6 +156,16 @@ export class AccountSaveRepository implements AccountSavePort {
               save: validateSave(remote.save),
             }
           : null;
+      if (selected) {
+        const save = this.preserveExpeditions(
+          selected.save,
+          ...(remote ? [validateSave(remote.save)] : []),
+          ...(previous ? [previous] : []),
+          ...(backup ? [backup] : []),
+        );
+        if (save !== selected.save)
+          selected = { save, revision: selected.revision, dirty: true };
+      }
       if (selected) this.store(selected);
       else {
         this.storage().removeItem(this.key);
@@ -169,7 +217,7 @@ export class AccountSaveRepository implements AccountSavePort {
     });
     return this.flushing;
   };
-  private async upload() {
+  private async upload(attempt = 0): Promise<void> {
     let captured = this.cache;
     if (!captured) return;
     this.publish({ status: 'syncing', error: null });
@@ -192,14 +240,23 @@ export class AccountSaveRepository implements AccountSavePort {
           throw new Error('Account progress is unavailable. Retry syncing.');
         const current = this.cache ?? captured;
         await this.backup(current.save);
-        const save = validateSave(remote.save);
-        this.store({ save, revision: remote.revision, dirty: false });
+        const canonical = validateSave(remote.save);
+        const save = this.preserveExpeditions(canonical, current.save);
+        const dirty = save !== canonical;
+        this.store({ save, revision: remote.revision, dirty });
         this.remoteUpdate = save;
         this.publish({
-          status: 'saved',
+          status: dirty ? 'pending' : 'saved',
           error: null,
           syncedAt: remote.updated_at,
         });
+        if (dirty) {
+          if (attempt >= 2)
+            throw new Error(
+              'Another game session keeps changing progress. Close other game tabs and retry sync. Completed expeditions are preserved on this device.',
+            );
+          await this.upload(attempt + 1);
+        }
         return;
       }
       const row = data?.[0];
