@@ -1117,3 +1117,25 @@
     font-size: 10px;
   }
 }
+
+.social-signin .provider-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.social-signin .provider-badge svg {
+  width: 16px;
+  height: 16px;
+}
+@media (max-width: 759px) {
+  .auth-entry-register .provider-grid .provider-badge {
+    width: 23px;
+    height: 23px;
+    border-radius: 7px;
+  }
+  .auth-entry-register .provider-grid .provider-badge svg {
+    width: 14px;
+    height: 14px;
+  }
+}

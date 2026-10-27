@@ -1,6 +1,6 @@
 import { PROVIDER_LABELS } from '../../infrastructure/supabase/socialProviders';
 import type { SocialProvider } from '../../infrastructure/supabase/socialProviders';
-import { ProviderIcon } from './ProviderIcon';
+import { ProviderBadge } from '../account/ProviderBadge';
 import { GameIcon } from '../components/GameIcon';
 
 export function SocialSignIn({
@@ -25,7 +25,7 @@ export function SocialSignIn({
       }}
       aria-label={`Continue with ${PROVIDER_LABELS[provider]}`}
     >
-      <ProviderIcon provider={provider} />
+      <ProviderBadge provider={provider} />
       <span>
         {prominent
           ? `Continue with ${PROVIDER_LABELS[provider]}`
