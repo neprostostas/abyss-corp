@@ -18,3 +18,13 @@ Build your underwater empire. Mine crystals, automate your outposts, and explore
 - **Reach the abyss beacon.** Complete research, grow your outposts, and supply three expeditions.
 
 Your progress follows your account. Play on your phone or settle in on a bigger screen.
+
+### Local checks
+
+```sh
+npm ci
+npm run check
+npm run build
+```
+
+`check` includes TypeScript, lint, formatting and deterministic regression tests. Use `npm test` to run only tests or `npm run test:watch` during a fix. Tests use local fixtures and never contact player accounts or send email.

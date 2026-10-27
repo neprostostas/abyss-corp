@@ -1,0 +1,133 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { GameSession } from '../src/application/GameSession';
+import { advanceWorld, createLayer, createWorld } from '../src/domain/world';
+import { OFFLINE_LIMIT_MS } from '../src/data/automation';
+import { DeviceSave, FakeClock, gameSave } from './fixtures';
+
+async function sessionFixture(away = 0) {
+  const clock = new FakeClock();
+  const world = {
+    ...createWorld(),
+    layers: {
+      shallows: {
+        ...createLayer(),
+        automation: { level: 1, enabled: true, elapsedMs: 0 },
+      },
+    },
+  };
+  const repository = new DeviceSave({
+    ...gameSave(),
+    savedAt: clock.timestamp() - away,
+    world,
+  });
+  const session = new GameSession(repository, clock);
+  session.setActive(true);
+  await session.initialize();
+  await session.save();
+  return { clock, world, repository, session };
+}
+
+void test('a save between ticks includes the elapsed production before dating the save', async () => {
+  const h = await sessionFixture();
+  h.clock.advance(60_000);
+  await h.session.save(true);
+  assert.deepEqual(h.repository.saved?.world, advanceWorld(h.world, 60_000));
+  assert.equal(h.repository.saved.savedAt, h.clock.timestamp());
+});
+
+for (const sleep of [10_000, 600_000, 6 * 3_600_000]) {
+  void test(`device sleep of ${String(sleep)}ms works when the monotonic clock pauses`, async () => {
+    const h = await sessionFixture();
+    h.clock.advance(100, sleep);
+    await h.session.save(true);
+    const expected = advanceWorld(h.world, Math.min(sleep, OFFLINE_LIMIT_MS));
+    assert.deepEqual(h.session.getSnapshot().world, expected);
+    await h.session.save(true);
+    assert.deepEqual(
+      h.repository.saved?.world,
+      expected,
+      'must not award the same absence twice',
+    );
+  });
+}
+
+void test('hidden-tab progress is capped and resuming twice does not duplicate it', async () => {
+  const h = await sessionFixture();
+  h.session.setActive(false);
+  const since = h.clock.timestamp();
+  h.clock.advance(6 * 3_600_000);
+  await h.session.save(true);
+  assert.equal(h.repository.saved?.savedAt, since);
+  h.session.setActive(true);
+  const expected = advanceWorld(h.world, OFFLINE_LIMIT_MS);
+  assert.deepEqual(h.session.getSnapshot().world, expected);
+  assert.equal(h.session.getSnapshot().offlineReport?.capped, true);
+  h.session.setActive(true);
+  h.session.tick();
+  assert.deepEqual(h.session.getSnapshot().world, expected);
+});
+
+void test('a backward wall-clock change does not stop foreground production', async () => {
+  const h = await sessionFixture();
+  h.clock.advance(15_000, -60_000);
+  h.session.tick();
+  assert.deepEqual(
+    h.session.getSnapshot().world,
+    advanceWorld(h.world, 15_000),
+  );
+});
+
+void test('small wall-clock jitter does not accumulate extra foreground production', async () => {
+  const h = await sessionFixture();
+  for (let i = 0; i < 600; i++) {
+    h.clock.advance(100, i % 2 ? 99 : 101);
+    h.session.tick();
+  }
+  assert.deepEqual(
+    h.session.getSnapshot().world,
+    advanceWorld(h.world, 60_000),
+  );
+});
+
+void test('loading after a long absence consumes it before the next reload', async () => {
+  const h = await sessionFixture(8 * 3_600_000);
+  assert.deepEqual(
+    h.repository.saved?.world,
+    advanceWorld(h.world, OFFLINE_LIMIT_MS),
+  );
+  assert.equal(h.repository.saved.savedAt, h.clock.timestamp());
+});
+
+void test('failed device writes retain newer commands until an explicit retry succeeds', async (context) => {
+  context.mock.method(console, 'error', () => undefined);
+  const clock = new FakeClock();
+  const repository = new DeviceSave(gameSave(1000));
+  const session = new GameSession(repository, clock);
+  session.setActive(true);
+  await session.initialize();
+  repository.fail = true;
+  session.upgrade('mining');
+  await session.save(true);
+  assert.equal(session.getSnapshot().saveStatus, 'error');
+  session.upgrade('transport');
+  const latest = session.getSnapshot().world;
+  repository.fail = false;
+  await session.save(true);
+  assert.deepEqual(repository.saved?.world, latest);
+  assert.equal(session.getSnapshot().saveStatus, 'saved');
+});
+
+void test('a failed initial load never saves a replacement new game', async (context) => {
+  context.mock.method(console, 'error', () => undefined);
+  const repository = new DeviceSave(null);
+  repository.load = () => Promise.reject(new Error('offline'));
+  const session = new GameSession(repository, new FakeClock());
+  session.setActive(true);
+  await session.initialize();
+  session.upgrade('mining');
+  session.sell();
+  await session.save(true);
+  assert.equal(session.getSnapshot().status, 'load-error');
+  assert.equal(repository.writes.length, 0);
+});

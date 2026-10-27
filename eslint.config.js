@@ -35,6 +35,16 @@ export default defineConfig([
     },
   },
   {
+    files: ['tests/**/*.ts'],
+    languageOptions: {
+      globals: globals.node,
+      parserOptions: {
+        project: './tsconfig.tests.json',
+        projectService: false,
+      },
+    },
+  },
+  {
     files: ['src/ui/world/**/*.tsx'],
     rules: {
       '@typescript-eslint/restrict-template-expressions': [

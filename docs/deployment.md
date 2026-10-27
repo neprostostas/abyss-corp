@@ -5,7 +5,7 @@
 - Supabase: **abyss-corp**, регіон Frankfurt, ID `qduhqhhhsboljuipruvy`.
 - PostgreSQL: профілі, збереження за акаунтом, ревізії, правила доступу й адмінські дозволи. Міграції у `supabase/migrations` вже застосовані до цього проєкту.
 - Netlify: **abyss-corp**, основна адреса `https://abysscorp.us.ci` (резервна `https://abyss-corp.netlify.app`).
-- GitHub-підключення: `neprostostas/abyss-corp`, гілка `main`, build `npm run build`, publish `dist`.
+- GitHub-підключення: `neprostostas/abyss-corp`, гілка `main`, build `npm run check && npm run build`, publish `dist`.
 - Старі тестові деплої account-preview видалено. Публікується тільки production з main.
 - Supabase Site URL: `https://abysscorp.us.ci`; дозволені тільки точні `/` та `/reset-password` тільки на основному домені. Стандартна Netlify-адреса також надсилає листи на основний домен. Localhost і wildcard-адреси видалено.
 
@@ -71,7 +71,7 @@ npm run build
 npm run dev
 ```
 
-`check` перевіряє TypeScript, ESLint і форматування. Старі тестові файли та Vitest видалено; тести під час деплою не запускаються.
+`check` перевіряє TypeScript, ESLint, форматування й регресійні тести. Окремо тести запускаються через `npm test`, а режим спостереження — через `npm run test:watch`. Тести використовують локальні підставні годинники, сховище й транспорт; листи та запити до бази гравців не надсилаються. Netlify і збірка контейнера виконують `npm run check && npm run build` перед публікацією.
 
 Основний сценарій: створити акаунт → підтвердити email → увійти → запустити виробництво → Save now → оновити сторінку → перевірити прогрес → вийти → відновити пароль через лист. Для адміністратора додатково відкрити `/database`; для звичайного акаунта доступ має бути заборонений.
 

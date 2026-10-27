@@ -151,9 +151,15 @@ export class AccountSaveRepository implements AccountSavePort {
       const previous = local?.save;
       const backup = this.readBackup();
       const remote = await this.remote();
-      if (corruptCache && !remote)
+      const firstUploadPending = local?.dirty && local.revision === 0;
+      if (
+        !remote &&
+        (corruptCache ||
+          backup !== null ||
+          (local !== null && !firstUploadPending))
+      )
         throw new Error(
-          'No cloud copy is available to recover device progress.',
+          'The existing cloud save is unavailable. Device progress has been kept; retry loading.',
         );
       if (local?.pendingWrite && remote?.write_id === local.pendingWrite.id) {
         local = {

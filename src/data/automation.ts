@@ -8,3 +8,6 @@ export const OFFLINE_REPORT_MIN_MS = 1000;
 
 // Treat a long foreground timer gap (for example device sleep) as an absence.
 export const ACTIVE_GAP_LIMIT_MS = 30000;
+
+// Ignore small differences between wall and monotonic clock sampling.
+export const ACTIVE_CLOCK_DRIFT_MS = 1000;

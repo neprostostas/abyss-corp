@@ -1,3 +1,4 @@
+import { normalizeCaptainName } from '../../domain/captainName';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from './database.types';
 import type {
@@ -51,9 +52,10 @@ export class PlayerClient implements PlayerGateway {
     };
   }
   async renameCaptain(name: string): Promise<void> {
+    const captainName = normalizeCaptainName(name);
     const { error } = await this.client
       .from('player_progress')
-      .update({ captain_name: name })
+      .update({ captain_name: captainName })
       .eq('id', this.userId)
       .select('id')
       .single();

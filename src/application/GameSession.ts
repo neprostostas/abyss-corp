@@ -4,6 +4,7 @@ import {
   OFFLINE_LIMIT_MS,
   OFFLINE_REPORT_MIN_MS,
   ACTIVE_GAP_LIMIT_MS,
+  ACTIVE_CLOCK_DRIFT_MS,
 } from '../data/automation';
 import {
   advanceWorld,
@@ -147,10 +148,15 @@ export class GameSession {
 
   tick = () => {
     const now = this.clock.now();
-    const elapsed = Math.max(0, now - this.lastTick);
+    const monotonicElapsed = Math.max(0, now - this.lastTick);
     const timestamp = this.clock.timestamp();
-    // Some platforms pause the monotonic clock during device sleep.
-    const gap = Math.max(elapsed, timestamp - this.lastTimestamp);
+    const wallElapsed = Math.max(0, timestamp - this.lastTimestamp);
+    // Recover short sleeps too, while keeping small wall-clock jitter out of production.
+    const elapsed =
+      wallElapsed - monotonicElapsed > ACTIVE_CLOCK_DRIFT_MS
+        ? wallElapsed
+        : monotonicElapsed;
+    const gap = Math.max(elapsed, wallElapsed);
     this.lastTick = now;
     this.lastTimestamp = timestamp;
     if (!this.active || this.snapshot.status !== 'ready') return;

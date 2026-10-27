@@ -1,3 +1,8 @@
+import {
+  CAPTAIN_NAME_LIMITS,
+  captainInitial,
+  normalizeCaptainName,
+} from '../../domain/captainName';
 import { useEffect, useState } from 'react';
 import type {
   LeaderboardPage,
@@ -29,7 +34,7 @@ function StandingRow({
         <b>{player.position}</b>
       </span>
       <span className="captain-avatar" aria-hidden="true">
-        {player.captainName.slice(0, 1).toUpperCase()}
+        {captainInitial(player.captainName)}
       </span>
       <span className="standing-captain">
         <strong>
@@ -92,19 +97,11 @@ export function LeaderboardPanel({
     };
   }, [gateway, synchronize, page, refresh]);
   const rename = async () => {
-    const trimmed = name.trim();
-    if (
-      trimmed.length < 3 ||
-      trimmed.length > 24 ||
-      /[\p{Cc}]/u.test(trimmed)
-    ) {
-      setError('Use 3-24 characters.');
-      return;
-    }
+    if (renaming) return;
     setRenaming(true);
     setError(null);
     try {
-      await gateway.renameCaptain(trimmed);
+      await gateway.renameCaptain(normalizeCaptainName(name));
       setEditing(false);
       setRefresh((value) => value + 1);
     } catch (failure) {
@@ -143,6 +140,7 @@ export function LeaderboardPanel({
             <span>Your captain</span>
             <button
               className="text-button"
+              disabled={renaming}
               onClick={() => {
                 setName(data.currentPlayer?.captainName ?? '');
                 setEditing(!editing);
@@ -166,8 +164,8 @@ export function LeaderboardPanel({
               <input
                 id="captain-name"
                 autoComplete="nickname"
-                minLength={3}
-                maxLength={24}
+                minLength={CAPTAIN_NAME_LIMITS.min}
+                maxLength={CAPTAIN_NAME_LIMITS.max * 2}
                 value={name}
                 onChange={(event) => {
                   setName(event.target.value);

@@ -6,7 +6,7 @@ COPY . .
 ARG VITE_SUPABASE_URL
 ARG VITE_SUPABASE_PUBLISHABLE_KEY
 ARG VITE_POSTHOG_KEY
-RUN test -n "$VITE_SUPABASE_URL" && test -n "$VITE_SUPABASE_PUBLISHABLE_KEY" && npm run build
+RUN test -n "$VITE_SUPABASE_URL" && test -n "$VITE_SUPABASE_PUBLISHABLE_KEY" && npm run check && npm run build
 
 FROM nginx:stable-alpine
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
