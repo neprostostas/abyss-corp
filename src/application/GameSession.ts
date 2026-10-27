@@ -46,6 +46,7 @@ export class GameSession {
   };
   private readonly listeners = new Set<() => void>();
   private lastTick: number;
+  private lastTimestamp: number;
   private active = false;
   private suspendedAt: number | null = null;
   private loading: Promise<void> | null = null;
@@ -57,6 +58,7 @@ export class GameSession {
     private readonly clock: Clock,
   ) {
     this.lastTick = clock.now();
+    this.lastTimestamp = clock.timestamp();
   }
 
   getSnapshot = (): SessionSnapshot => this.snapshot;
@@ -86,6 +88,7 @@ export class GameSession {
     try {
       const saved = await this.repository.load();
       this.lastTick = this.clock.now();
+      this.lastTimestamp = this.clock.timestamp();
       this.publish({
         status: 'ready',
         world: saved?.world ?? createWorld(),
@@ -138,16 +141,21 @@ export class GameSession {
     }
     this.active = active;
     this.lastTick = this.clock.now();
+    this.lastTimestamp = this.clock.timestamp();
     if (active && this.snapshot.status === 'ready') void this.save();
   }
 
   tick = () => {
     const now = this.clock.now();
     const elapsed = Math.max(0, now - this.lastTick);
+    const timestamp = this.clock.timestamp();
+    // Some platforms pause the monotonic clock during device sleep.
+    const gap = Math.max(elapsed, timestamp - this.lastTimestamp);
     this.lastTick = now;
+    this.lastTimestamp = timestamp;
     if (!this.active || this.snapshot.status !== 'ready') return;
-    if (elapsed > ACTIVE_GAP_LIMIT_MS) {
-      this.applyOffline(this.clock.timestamp() - elapsed);
+    if (gap > ACTIVE_GAP_LIMIT_MS) {
+      this.applyOffline(timestamp - gap);
       void this.save();
       return;
     }
@@ -221,6 +229,7 @@ export class GameSession {
     this.applyOffline(data.savedAt);
     this.publish({ world: resumeProduction(this.snapshot.world) });
     this.lastTick = this.clock.now();
+    this.lastTimestamp = this.clock.timestamp();
     this.suspendedAt = this.active ? null : this.clock.timestamp();
     void this.save();
   }
@@ -231,6 +240,8 @@ export class GameSession {
       (this.snapshot.saveStatus === 'error' && !retry)
     )
       return Promise.resolve();
+    // Match the persisted timestamp to the production state, even between timer ticks.
+    this.tick();
     this.pendingSave = {
       version: 7,
       savedAt: this.suspendedAt ?? this.clock.timestamp(),

@@ -11,6 +11,8 @@
 - `src/app`: authentication lifecycle, one game runtime per user ID, cloud sync scheduling and route selection.
 - `src/ui`: the ocean scene, upgrades, compact equipment panels, account forms and read-only database browser.
 
+Before saving, GameSession advances production to the captured time so a save cannot consume elapsed time without its corresponding output. Long foreground gaps compare both the monotonic and wall clocks, covering [platforms where the monotonic clock pauses during sleep](https://developer.mozilla.org/en-US/docs/Web/API/Performance/now#ticking_during_sleep). The same four-hour offline cap and suspension timestamp prevent duplicate awards on resume or reload.
+
 The existing bounded extraction → transport → processing → storage/sale engine is unchanged. Production stops at full buffers without losing cargo. Unselected running outposts continue producing; credits are shared. Automation and capped four-hour offline simulation use the same domain engine.
 
 ## Authentication
@@ -41,7 +43,7 @@ Checks validate strict TypeScript, ESLint and formatting. The test runner and ex
 
 ## Captain standings
 
-`PlayerGateway` separates the game interface from `PlayerClient`. Opening Leaders synchronizes the current account before reading standings; the board then refreshes every 30 seconds. Names can be edited inline without an extra onboarding screen. The public board shows only confirmed accounts, with generated captain names until the owner chooses another name. Emails are never used as default nicknames.
+`PlayerGateway` separates the game interface from `PlayerClient`. Opening Leaders synchronizes the current account before reading standings; the board then refreshes every 30 seconds. Only the latest request may update results, errors or loading state; delayed older responses and responses arriving after close are ignored. Names can be edited inline without an extra onboarding screen. The public board shows only confirmed accounts, with generated captain names until the owner chooses another name. Emails are never used as default nicknames.
 
 `public.player_progress` is a bounded, sanitized projection maintained by database triggers on account confirmation and saved-game writes. Authenticated users can read it and update only their own `captain_name` column. The credits/depth/upgrade columns have no client write grant. `public.leaderboard` is a security-invoker view ranked by deepest outpost, infrastructure upgrades, research, automation, credits and a stable ID tie-break. The same projection supplies pagination and the current player's position.
 

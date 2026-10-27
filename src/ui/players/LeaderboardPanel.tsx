@@ -64,21 +64,24 @@ export function LeaderboardPanel({
   const [renaming, setRenaming] = useState(false);
   useEffect(() => {
     let active = true;
+    let latestRequest = 0;
     const load = () => {
+      const request = ++latestRequest;
+      const isCurrent = () => active && request === latestRequest;
       void synchronize()
         .then(() => gateway.loadLeaderboard(page))
         .then((result) => {
-          if (active) {
+          if (isCurrent()) {
             setData(result);
             setError(null);
           }
         })
         .catch((failure: unknown) => {
-          if (active)
+          if (isCurrent())
             setError(failure instanceof Error ? failure.message : 'Try again.');
         })
         .finally(() => {
-          if (active) setBusy(false);
+          if (isCurrent()) setBusy(false);
         });
     };
     load();
