@@ -2,17 +2,17 @@
 
 All native OAuth applications use `https://qduhqhhhsboljuipruvy.supabase.co/auth/v1/callback`. The website callback stays `https://abysscorp.us.ci/`. Secrets belong only in Supabase provider settings, never VITE variables, Git, or public/auth-providers.json.
 
-| Display name | Supabase ID       | Setup                                                                                                               |
-| ------------ | ----------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Google       | `google`          | Configured and verified on production                                                                               |
-| Discord      | `discord`         | App `1564692722789515396`; enabled in Supabase; full player sign-in verification pending                            |
-| GitHub       | `github`          | OAuth app `3969507`; enabled in Supabase; full player sign-in verification pending                                  |
-| Twitch       | `twitch`          | App `y6yltmiwz2g6zpvzmh65pbxb02sqn0`; enabled in Supabase; full player sign-in verification pending                 |
-| Microsoft    | `azure`           | Entra app registration; request `email`; use an account allowed to register apps                                    |
-| X / Twitter  | `x`               | OAuth 2.0 app; request confirmed email; developer onboarding pending                                                |
-| LinkedIn     | `linkedin_oidc`   | LinkedIn Page association, app logo, OpenID Connect product and redirect required                                   |
-| Telegram     | `custom:telegram` | OIDC enabled; bot `abysscorp_login_bot`; email optional; profile migration applied; authorization redirect verified |
-| Steam        | `custom:steam`    | Steam uses OpenID 2.0; an authenticated server-side bridge is needed before it can be a Supabase OAuth provider     |
+| Display name | Supabase ID       | Setup                                                                                                                              |
+| ------------ | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Google       | `google`          | Configured and verified on production                                                                                              |
+| Discord      | `discord`         | App `1564692722789515396`; enabled in Supabase; full player sign-in verification pending                                           |
+| GitHub       | `github`          | OAuth app `3969507`; enabled in Supabase; full player sign-in verification pending                                                 |
+| Twitch       | `twitch`          | App `y6yltmiwz2g6zpvzmh65pbxb02sqn0`; enabled in Supabase; full player sign-in verification pending                                |
+| Microsoft    | `azure`           | Entra app registration; request `email`; use an account allowed to register apps                                                   |
+| X / Twitter  | `x`               | OAuth 2.0 app; request confirmed email; developer onboarding pending                                                               |
+| LinkedIn     | `linkedin_oidc`   | LinkedIn Page association, app logo, OpenID Connect product and redirect required                                                  |
+| Telegram     | `custom:telegram` | OIDC enabled; bot `abysscorp_login_bot`; email optional; profile migration applied; production sign-in reached nickname onboarding |
+| Steam        | `custom:steam`    | Steam uses OpenID 2.0; an authenticated server-side bridge is needed before it can be a Supabase OAuth provider                    |
 
 Apple is excluded from the frontend catalog. Facebook remains disabled because the owner's account lacks the business verification required by Meta's current setup flow.
 
