@@ -1,7 +1,7 @@
 import type { WorldState } from '../domain/world';
 
 export interface GameSave {
-  readonly version: 3 | 4 | 5 | 6;
+  readonly version: 3 | 4 | 5 | 6 | 7;
   readonly savedAt: number;
   readonly world: WorldState;
 }

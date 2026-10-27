@@ -9,7 +9,7 @@ The [persistent specification](../ABYSS_CORP_PROJECT_SPEC.md) remains the source
 - `src/application/GameSession.ts`: elapsed-time simulation, commands, offline reports and serialized local saves through `SaveRepository`.
 - `src/application/accountPorts.ts`: account save synchronization status and canonical cloud update contract.
 - `src/infrastructure/supabase`: the configured Supabase client, generated public database types and account save repository.
-- `src/infrastructure/persistence`: strict runtime save validation, explicit version 1–6 migration.
+- `src/infrastructure/persistence`: strict runtime save validation, explicit version 1–7 migration.
 - `src/app`: authentication lifecycle, one game runtime per user ID, cloud sync scheduling and route selection.
 - `src/ui`: the ocean scene, upgrades, compact equipment panels, account forms and read-only database browser.
 
@@ -23,7 +23,7 @@ Authentication changes remount the game by user ID. An old runtime can write onl
 
 ## Saving and conflicts
 
-The account repository implements `SaveRepository`. Each local journal is stored under `abyss-corp.account.<user-id>` with the save, acknowledged server revision and dirty marker. Domain saves keep version 6; account identity and server revision belong to the storage envelope.
+The account repository implements `SaveRepository`. Each local journal is stored under `abyss-corp.account.<user-id>` with the save, acknowledged server revision and dirty marker. Domain saves keep version 7; account identity and server revision belong to the storage envelope.
 
 Loading reads the server before enabling gameplay. A clean journal follows the cloud copy. A dirty journal resumes only when its base revision still matches the server; otherwise the rejected device journal is backed up and the canonical cloud copy loads automatically. Load failures never create or overwrite a fresh cloud save.
 
@@ -70,3 +70,13 @@ Business save conflicts use SQLSTATE `PT409` (HTTP 409). `40001` is reserved for
 `VisitorAnalytics` sends allowlisted anonymous page events to PostHog EU only after affirmative consent, only on the production and named preview hosts. It never reads the Auth token, account ID, email or game save. URL fragments, query strings and referrers are omitted. No autocapture, recordings, forms or advertisements are enabled. Optional visitor/session cookies use Secure on HTTPS and SameSite=Lax; consent is stored separately and can be withdrawn through Settings or `/privacy`.
 
 `/analytics` is admin-only. A Netlify Function validates the Supabase access token and checks active database administrator permission before querying PostHog with a server-only read key. Fixed 7/30/90-day reports cover production page views, unique visitors and visits in UTC. The function does not accept arbitrary SQL or expose raw provider responses or API keys. Admin authorization happens before the short-lived report cache. The dashboard counts consenting visits, not all network requests.
+
+## Expeditions
+
+Version 7 adds an explicit expedition state. Older saves migrate with zero completed expeditions and empty deliveries; their credits, levels and timers are unchanged. After all three outposts, research and pilots reach maximum level, three sequential cargo expeditions become available in Missions. Opting in routes pilot shipments into capped per-resource goals before selling the remainder. Manual sales still earn credits normally. Completion is claimed once and adds five percentage points to base cargo prices, without a cash payout or progress reset. The same supply logic runs in foreground and capped offline simulation.
+
+## Admin reports
+
+Vite development and preview proxy `/.netlify/functions` to the production Netlify function; bearer-token authorization and PostHog credentials remain on that server. An HTML fallback is rejected before JSON parsing. The chart switches between daily unique visitors, visits and page views, fills missing dates with zero, and keeps totals deduplicated over the whole period. Charts support pointer and keyboard inspection.
+
+`admin_overview` uses the same private administrator check as the database browser. It reports account creation dates, deepest unlocked outpost, and accounts with recent saves. Recent saves are explicitly labelled as saves, not live users or visits. No search or current table page changes these aggregate numbers.

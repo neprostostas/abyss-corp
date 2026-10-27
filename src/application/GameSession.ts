@@ -1,3 +1,4 @@
+import { startExpedition, claimExpedition } from '../domain/expeditions';
 import type { ResearchId, MissionId } from '../data/progression';
 import {
   OFFLINE_LIMIT_MS,
@@ -164,6 +165,12 @@ export class GameSession {
     void this.save();
   }
 
+  startExpedition = () => {
+    this.command(startExpedition);
+  };
+  claimExpedition = () => {
+    this.command(claimExpedition);
+  };
   research = (id: ResearchId) => {
     this.command((world) => buyResearch(world, id));
   };
@@ -224,7 +231,7 @@ export class GameSession {
       throw new Error('Wait for your local save to load.');
     this.tick();
     return {
-      version: 6,
+      version: 7,
       savedAt: this.suspendedAt ?? this.clock.timestamp(),
       world: this.snapshot.world,
     };
@@ -237,7 +244,7 @@ export class GameSession {
     )
       return Promise.resolve();
     this.pendingSave = {
-      version: 6,
+      version: 7,
       savedAt: this.suspendedAt ?? this.clock.timestamp(),
       world: this.snapshot.world,
     };

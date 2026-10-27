@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   MISSION_IDS,
   MISSIONS,
@@ -20,17 +21,19 @@ const goals: Record<MissionId, string> = {
 };
 export function ProgressionPanel({
   world,
+  expeditions,
   onResearch,
   onClaim,
   mode = 'research',
 }: {
   world: WorldState;
+  expeditions?: ReactNode;
   onResearch: (id: ResearchId) => void;
   onClaim: (id: MissionId) => void;
   mode?: 'research' | 'missions';
 }) {
-  if (mode === 'missions')
-    return (
+  if (mode === 'missions') {
+    const missions = (
       <div className="mission-list">
         {MISSION_IDS.map((id) => {
           const definition = MISSIONS[id];
@@ -82,6 +85,22 @@ export function ProgressionPanel({
         })}
       </div>
     );
+    const allClaimed =
+      world.progression?.claimedMissions.length === MISSION_IDS.length;
+    return (
+      <>
+        {expeditions}
+        {allClaimed ? (
+          <details className="mission-history">
+            <summary>Completed missions</summary>
+            {missions}
+          </details>
+        ) : (
+          missions
+        )}
+      </>
+    );
+  }
   return (
     <div className="research-grid">
       {RESEARCH_IDS.map((id) => {

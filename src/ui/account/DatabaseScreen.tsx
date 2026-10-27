@@ -1,3 +1,5 @@
+import { DatabaseOverview } from './DatabaseOverview';
+import type { AdminOverview } from '../../application/adminPorts';
 import { Brand } from '../components/Brand';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -11,13 +13,22 @@ import type {
   AdminTableId,
 } from '../../application/adminPorts';
 import { GameIcon } from '../components/GameIcon';
+const dateFormat = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+});
 function cell(value: unknown, column: string): string {
   if (value === null || value === undefined) return '—';
+  if (column === 'depth_m' && typeof value === 'number')
+    return value === 0 ? 'Not started' : `${String(value)} m`;
   if (column === 'email_confirmed_at') return 'Verified';
   if (typeof value === 'number') return value.toLocaleString();
   if (typeof value === 'string')
     return column.endsWith('_at') || column === 'banned_until'
-      ? new Date(value).toLocaleString()
+      ? dateFormat.format(new Date(value))
       : value;
   if (typeof value === 'object') return 'JSON';
   return typeof value === 'boolean' ? (value ? 'Yes' : 'No') : '—';
@@ -71,7 +82,14 @@ function RecordInspector({
   );
 }
 export function DatabaseScreen({ gateway }: { gateway: AdminDatabaseGateway }) {
-  const [table, setTable] = useState<AdminTableId>('profiles');
+  const [table, setTable] = useState<AdminTableId>('player_progress');
+  const [overview, setOverview] = useState<AdminOverview | null>(null);
+  const [overviewError, setOverviewError] = useState<string | null>(null);
+  const [technical, setTechnical] = useState(false);
+  const columns = ADMIN_TABLES[table].columns.filter(
+    (column) =>
+      technical || !['id', 'user_id', 'write_id', 'save'].includes(column),
+  );
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [refresh, setRefresh] = useState(0);
@@ -112,6 +130,28 @@ export function DatabaseScreen({ gateway }: { gateway: AdminDatabaseGateway }) {
       window.clearTimeout(timer);
     };
   }, [gateway, table, page, search, refresh]);
+  useEffect(() => {
+    let active = true;
+    void gateway
+      .overview()
+      .then((result) => {
+        if (active) {
+          setOverview(result);
+          setOverviewError(null);
+        }
+      })
+      .catch((failure: unknown) => {
+        if (active)
+          setOverviewError(
+            failure instanceof Error
+              ? failure.message
+              : 'Overview unavailable.',
+          );
+      });
+    return () => {
+      active = false;
+    };
+  }, [gateway, refresh]);
   return (
     <main className="database-screen">
       <header className="database-header">
@@ -149,6 +189,12 @@ export function DatabaseScreen({ gateway }: { gateway: AdminDatabaseGateway }) {
           <GameIcon name="refresh" />
         </button>
       </div>
+      {overview && <DatabaseOverview data={overview} />}
+      {overviewError && (
+        <p className="form-error" role="alert">
+          {overviewError}
+        </p>
+      )}
       {!error && (
         <nav className="database-tabs" aria-label="Database tables">
           {ADMIN_TABLE_IDS.map((id) => (
@@ -179,6 +225,15 @@ export function DatabaseScreen({ gateway }: { gateway: AdminDatabaseGateway }) {
             <span>
               {data?.total ?? 0} {data?.total === 1 ? 'record' : 'records'}
             </span>
+            <button
+              className="technical-toggle"
+              aria-pressed={technical}
+              onClick={() => {
+                setTechnical(!technical);
+              }}
+            >
+              Technical fields
+            </button>
             <label>
               <span className="sr-only">Search database records</span>
               <input
@@ -198,8 +253,27 @@ export function DatabaseScreen({ gateway }: { gateway: AdminDatabaseGateway }) {
             <table>
               <thead>
                 <tr>
-                  {ADMIN_TABLES[table].columns.map((column) => (
-                    <th key={column}>{column.replaceAll('_', ' ')}</th>
+                  {columns.map((column) => (
+                    <th key={column}>
+                      {(
+                        {
+                          captain_name: 'Captain',
+                          depth_m: 'Depth',
+                          outposts: 'Bases',
+                          upgrades: 'Upgrades',
+                          research: 'Research',
+                          automation: 'Pilot levels',
+                          credits: 'Credits',
+                          updated_at: 'Last saved',
+                          created_at: 'Created',
+                          email_confirmed_at: 'Email confirmed',
+                          last_sign_in_at: 'Last sign in',
+                          banned_until: 'Blocked until',
+                          revision: 'Save revision',
+                          email: 'Email',
+                        } as Record<string, string>
+                      )[column] ?? column.replaceAll('_', ' ')}
+                    </th>
                   ))}
                   <th>
                     <span className="sr-only">Inspect</span>
@@ -210,7 +284,7 @@ export function DatabaseScreen({ gateway }: { gateway: AdminDatabaseGateway }) {
                 {!busy &&
                   data?.rows.map((record, index) => (
                     <tr key={index}>
-                      {ADMIN_TABLES[table].columns.map((column) => (
+                      {columns.map((column) => (
                         <td key={column}>
                           <span
                             className="database-cell"

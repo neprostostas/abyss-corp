@@ -1,3 +1,5 @@
+import { getExpeditionOffer } from '../../domain/expeditions';
+import { ExpeditionsPanel } from '../panels/ExpeditionsPanel';
 import { DRAWER_DURATION_MS, useGameDrawer } from '../hooks/useGameDrawer';
 import { getFirstStep } from '../../domain/firstSteps';
 import { useEffect, useState } from 'react';
@@ -104,7 +106,10 @@ function GameBoard({
   const production = getProductionSummary(game, config);
   const progress = game.phaseElapsedMs / getPhaseDuration(game, config);
   const saleValue = getSaleValue(game, config);
-  const missionsReady = getReadyMissionCount(world);
+  const expedition = getExpeditionOffer(world);
+  const missionsReady =
+    getReadyMissionCount(world) +
+    (expedition.ready || expedition.canStart ? 1 : 0);
   const researchReady = RESEARCH_IDS.filter(
     (id) => getResearchOffer(world, id).affordable,
   ).length;
@@ -364,6 +369,13 @@ function GameBoard({
             <ProgressionPanel
               mode={windowName}
               world={world}
+              expeditions={
+                <ExpeditionsPanel
+                  world={world}
+                  onStart={session.startExpedition}
+                  onClaim={session.claimExpedition}
+                />
+              }
               onResearch={session.research}
               onClaim={session.claimMission}
             />

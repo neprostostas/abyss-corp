@@ -1,6 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+const functionsProxy = {
+  '/.netlify/functions': {
+    target: 'https://abyss-corp.netlify.app',
+    changeOrigin: true,
+    secure: true,
+  },
+};
+
 export default defineConfig({
   plugins: [react()],
   build: {
@@ -12,6 +20,6 @@ export default defineConfig({
       },
     },
   },
-  server: { port: 5173, strictPort: true },
-  preview: { port: 4173, strictPort: true },
+  server: { port: 5173, strictPort: true, proxy: functionsProxy },
+  preview: { port: 4173, strictPort: true, proxy: functionsProxy },
 });

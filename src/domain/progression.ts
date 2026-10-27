@@ -1,3 +1,4 @@
+import { EXPEDITION_TRADE_BONUS } from '../data/expeditions';
 import {
   MISSION_IDS,
   MISSIONS,
@@ -9,7 +10,20 @@ import { LAYERS, LAYER_IDS } from '../data/layers';
 import type { LayerId, ProductionConfig } from '../data/layers';
 import type { WorldState } from './world';
 
+export interface ExpeditionState {
+  readonly completed: number;
+  readonly active: boolean;
+  readonly delivered: Readonly<Record<LayerId, number>>;
+}
+export function createExpedition(): ExpeditionState {
+  return {
+    completed: 0,
+    active: false,
+    delivered: { shallows: 0, 'golden-trench': 0, 'pearl-caverns': 0 },
+  };
+}
 export interface ProgressionState {
+  readonly expedition?: ExpeditionState;
   readonly claimedEvents?: readonly string[];
   readonly research: Readonly<Record<ResearchId, number>>;
   readonly claimedMissions: readonly MissionId[];
@@ -19,6 +33,7 @@ export function createProgression(): ProgressionState {
     research: { trade: 0, storage: 0 },
     claimedMissions: [],
     claimedEvents: [],
+    expedition: createExpedition(),
   };
 }
 export function getProgression(world: WorldState): ProgressionState {
@@ -43,7 +58,8 @@ export function getLayerProduction(
   id: LayerId = world.selectedLayerId,
 ): ProductionConfig {
   const base = LAYERS[id].production;
-  const research = getProgression(world).research;
+  const progression = getProgression(world);
+  const research = progression.research;
   return {
     ...base,
     storageBonus: research.storage * RESEARCH.storage.bonusPerLevel,
@@ -51,7 +67,10 @@ export function getLayerProduction(
       ...base.resource,
       refinedValue: Math.floor(
         (base.resource.refinedValue *
-          (100 + research.trade * RESEARCH.trade.bonusPerLevel)) /
+          (100 +
+            research.trade * RESEARCH.trade.bonusPerLevel +
+            (progression.expedition?.completed ?? 0) *
+              EXPEDITION_TRADE_BONUS)) /
           100,
       ),
     },

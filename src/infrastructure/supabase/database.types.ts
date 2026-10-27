@@ -136,6 +136,7 @@ export type Database = {
       };
     };
     Functions: {
+      admin_overview: { Args: never; Returns: Json };
       admin_database: {
         Args: {
           filter_text?: string;

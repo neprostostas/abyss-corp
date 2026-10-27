@@ -32,6 +32,8 @@ export class AdminAnalyticsClient implements AdminAnalyticsGateway {
         signal: AbortSignal.any([signal, AbortSignal.timeout(25000)]),
       },
     );
+    if (!response.headers.get('content-type')?.includes('application/json'))
+      throw new Error('Analytics endpoint unavailable. Refresh and try again.');
     const body: unknown = await response.json();
     if (!response.ok)
       throw new Error(
@@ -42,6 +44,9 @@ export class AdminAnalyticsClient implements AdminAnalyticsGateway {
           ? body.error
           : 'Analytics unavailable.',
       );
-    return schema.parse(body);
+    const parsed = schema.safeParse(body);
+    if (!parsed.success)
+      throw new Error('Analytics report is incomplete. Try again.');
+    return parsed.data;
   }
 }

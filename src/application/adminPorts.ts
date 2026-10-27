@@ -23,12 +23,13 @@ export const ADMIN_TABLES = {
   },
   game_saves: {
     label: 'Saves',
-    columns: ['user_id', 'revision', 'updated_at', 'write_id', 'save'],
+    columns: ['email', 'user_id', 'revision', 'updated_at', 'write_id', 'save'],
   },
   player_progress: {
     label: 'Progress',
     columns: [
       'captain_name',
+      'email',
       'depth_m',
       'outposts',
       'upgrades',
@@ -53,5 +54,24 @@ export interface AdminPage {
   readonly page_size: typeof ADMIN_PAGE_SIZE;
 }
 export interface AdminDatabaseGateway {
+  overview(): Promise<AdminOverview>;
   load(table: AdminTableId, page: number, search: string): Promise<AdminPage>;
+}
+
+export interface AdminOverview {
+  readonly updatedAt: string;
+  readonly totals: {
+    readonly accounts: number;
+    readonly verified: number;
+    readonly withProgress: number;
+    readonly saved7Days: number;
+  };
+  readonly depths: readonly {
+    readonly depth: number;
+    readonly count: number;
+  }[];
+  readonly registrations: readonly {
+    readonly day: string;
+    readonly value: number;
+  }[];
 }

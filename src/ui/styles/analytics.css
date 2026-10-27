@@ -87,14 +87,6 @@
   gap: 16px;
   margin: 24px 0;
 }
-.analytics-totals article {
-  padding: 22px;
-  border: 1px solid #8ab6a34d;
-  border-radius: 16px;
-  display: grid;
-  gap: 12px;
-  background: #163c48;
-}
 .analytics-totals small {
   font-size: 12px;
   color: #a6c6b8;
@@ -103,48 +95,6 @@
   font-family: var(--font-display);
   font-size: 34px;
   color: #ffe2a1;
-}
-.analytics-chart {
-  padding: 24px;
-  border: 1px solid #8ab6a34d;
-  border-radius: 16px;
-}
-.analytics-chart h2 {
-  font-size: 17px;
-  margin-bottom: 28px;
-}
-.analytics-chart p {
-  font-size: 13px;
-  color: #adc8bc;
-}
-.analytics-bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-}
-.analytics-bars > div {
-  flex: 1;
-  min-width: 28px;
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  font-size: 9px;
-}
-.analytics-bars span {
-  width: 100%;
-  max-width: 42px;
-  min-height: 2px;
-  border-radius: 5px 5px 0 0;
-  background: linear-gradient(#bce1a6, #40a9a8);
-}
-.analytics-bars b {
-  color: #dce9d5;
-}
-.analytics-bars small {
-  color: #a2bcb2;
-  white-space: nowrap;
 }
 .analytics-note {
   font-size: 11px;
@@ -167,13 +117,175 @@
   .analytics-totals {
     gap: 8px;
   }
-  .analytics-totals article {
-    padding: 12px;
-  }
   .analytics-totals strong {
     font-size: 24px;
   }
   .analytics-totals small {
     font-size: 10px;
+  }
+}
+
+/* Operator reports: one chosen metric, readable axes, exact values on hover or focus. */
+.analytics-totals > button {
+  min-width: 0;
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #8ab6a34d;
+  border-radius: 14px;
+  background: #163c48;
+  box-shadow: none;
+  color: #dce9df;
+  text-align: left;
+}
+.analytics-totals > button[aria-pressed='true'] {
+  border-color: #b8dac0;
+  background: #244b52;
+}
+.report-chart {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid #8ab6a34d;
+  border-radius: 14px;
+  background: #123440;
+}
+.report-chart > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.report-chart h2 {
+  font-size: 16px;
+}
+.report-chart output {
+  font-size: 12px;
+  color: #c8dfd3;
+  font-variant-numeric: tabular-nums;
+}
+.report-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 16px;
+  touch-action: pan-y;
+}
+.report-chart svg text {
+  fill: #a9c7bb;
+  font: 11px var(--font-body);
+}
+.chart-grid {
+  stroke: #adc8bb20;
+  stroke-width: 1;
+}
+.chart-line {
+  stroke: #93d9c5;
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linejoin: round;
+}
+.chart-cursor {
+  stroke: #b9d4c980;
+  stroke-dasharray: 3 4;
+}
+.chart-point {
+  fill: #ffe0a1;
+  stroke: #123440;
+  stroke-width: 2;
+}
+.database-overview {
+  margin: 24px 0 32px;
+}
+.overview-totals {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.overview-totals article {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid #8ab6a33b;
+  border-radius: 12px;
+  background: #163c48;
+}
+.overview-totals strong {
+  color: #f3dda6;
+  font: 700 28px var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+.overview-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr);
+  gap: 16px;
+}
+.depth-distribution > div {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr) 32px;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  font-size: 12px;
+}
+.depth-distribution strong {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.depth-count-track {
+  height: 9px;
+  background: #40625e44;
+  overflow: hidden;
+  border-radius: 5px;
+}
+.depth-count-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #93d9c5;
+}
+.database-toolbar {
+  flex-wrap: wrap;
+}
+.technical-toggle {
+  margin-left: auto;
+  font-size: 11px;
+  box-shadow: none;
+  background: #21454e;
+  color: #bbd3c7;
+}
+.technical-toggle[aria-pressed='true'] {
+  background: #d5c391;
+  color: #183b47;
+}
+.database-table tbody tr:nth-child(even) {
+  background: #21455033;
+}
+.database-table tbody tr:hover {
+  background: #47685b33;
+}
+.database-table td {
+  padding-block: 16px;
+}
+@media (max-width: 760px) {
+  .overview-charts {
+    grid-template-columns: 1fr;
+  }
+  .overview-totals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .analytics-totals > button {
+    padding: 12px;
+  }
+  .report-chart {
+    padding: 16px;
+  }
+  .database-toolbar {
+    gap: 10px;
+  }
+  .database-toolbar input {
+    width: 100%;
   }
 }

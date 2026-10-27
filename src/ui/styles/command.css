@@ -644,3 +644,74 @@ h3,
     margin: 0;
   }
 }
+
+.expedition-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  margin-bottom: 20px;
+  border: 1px solid #c4d5a666;
+  border-radius: 14px;
+  background: #23474c;
+}
+.expedition-card > small {
+  color: #aac7b6;
+  font-size: 11px;
+}
+.expedition-card h3 {
+  color: #f3dda6;
+  font-size: 22px;
+}
+.expedition-card p {
+  color: #b6d0c3;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.expedition-cargo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px;
+  font-size: 12px;
+}
+.expedition-cargo b {
+  font-variant-numeric: tabular-nums;
+  color: #e0eddb;
+}
+.expedition-cargo .progress-track {
+  grid-column: 1 / -1;
+}
+.expedition-status {
+  color: #c9dfc9;
+  font-size: 12px;
+}
+.expedition-complete > .game-icon {
+  color: #f2d48c;
+  width: 36px;
+  height: 36px;
+}
+.mission-history > summary {
+  cursor: pointer;
+  padding: 12px 0;
+  margin-bottom: 8px;
+  color: #a9c7b9;
+  font-size: 12px;
+}
+.mission-history > summary {
+  list-style: none;
+}
+.mission-history > summary::-webkit-details-marker {
+  display: none;
+}
+.mission-history > summary::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 10px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+}
+.mission-history[open] > summary::before {
+  transform: rotate(45deg);
+}

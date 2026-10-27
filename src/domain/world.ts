@@ -1,3 +1,4 @@
+import { supplyExpedition } from './expeditions';
 import {
   createProgression,
   getProgression,
@@ -127,7 +128,9 @@ export function advanceWorld(world: WorldState, elapsedMs: number): WorldState {
       elapsed += step;
       remaining -= step;
       if (elapsed === module.intervalMs) {
-        game = sellRefined(game, config);
+        const shipment = supplyExpedition(next, id, game, config);
+        next = shipment.world;
+        game = sellRefined(shipment.game, config);
         elapsed = 0;
       }
     }

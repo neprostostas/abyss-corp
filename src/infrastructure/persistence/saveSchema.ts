@@ -1,3 +1,5 @@
+import { createExpedition } from '../../domain/expeditions';
+import { EXPEDITIONS } from '../../data/expeditions';
 import { MISSION_IDS, RESEARCH } from '../../data/progression';
 import {
   createProgression,
@@ -47,12 +49,32 @@ const layerSchema = z
   .strict();
 const schema = z
   .object({
-    version: z.union([z.literal(3), z.literal(4), z.literal(5), z.literal(6)]),
+    version: z.union([
+      z.literal(3),
+      z.literal(4),
+      z.literal(5),
+      z.literal(6),
+      z.literal(7),
+    ]),
     savedAt: integer,
     world: z
       .object({
         progression: z
           .object({
+            expedition: z
+              .object({
+                completed: z.number().int().min(0).max(EXPEDITIONS.length),
+                active: z.boolean(),
+                delivered: z
+                  .object({
+                    shallows: integer,
+                    'golden-trench': integer,
+                    'pearl-caverns': integer,
+                  })
+                  .strict(),
+              })
+              .strict()
+              .optional(),
             research: z
               .object({
                 trade: z.number().int().min(0).max(RESEARCH.trade.costs.length),
@@ -107,10 +129,14 @@ export function validateSave(data: unknown): GameSave {
   )
     throw new Error('Legacy save cannot contain event claims.');
   if (
-    parsed.version === 6 &&
+    parsed.version >= 6 &&
     parsed.world.progression?.claimedEvents === undefined
   )
-    throw new Error('Version 6 requires event claim history.');
+    throw new Error('Save requires event claim history.');
+  if (parsed.version === 7 && !parsed.world.progression?.expedition)
+    throw new Error('Version 7 requires expedition state.');
+  if (parsed.version < 7 && parsed.world.progression?.expedition)
+    throw new Error('Legacy save cannot contain expeditions.');
   const normalizeLayer = (layer: z.infer<typeof layerSchema>) => {
     const { automation, ...production } = layer;
     if (parsed.version === 3 && automation)
@@ -121,12 +147,13 @@ export function validateSave(data: unknown): GameSave {
   // Normalize optional fields to absent keys under exactOptionalPropertyTypes.
   const save: GameSave = {
     ...parsed,
-    version: 6,
+    version: 7,
     world: {
       ...parsed.world,
       progression: {
         ...(parsed.world.progression ?? createProgression()),
         claimedEvents: parsed.world.progression?.claimedEvents ?? [],
+        expedition: parsed.world.progression?.expedition ?? createExpedition(),
       },
       layers: {
         shallows: normalizeLayer(parsedLayers.shallows),
@@ -140,6 +167,25 @@ export function validateSave(data: unknown): GameSave {
     },
   };
   const world = save.world;
+  const expedition = world.progression?.expedition;
+  if (expedition) {
+    const definition = EXPEDITIONS[expedition.completed];
+    if (expedition.active && !definition)
+      throw new Error('Completed campaign cannot be active.');
+    for (const id of LAYER_IDS) {
+      if (
+        (!expedition.active && expedition.delivered[id] !== 0) ||
+        expedition.delivered[id] > (definition?.targets[id] ?? 0)
+      )
+        throw new Error('Invalid expedition cargo.');
+    }
+    if (
+      (expedition.active || expedition.completed > 0) &&
+      LAYER_IDS.some((id) => !world.layers[id])
+    )
+      throw new Error('Expeditions require all outposts.');
+  }
+
   if (!world.layers[world.selectedLayerId])
     throw new Error('Selected layer is locked.');
   for (const [index, id] of LAYER_IDS.entries()) {

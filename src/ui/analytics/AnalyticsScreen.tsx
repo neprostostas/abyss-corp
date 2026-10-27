@@ -1,3 +1,4 @@
+import { TimelineChart } from '../charts/TimelineChart';
 import { Brand } from '../components/Brand';
 import { useEffect, useState } from 'react';
 import type {
@@ -40,7 +41,25 @@ export function AnalyticsScreen({
       controller.abort();
     };
   }, [gateway, days, refresh]);
-  const max = Math.max(1, ...(report?.daily.map((row) => row.visitors) ?? []));
+  const [metric, setMetric] = useState<'visitors' | 'sessions' | 'pageviews'>(
+    'visitors',
+  );
+  const labels = {
+    visitors: 'Unique visitors',
+    sessions: 'Visits',
+    pageviews: 'Page views',
+  };
+  const points = report
+    ? Array.from({ length: days }, (_, i) => {
+        const date = new Date(report.updatedAt);
+        date.setUTCDate(date.getUTCDate() - days + 1 + i);
+        const day = date.toISOString().slice(0, 10);
+        return {
+          day,
+          value: report.daily.find((row) => row.day === day)?.[metric] ?? 0,
+        };
+      })
+    : [];
   return (
     <main className="database-screen analytics-screen">
       <header className="database-header">
@@ -94,47 +113,31 @@ export function AnalyticsScreen({
         report && (
           <>
             <div className="analytics-totals">
-              {(['visitors', 'pageviews', 'sessions'] as const).map(
-                (metric) => (
-                  <article key={metric}>
-                    <small>
-                      {metric === 'visitors'
-                        ? 'Unique visitors'
-                        : metric === 'pageviews'
-                          ? 'Page views'
-                          : 'Visits'}
-                    </small>
-                    <strong>{report.totals[metric].toLocaleString()}</strong>
-                  </article>
-                ),
-              )}
+              {(['visitors', 'sessions', 'pageviews'] as const).map((item) => (
+                <button
+                  key={item}
+                  aria-pressed={metric === item}
+                  onClick={() => {
+                    setMetric(item);
+                  }}
+                >
+                  <small>{labels[item]}</small>
+                  <strong>{report.totals[item].toLocaleString()}</strong>
+                </button>
+              ))}
             </div>
-            <section
-              className="analytics-chart"
-              aria-label="Daily unique visitors"
-            >
-              <h2>Visitors per day</h2>
-              {report.daily.length ? (
-                <div className="analytics-bars">
-                  {report.daily.map((row) => (
-                    <div
-                      key={row.day}
-                      title={`${row.day}: ${String(row.visitors)} visitors`}
-                    >
-                      <b>{row.visitors}</b>
-                      <span
-                        style={{
-                          height: `${String(Math.max(2, (row.visitors / max) * 160))}px`,
-                        }}
-                      />
-                      <small>{row.day.slice(5)}</small>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p>No consenting visitors yet.</p>
-              )}
-            </section>
+            <TimelineChart
+              key={`${String(days)}-${metric}`}
+              title={`${labels[metric]} per day`}
+              unit={
+                metric === 'visitors'
+                  ? 'visitors'
+                  : metric === 'sessions'
+                    ? 'visits'
+                    : 'views'
+              }
+              points={points}
+            />
             <p className="analytics-note">
               PostHog EU · Production site · Consenting visitors only · UTC
               dates
