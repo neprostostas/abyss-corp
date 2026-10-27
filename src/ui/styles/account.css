@@ -712,16 +712,34 @@
 .profile-trigger-avatar {
   position: relative;
   display: block;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
 }
 .settings-trigger:has(.profile-trigger-avatar) {
+  width: 44px;
+  height: 44px;
   padding: 4px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
   overflow: visible;
 }
+.settings-trigger:has(.profile-trigger-avatar):hover:not(:disabled),
+.settings-trigger:has(.profile-trigger-avatar):active:not(:disabled) {
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+  filter: none;
+}
+.settings-trigger:has(.profile-trigger-avatar)[aria-expanded='true']
+  .account-avatar {
+  outline: 2px solid #93e8d0;
+  outline-offset: 3px;
+}
 .profile-trigger-avatar .account-avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   font-size: 13px;
 }
 .provider-badge {
@@ -1143,26 +1161,52 @@
 }
 
 .settings-control {
-  width: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
-  text-align: left;
-  padding: 11px 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px;
+  border: 1px solid #a2d4cc12;
+  border-radius: 12px;
+  background: #0d303b80;
+  box-shadow: none;
   color: #d4e5df;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  letter-spacing: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.settings-control:hover:not(:disabled),
+.settings-control:active:not(:disabled) {
+  background: #274f5899;
+  border-color: #a2d4cc30;
+  box-shadow: none;
+  transform: none;
+  filter: none;
 }
 .settings-control > span {
   flex: 1;
 }
 .settings-control > .game-icon:first-child {
+  width: 20px;
+  height: 20px;
   color: #79d3c1;
 }
 .settings-control > .game-icon:last-child {
-  width: 15px;
+  width: 14px;
+  height: 14px;
   opacity: 0.45;
+}
+.account-settings .text-button,
+.guest-profile .text-button {
+  text-decoration: none;
 }
 .avatar-options {
   padding: 10px 0 16px;
@@ -1173,6 +1217,7 @@
   gap: 8px;
 }
 .avatar-grid button {
+  box-shadow: none;
   aspect-ratio: 1;
   padding: 0;
   overflow: hidden;
@@ -1213,14 +1258,20 @@
   display: none;
 }
 .account-danger {
+  display: grid;
+  gap: 8px;
   border-top: 1px solid #91acae26;
   margin-top: 16px;
   padding-top: 8px;
 }
-.danger-link {
+.settings-control.danger-link {
   color: #e7a59c;
 }
-.danger-link > .game-icon:first-child {
+.settings-control.danger-link:hover:not(:disabled) {
+  background: #743e3a33;
+  border-color: #e7a59c30;
+}
+.settings-control.danger-link > .game-icon:first-child {
   color: #e7a59c;
 }
 .danger-confirm {
@@ -1258,4 +1309,39 @@
 .avatar-grid button:focus-visible {
   outline: 2px solid #e6bd79;
   outline-offset: 3px;
+}
+
+.account-settings {
+  gap: 12px;
+}
+.avatar-tools button {
+  min-height: 44px;
+  border-radius: 10px;
+  box-shadow: none;
+}
+.avatar-tools .text-button {
+  padding: 10px 12px;
+  background: #31556366;
+}
+.danger-buttons button {
+  min-height: 44px;
+  box-shadow: none;
+}
+.danger-buttons .text-button {
+  padding: 10px 14px;
+  background: #31556366;
+}
+.danger-confirm input {
+  min-height: 44px;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.guest-profile .account-danger {
+  width: 100%;
+}
+.avatar-grid button:hover:not(:disabled),
+.avatar-grid button:active:not(:disabled) {
+  transform: none;
+  filter: none;
 }

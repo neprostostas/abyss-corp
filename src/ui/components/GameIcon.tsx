@@ -21,6 +21,8 @@ export type IconName =
   | 'check'
   | 'depth'
   | 'profile'
+  | 'camera'
+  | 'trash'
   | 'cookie'
   | 'database'
   | 'analytics'
@@ -28,8 +30,21 @@ export type IconName =
 const shapes: Record<IconName, ReactNode> = {
   profile: (
     <>
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 21v-2a8 8 0 0 1 16 0v2" />
+      <path d="M6 15V9a6 6 0 0 1 12 0v6M8 17h8M8 17v3h8v-3M5 21h14" />
+      <circle cx="12" cy="10" r="3.25" />
+      <path d="M3.5 9.5H6v4H3.5zM18 9.5h2.5v4H18z" />
+    </>
+  ),
+  camera: (
+    <>
+      <path d="M8 6 9.5 3.5h5L16 6h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" />
+      <circle cx="12" cy="12.5" r="3.5" />
+      <path d="M17.5 9h.01" />
+    </>
+  ),
+  trash: (
+    <>
+      <path d="M4 6h16M9 6V4h6v2M6 6l.8 13a2 2 0 0 0 2 2h6.4a2 2 0 0 0 2-2L18 6M10 10v6M14 10v6" />
     </>
   ),
   cookie: (

@@ -37,7 +37,7 @@ export function AccountDangerActions({
                 setConfirmation('');
               }}
             >
-              <GameIcon name="close" />
+              <GameIcon name="trash" />
               <span>Delete account</span>
               <GameIcon name="arrow" />
             </button>
@@ -75,9 +75,8 @@ export function AccountDangerActions({
           </strong>
           <p>
             {action === 'delete'
-              ? 'Your account, cloud progress and uploaded photo will be permanently deleted.'
-              : 'All game progress and expedition milestones will be erased. Your profile and connected accounts stay.'}{' '}
-            This cannot be undone.
+              ? 'Account, progress and uploaded photos will be deleted permanently.'
+              : 'Erase all game progress. Keep your profile and sign-in methods.'}
           </p>
           <label htmlFor="danger-confirmation">Type {word} to confirm</label>
           <input

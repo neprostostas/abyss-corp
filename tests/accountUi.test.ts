@@ -426,3 +426,126 @@ void test('all 20 avatars can be selected without changing provider data', async
   });
   await reset();
 });
+
+void test('email sign-in sends entered credentials and explains an unconfirmed email', async () => {
+  let request: unknown = null;
+  const client = {
+    auth: {
+      signInWithPassword: (value: unknown) => {
+        request = value;
+        return Promise.resolve({ error: { code: 'email_not_confirmed' } });
+      },
+    },
+  } as unknown as SupabaseClient<Database>;
+  await ui(() => {
+    root.render(
+      createElement(AuthScreen, {
+        client,
+        recovery: false,
+        signedIn: false,
+        onGuest: () => {
+          assert.fail('Unexpected guest navigation');
+        },
+        onPasswordUpdated: () => {
+          assert.fail('Unexpected password update');
+        },
+      }),
+    );
+  });
+  await fill('email', 'captain@example.com');
+  await fill('password', 'test-password-123');
+  await ui(() => {
+    document
+      .querySelector('form')
+      ?.dispatchEvent(
+        new dom.window.Event('submit', { bubbles: true, cancelable: true }),
+      );
+  });
+  assert.deepEqual(request, {
+    email: 'captain@example.com',
+    password: 'test-password-123',
+  });
+  assert.match(
+    document.querySelector('[role="alert"]')?.textContent ?? '',
+    /Confirm your email/,
+  );
+  await reset();
+});
+void test('password recovery sends only the primary domain callback', async () => {
+  let request: unknown = null;
+  const client = {
+    auth: {
+      resetPasswordForEmail: (...args: unknown[]) => {
+        request = args;
+        return Promise.resolve({ error: null });
+      },
+    },
+  } as unknown as SupabaseClient<Database>;
+  await ui(() => {
+    root.render(
+      createElement(AuthScreen, {
+        client,
+        recovery: false,
+        signedIn: false,
+        onGuest: () => {
+          assert.fail('Unexpected guest navigation');
+        },
+        onPasswordUpdated: () => {
+          assert.fail('Unexpected password update');
+        },
+      }),
+    );
+  });
+  await click('Forgot password?');
+  await fill('email', 'captain@example.com');
+  await click('Send reset link');
+  assert.deepEqual(request, [
+    'captain@example.com',
+    { redirectTo: 'https://abysscorp.us.ci/reset-password' },
+  ]);
+  assert.match(
+    document.querySelector('[role="status"]')?.textContent ?? '',
+    /receive a reset link/,
+  );
+  await reset();
+});
+void test('password recovery requires matching passwords and updates the authenticated user', async () => {
+  let request: unknown = null,
+    done = false;
+  const client = {
+    auth: {
+      updateUser: (args: unknown) => {
+        request = args;
+        return Promise.resolve({ error: null });
+      },
+    },
+  } as unknown as SupabaseClient<Database>;
+  await ui(() => {
+    root.render(
+      createElement(AuthScreen, {
+        client,
+        recovery: true,
+        signedIn: true,
+        onGuest: () => {
+          assert.fail('Unexpected guest navigation');
+        },
+        onPasswordUpdated: () => {
+          done = true;
+        },
+      }),
+    );
+  });
+  await fill('password', 'test-password-123');
+  await fill('confirmation', 'other-password-123');
+  await click('Save password');
+  assert.equal(request, null);
+  assert.match(
+    document.querySelector('[role="alert"]')?.textContent ?? '',
+    /Passwords do not match/,
+  );
+  await fill('confirmation', 'test-password-123');
+  await click('Save password');
+  assert.deepEqual(request, { password: 'test-password-123' });
+  assert.equal(done, true);
+  await reset();
+});

@@ -92,3 +92,58 @@ void test('linking saves first, uses linkIdentity with the primary callback, and
   );
   assert.equal(calls.length, 0);
 });
+
+const configuredProviders = [
+  ['google', undefined],
+  ['discord', 'identify email'],
+  ['github', 'user:email'],
+  ['azure', 'email'],
+  ['twitch', 'user:read:email'],
+  ['custom:telegram', 'openid profile'],
+  ['custom:steam', undefined],
+] as const;
+for (const [provider, scopes] of configuredProviders) {
+  void test(`${provider} linking keeps the primary callback and preserves the current account flow`, async () => {
+    const calls: unknown[] = [];
+    const client = {
+      auth: {
+        linkIdentity: (options: unknown) => {
+          calls.push(options);
+          return Promise.resolve({ error: null });
+        },
+        signInWithOAuth: () =>
+          assert.fail('Linking must not start another account session'),
+      },
+    } as unknown as SupabaseClient<Database>;
+    await linkAccountIdentity(client, provider, () => {
+      calls.push('save');
+      return Promise.resolve();
+    });
+    assert.deepEqual(calls, [
+      'save',
+      {
+        provider,
+        options: {
+          redirectTo: 'https://abysscorp.us.ci/',
+          ...(scopes ? { scopes } : {}),
+        },
+      },
+    ]);
+  });
+}
+void test('failed provider linking clears the return flag and surfaces the error', async () => {
+  const client = {
+    auth: {
+      linkIdentity: () =>
+        Promise.resolve({ error: new Error('Provider unavailable') }),
+    },
+  } as unknown as SupabaseClient<Database>;
+  await assert.rejects(
+    linkAccountIdentity(client, 'google', () => Promise.resolve()),
+    /Provider unavailable/,
+  );
+  assert.equal(
+    dom.window.sessionStorage.getItem('abyss-corp.show-connections'),
+    null,
+  );
+});

@@ -52,7 +52,7 @@ export function AvatarPicker({
         }}
         disabled={busy}
       >
-        <GameIcon name="profile" />
+        <GameIcon name="camera" />
         <span>Change photo</span>
         <GameIcon name="arrow" />
       </button>

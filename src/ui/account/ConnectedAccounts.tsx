@@ -142,7 +142,6 @@ export function ConnectedAccounts({
     <section className="connected-accounts" aria-label="Sign-in methods">
       <div className="connections-heading">
         <h3>Sign-in methods</h3>
-        <span>One account, one save</span>
       </div>
       <div className="connection-list">
         {methods.filter(isLinked).map(row)}
