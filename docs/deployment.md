@@ -6,8 +6,8 @@
 - PostgreSQL: профілі, збереження за акаунтом, ревізії, правила доступу й адмінські дозволи. Міграції у `supabase/migrations` вже застосовані до цього проєкту.
 - Netlify: **abyss-corp**, основна адреса `https://abysscorp.us.ci` (резервна `https://abyss-corp.netlify.app`).
 - GitHub-підключення: `neprostostas/abyss-corp`, гілка `main`, build `npm run build`, publish `dist`.
-- Preview для перевірки: [account-preview--abyss-corp.netlify.app](https://account-preview--abyss-corp.netlify.app), з тією ж акаунтною базою.
-- Supabase Site URL: `https://abysscorp.us.ci`; дозволені тільки точні `/` та `/reset-password` на основному сайті, старій Netlify-адресі й account-preview. Localhost і wildcard-адреси видалено.
+- Старі тестові деплої account-preview видалено. Публікується тільки production з main.
+- Supabase Site URL: `https://abysscorp.us.ci`; дозволені тільки точні `/` та `/reset-password` на основному сайті та стандартній Netlify-адресі. Localhost і wildcard-адреси видалено.
 
 Основний сайт оновлюється через commit/push у `main` та автоматичну збірку Netlify. Preview використовується для перевірки перед основною публікацією.
 
@@ -87,7 +87,7 @@ npm run dev
 
 Цей список не забороняє запускати змінений frontend локально: publishable key публічний за призначенням. Доступ до бази визначає підписаний токен акаунта й PostgreSQL RLS, а не адреса frontend. Інший гравець не може змінити налаштування Supabase, читати ваш приватний save чи призначити себе адміном через свій локальний код.
 
-При локальній розробці вхід із паролем працює. Листи підтвердження й відновлення повертають на контрольований account-preview, а не localhost. Документація: [Redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls), [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).
+При локальній розробці вхід із паролем працює. Листи підтвердження й відновлення повертають на основний `https://abysscorp.us.ci`, а не localhost. Документація: [Redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls), [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).
 
 ## Очищення проєкту
 

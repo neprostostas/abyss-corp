@@ -74,11 +74,7 @@ export class VisitorAnalytics {
   page = () => {
     if (
       this.state.consent !== 'accepted' ||
-      ![
-        'abysscorp.us.ci',
-        'abyss-corp.netlify.app',
-        'account-preview--abyss-corp.netlify.app',
-      ].includes(location.hostname)
+      !['abysscorp.us.ci', 'abyss-corp.netlify.app'].includes(location.hostname)
     )
       return;
     const key: unknown = import.meta.env.VITE_POSTHOG_KEY;
