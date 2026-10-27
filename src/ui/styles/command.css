@@ -710,3 +710,119 @@ h3,
 .mission-history[open] > summary::before {
   transform: rotate(45deg);
 }
+
+/* Respond to the space left beside the drawer, not just the viewport. */
+.upgrade-deck {
+  container-type: inline-size;
+  container-name: upgrades;
+  min-width: 0;
+  align-items: stretch;
+}
+.upgrade-tile {
+  min-width: 0;
+}
+.upgrade-info h3,
+.upgrade-info > span {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.upgrade-tile button {
+  height: auto;
+  min-height: 32px;
+  min-width: 0;
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+@container upgrades (max-width: 720px) {
+  .upgrade-tile {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    gap: 5px;
+    padding: 7px 5px;
+    text-align: center;
+  }
+  .upgrade-art,
+  .machine-portrait {
+    width: 40px;
+    height: 36px;
+  }
+  .upgrade-art {
+    margin: 0 auto;
+  }
+  .upgrade-info h3 {
+    justify-content: center;
+    font-size: 12px;
+    line-height: 1.3;
+    gap: 3px;
+  }
+  .upgrade-info > span {
+    display: block;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .upgrade-info b {
+    display: inline-block;
+  }
+  .upgrade-tile button {
+    font-size: 11px;
+    padding: 5px 3px;
+    gap: 3px;
+    margin: 0;
+  }
+}
+.panel-heading > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.panel-heading > .game-icon,
+.panel-heading .icon-button {
+  flex-shrink: 0;
+}
+.panel-content {
+  overflow-wrap: anywhere;
+}
+.panel-content .research-card {
+  grid-template-columns: 68px minmax(0, 1fr);
+}
+.panel-content .level-pips {
+  flex-wrap: wrap;
+}
+@media (max-width: 380px) {
+  .game-panel {
+    left: 10px;
+  }
+}
+
+.ocean-stage {
+  container: ocean / inline-size;
+}
+@container ocean (max-width: 620px) {
+  .stage-bottom {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .production-readout {
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    min-height: 46px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+  }
+  .production-readout > div {
+    min-width: 0;
+    gap: 4px;
+  }
+  .production-readout b {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+  .sell-button {
+    min-width: 0;
+    max-width: 100%;
+    min-height: 46px;
+    height: auto;
+  }
+}
