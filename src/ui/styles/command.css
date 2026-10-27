@@ -980,3 +980,101 @@ h3,
 .game-shell.panel-open:has(.game-panel-profile) > .game-hud {
   grid-column: 1;
 }
+
+/* Inherited colors interpolate together when the selected depth changes. */
+@property --ocean-panel-top {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #214b56;
+}
+@property --ocean-panel-bottom {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #12333f;
+}
+@property --ocean-panel-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #93e8d0;
+}
+.game-shell {
+  --ocean-panel-top: #214b56;
+  --ocean-panel-bottom: #12333f;
+  --ocean-panel-accent: #93e8d0;
+  transition:
+    grid-template-columns var(--drawer-duration, 280ms) var(--drawer-easing),
+    --ocean-panel-top 320ms ease,
+    --ocean-panel-bottom 320ms ease,
+    --ocean-panel-accent 320ms ease;
+}
+.game-shell.biome-golden-trench {
+  --ocean-panel-top: #21455c;
+  --ocean-panel-bottom: #112f45;
+  --ocean-panel-accent: #9dd9e3;
+}
+.game-shell.biome-pearl-caverns {
+  --ocean-panel-top: #303e62;
+  --ocean-panel-bottom: #1b2948;
+  --ocean-panel-accent: #b9c4ee;
+}
+.game-panel {
+  background: linear-gradient(
+    120deg,
+    var(--ocean-panel-top),
+    var(--ocean-panel-bottom)
+  );
+  border-color: color-mix(in srgb, var(--ocean-panel-accent) 28%, transparent);
+  box-shadow: -8px 0 28px
+    color-mix(in srgb, var(--ocean-panel-bottom) 45%, transparent);
+}
+.game-panel .panel-heading .icon-button,
+.game-panel .profile-sections,
+.game-panel .account-avatar,
+.game-panel .settings-control,
+.game-panel .profile-rename,
+.game-panel .settings-actions a,
+.game-panel .settings-actions button,
+.game-panel .settings-signout,
+.game-panel .mission-row,
+.game-panel .connection-row,
+.game-panel .captain-avatar,
+.game-panel input {
+  background: color-mix(
+    in srgb,
+    var(--ocean-panel-bottom) 68%,
+    var(--ocean-panel-top)
+  );
+}
+.game-panel .settings-control:hover:not(:disabled),
+.game-panel .profile-sections button[aria-pressed='true'],
+.game-panel .profile-rename:hover:not(:disabled),
+.game-panel .settings-actions a:hover,
+.game-panel .settings-actions button:hover:not(:disabled),
+.game-panel .settings-signout:hover:not(:disabled) {
+  background: color-mix(
+    in srgb,
+    var(--ocean-panel-top) 82%,
+    var(--ocean-panel-accent)
+  );
+}
+.game-panel .settings-control:not(.danger-link) > .game-icon:first-child,
+.game-panel .settings-actions .game-icon,
+.game-panel .settings-signout .game-icon {
+  color: var(--ocean-panel-accent);
+}
+.game-panel .settings-control.danger-link:hover:not(:disabled) {
+  background: #743e3a33;
+}
+@media (max-width: 760px) {
+  .game-shell {
+    transition:
+      --ocean-panel-top 320ms ease,
+      --ocean-panel-bottom 320ms ease,
+      --ocean-panel-accent 320ms ease;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell {
+    transition: none;
+  }
+}
