@@ -109,7 +109,7 @@ button {
 .crew-card h3 {
   font-size: 30px;
 }
-.crew-card > p {
+.crew-description p {
   font-size: 13px;
   line-height: 1.6;
 }
@@ -582,5 +582,65 @@ h3,
 @media (max-width: 520px) {
   .game-panel {
     left: 78px;
+  }
+}
+
+@media (max-width: 760px) {
+  .panel-content .crew-card {
+    display: grid;
+    gap: 6px;
+    text-align: left;
+  }
+  .crew-intro {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 0;
+  }
+  .panel-content .crew-portrait {
+    width: 48px;
+    height: 48px;
+    margin: 0;
+    box-shadow: none;
+  }
+  .crew-portrait .robot-face {
+    position: absolute;
+    left: 50%;
+    top: 55%;
+    transform: translate(-50%, -50%) scale(0.4);
+    transform-origin: center;
+  }
+  .crew-portrait .crew-level {
+    bottom: -5px;
+    padding: 2px 5px;
+    border-width: 1px;
+    border-radius: 5px;
+    font-size: 9px;
+    white-space: nowrap;
+  }
+  .crew-description h3 {
+    font-size: 19px;
+    line-height: 1.2;
+  }
+  .crew-description p {
+    margin: 4px 0 0;
+    font-size: 11px;
+    line-height: 1.3;
+  }
+  .crew-offline {
+    display: none;
+  }
+  .crew-card .crew-status {
+    gap: 6px;
+    margin: 0;
+    padding: 9px 10px;
+  }
+  .crew-card .crew-next {
+    margin: 0;
+    text-align: center;
+  }
+  .crew-card .secondary-button {
+    margin: 0;
   }
 }

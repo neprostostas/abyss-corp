@@ -1067,7 +1067,7 @@ button:disabled {
 .crew-card h3 {
   font-size: 22px;
 }
-.crew-card > p {
+.crew-description p {
   font-size: 12px;
   color: #a6c2bf;
   line-height: 1.6;

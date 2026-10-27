@@ -16,16 +16,23 @@ export function AutomationPanel({
   const automation = layer?.automation;
   return (
     <div className="crew-card">
-      <div className="crew-portrait">
-        <div className="robot-face">
-          <span />
-          <span />
-          <i />
+      <div className="crew-intro">
+        <div className="crew-portrait">
+          <div className="robot-face" aria-hidden="true">
+            <span />
+            <span />
+            <i />
+          </div>
+          <span className="crew-level">LV {offer.level}</span>
         </div>
-        <span className="crew-level">LV {offer.level}</span>
+        <div className="crew-description">
+          <h3>Cargo pilot</h3>
+          <p>
+            Auto-sells cargo<span className="crew-offline">, even offline</span>
+            .
+          </p>
+        </div>
       </div>
-      <h3>Cargo pilot</h3>
-      <p>Auto-sells your cargo, even while you’re away.</p>
       {automation && offer.intervalMs && (
         <div className="crew-status">
           <span
@@ -66,7 +73,7 @@ export function AutomationPanel({
       </button>
       {offer.nextIntervalMs && (
         <small className="crew-next">
-          {offer.level ? 'Next: ' : ''}one sale every{' '}
+          {offer.level ? 'Next: ' : 'Every '}
           {offer.nextIntervalMs / 1000}s
         </small>
       )}
