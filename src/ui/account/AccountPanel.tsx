@@ -1,3 +1,5 @@
+import { AvatarPicker } from './AvatarPicker';
+import { AccountDangerActions } from './AccountDangerActions';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../infrastructure/supabase/database.types';
 import type { LoginProvider } from '../../infrastructure/supabase/sessionProvider';
@@ -19,6 +21,8 @@ export function AccountPanel({
   repository,
   onSave,
   onSignOut,
+  onReset,
+  onDelete,
   isAdmin,
 }: {
   user: User;
@@ -30,6 +34,8 @@ export function AccountPanel({
   repository: AccountSaveRepository;
   onSave: () => Promise<void>;
   onSignOut: () => Promise<void>;
+  onReset: () => Promise<void>;
+  onDelete: () => Promise<void>;
 }) {
   const details = accountProfileDetails(user, currentProvider);
   const [editing, setEditing] = useState(false);
@@ -78,6 +84,7 @@ export function AccountPanel({
           )}
         </button>
       </div>
+      <AvatarPicker user={user} client={client} />
       {editing ? (
         <form
           className="profile-edit"
@@ -167,6 +174,7 @@ export function AccountPanel({
           </a>
         </nav>
       )}
+      <AccountDangerActions onReset={onReset} onDelete={onDelete} />
       <button
         className="settings-signout"
         disabled={busy}

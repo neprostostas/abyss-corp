@@ -14,6 +14,7 @@ export type Database = {
     Tables: {
       game_saves: {
         Row: {
+          epoch: number;
           revision: number;
           save: Json;
           updated_at: string;
@@ -21,6 +22,7 @@ export type Database = {
           write_id: string;
         };
         Insert: {
+          epoch?: number;
           revision: number;
           save: Json;
           updated_at?: string;
@@ -28,6 +30,7 @@ export type Database = {
           write_id?: string;
         };
         Update: {
+          epoch?: number;
           revision?: number;
           save?: Json;
           updated_at?: string;
@@ -144,14 +147,20 @@ export type Database = {
         Returns: Json;
       };
       is_database_admin: { Args: never; Returns: boolean };
+      reset_game_save: {
+        Args: { account_id: string; payload: Json; operation_id: string };
+        Returns: Database['public']['Tables']['game_saves']['Row'][];
+      };
       write_game_save: {
         Args: {
           account_id: string;
+          expected_epoch?: number;
           expected_revision: number;
           operation_id: string;
           payload: Json;
         };
         Returns: {
+          epoch: number;
           revision: number;
           save: Json;
           updated_at: string;

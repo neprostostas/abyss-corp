@@ -1,3 +1,4 @@
+import { createWorld } from '../domain/world';
 import { sessionProvider } from '../infrastructure/supabase/sessionProvider';
 import type { LoginProvider } from '../infrastructure/supabase/sessionProvider';
 import { accountProfileDetails } from '../domain/profile';
@@ -125,6 +126,47 @@ function AccountGame({
       onRename={onRename}
       repository={repository}
       onSave={save}
+      onReset={async () => {
+        await session.lock();
+        try {
+          await repository.reset({
+            version: 7,
+            savedAt: browserClock.timestamp(),
+            world: createWorld(),
+          });
+        } finally {
+          session.unlockAfterAccountChange();
+          session.setActive(!document.hidden);
+        }
+      }}
+      onDelete={async () => {
+        await session.lock();
+        await repository.pause();
+        let deleted = false;
+        try {
+          const result = await client.functions.invoke<{
+            deleted?: boolean;
+          }>('delete-account', { body: { confirmation: 'DELETE' } });
+          if (result.error || !result.data?.deleted)
+            throw new Error(
+              'Could not finish deletion. Sign out, sign in again and retry.',
+            );
+          deleted = true;
+          try {
+            repository.clearDeviceData();
+          } catch {
+            /* Remote account is already deleted. */
+          }
+          await client.auth.signOut({ scope: 'local' });
+          window.location.assign('/');
+        } finally {
+          if (!deleted) {
+            repository.resume();
+            session.unlockAfterAccountChange();
+            session.setActive(!document.hidden);
+          }
+        }
+      }}
       onSignOut={async () => {
         session.setActive(false);
         let signedOut = false;

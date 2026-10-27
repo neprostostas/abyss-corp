@@ -131,3 +131,21 @@ void test('a failed initial load never saves a replacement new game', async (con
   assert.equal(session.getSnapshot().status, 'load-error');
   assert.equal(repository.writes.length, 0);
 });
+
+void test('account changes freeze commands, timer saves and visibility resumes until unlocked', async () => {
+  const h = await sessionFixture();
+  await h.session.lock();
+  const before = h.session.getSnapshot().world;
+  const writes = h.repository.writes.length;
+  h.clock.advance(60_000);
+  h.session.upgrade('mining');
+  h.session.setActive(true);
+  h.session.tick();
+  await h.session.save(true);
+  assert.deepEqual(h.session.getSnapshot().world, before);
+  assert.equal(h.repository.writes.length, writes);
+  h.session.unlockAfterAccountChange();
+  h.session.setActive(true);
+  await h.session.save(true);
+  assert(h.repository.writes.length > writes);
+});

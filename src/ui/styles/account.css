@@ -1139,3 +1139,121 @@
     height: 14px;
   }
 }
+
+.settings-control {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 11px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #d4e5df;
+}
+.settings-control > span {
+  flex: 1;
+}
+.settings-control > .game-icon:first-child {
+  color: #79d3c1;
+}
+.settings-control > .game-icon:last-child {
+  width: 15px;
+  opacity: 0.45;
+}
+.avatar-options {
+  padding: 10px 0 16px;
+}
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+.avatar-grid button {
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #173e4b;
+  border: 2px solid transparent;
+}
+.avatar-grid button:hover {
+  border-color: #79d3c1;
+}
+.avatar-grid button[aria-pressed='true'] {
+  border-color: #e6bd79;
+  box-shadow: 0 0 0 2px #e6bd7933;
+}
+.avatar-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.avatar-tools,
+.danger-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 6px;
+}
+.avatar-tools button,
+.danger-buttons button {
+  padding: 9px 12px;
+}
+.avatar-options small {
+  color: #91acae;
+  font-size: 11px;
+}
+.avatar-file {
+  display: none;
+}
+.account-danger {
+  border-top: 1px solid #91acae26;
+  margin-top: 16px;
+  padding-top: 8px;
+}
+.danger-link {
+  color: #e7a59c;
+}
+.danger-link > .game-icon:first-child {
+  color: #e7a59c;
+}
+.danger-confirm {
+  padding: 8px 0;
+  display: grid;
+  gap: 8px;
+}
+.danger-confirm > strong {
+  color: #efb3a5;
+  font-size: 16px;
+}
+.danger-confirm p {
+  color: #a9bdbe;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+}
+.danger-confirm label {
+  font-size: 12px;
+  margin-top: 6px;
+}
+.danger-confirm input {
+  width: 100%;
+  min-width: 0;
+}
+.danger-button {
+  background: #853f3a;
+  color: #fff1e9;
+  border-color: #b66f63;
+}
+.danger-button:hover:not(:disabled) {
+  background: #a34d44;
+}
+.settings-control:focus-visible,
+.avatar-grid button:focus-visible {
+  outline: 2px solid #e6bd79;
+  outline-offset: 3px;
+}

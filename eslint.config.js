@@ -6,7 +6,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default defineConfig([
-  globalIgnores(['dist', '.data']),
+  globalIgnores(['dist', '.data', 'supabase/functions']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

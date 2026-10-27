@@ -1,3 +1,4 @@
+import { gameSave } from './fixtures';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { test } from 'node:test';
@@ -10,6 +11,15 @@ void test('Telegram and Steam identities provision email-less players without tr
       create role anon;
       create role authenticated;
       create schema auth;
+      grant usage on schema auth to authenticated;
+      create schema storage;
+      create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
+      create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text);
+      alter table storage.objects enable row level security;
+      grant usage on schema storage to authenticated,anon;
+      grant select,insert,delete on storage.objects to authenticated;
+      grant select on storage.objects to anon;
+      create function storage.foldername(name text) returns text[] language sql immutable as $$ select string_to_array(name,'/') $$;
       create table auth.users (
         id uuid primary key, email text, email_confirmed_at timestamptz,
         banned_until timestamptz, is_anonymous boolean default false,
@@ -18,10 +28,10 @@ void test('Telegram and Steam identities provision email-less players without tr
       );
       create table auth.identities (
         id uuid primary key default gen_random_uuid(),
-        user_id uuid references auth.users(id), provider text not null
+        user_id uuid references auth.users(id) on delete cascade, provider text not null
       );
       create table auth.sessions (
-        id uuid primary key, user_id uuid references auth.users(id), not_after timestamptz
+        id uuid primary key, user_id uuid references auth.users(id) on delete cascade, not_after timestamptz
       );
       create function auth.uid() returns uuid language sql stable as
         $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
@@ -114,7 +124,70 @@ void test('Telegram and Steam identities provision email-less players without tr
       ).rows[0]?.credits,
       123,
     );
+    const owner = ids[2];
+    const other = ids[6];
+    assert(owner && other);
     await db.exec('set role authenticated');
+    await db.query(
+      "insert into storage.objects(bucket_id,name) values('avatars',$1)",
+      [`${owner}/photo.webp`],
+    );
+    await assert.rejects(
+      db.query(
+        "insert into storage.objects(bucket_id,name) values('avatars',$1)",
+        [`${other}/photo.webp`],
+      ),
+      /row-level security/,
+    );
+    await db.query('delete from storage.objects where name=$1', [
+      `${owner}/photo.webp`,
+    ]);
+    const payload = JSON.stringify(gameSave());
+    const operation = '20000000-0000-4000-8000-000000000001';
+    const reset = await db.query<{ epoch: number; revision: number }>(
+      'select * from public.reset_game_save($1,$2,$3)',
+      [ids[2], payload, operation],
+    );
+    assert.equal(reset.rows[0]?.epoch, 1);
+    assert.equal(reset.rows[0].revision, 1);
+    const replay = await db.query<{ epoch: number }>(
+      'select * from public.reset_game_save($1,$2,$3)',
+      [ids[2], payload, operation],
+    );
+    assert.equal(replay.rows[0]?.epoch, 1);
+    await assert.rejects(
+      db.query('select * from public.reset_game_save($1,$2,$3)', [
+        ids[6],
+        payload,
+        operation,
+      ]),
+      /Sign in again/,
+    );
+    await assert.rejects(
+      db.query('select * from public.write_game_save($1,1,$2,$3)', [
+        ids[2],
+        payload,
+        '20000000-0000-4000-8000-000000000002',
+      ]),
+      /Progress changed/,
+    );
+    const write = await db.query<{ revision: number }>(
+      'select * from public.write_game_save($1,1,$2,$3,1)',
+      [ids[2], payload, '20000000-0000-4000-8000-000000000003'],
+    );
+    assert.equal(write.rows[0]?.revision, 2);
+    await db.exec('reset role');
+    await db.query('delete from auth.sessions where id=$1', [session]);
+    await db.exec('set role authenticated');
+    await assert.rejects(
+      db.query('select * from public.reset_game_save($1,$2,$3)', [
+        ids[2],
+        payload,
+        '20000000-0000-4000-8000-000000000004',
+      ]),
+      /Sign in again/,
+    );
+
     await assert.rejects(
       db.query(
         "insert into auth.identities(user_id,provider) values($1,'custom:telegram')",
@@ -126,6 +199,19 @@ void test('Telegram and Steam identities provision email-less players without tr
       db.query('select private.has_game_identity($1)', [ids[0]]),
       /permission denied/,
     );
+    await db.exec('reset role');
+    await db.query('delete from auth.users where id=$1', [ids[2]]);
+    for (const table of ['profiles', 'game_saves', 'player_progress']) {
+      const column = table === 'game_saves' ? 'user_id' : 'id';
+      assert.equal(
+        (
+          await db.query(`select * from public.${table} where ${column}=$1`, [
+            ids[2],
+          ])
+        ).rows.length,
+        0,
+      );
+    }
   } finally {
     await db.close();
   }

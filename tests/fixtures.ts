@@ -108,6 +108,7 @@ export class MemoryStorage implements Storage {
 export function cloudFixture() {
   const storage = new MemoryStorage();
   let remote: SaveRow | null = {
+    epoch: 0,
     user_id: 'captain',
     revision: 1,
     save: z.json().parse(gameSave()),
@@ -134,19 +135,39 @@ export function cloudFixture() {
         }),
       }),
     }),
-    rpc: async (_name: string, args: Write) => {
+    rpc: async (name: string, args: Write) => {
       requests++;
       const waiting = gate;
       gate = null;
       if (waiting) await waiting.promise;
       if (offline) return { data: null, error: { code: 'NETWORK' } };
+      if (name === 'reset_game_save') {
+        if (remote?.write_id !== args.operation_id) {
+          remote = {
+            user_id: args.account_id,
+            revision: (remote?.revision ?? 0) + 1,
+            epoch: (remote?.epoch ?? 0) + 1,
+            save: args.payload,
+            updated_at: '2026-10-27T00:00:02Z',
+            write_id: args.operation_id,
+          };
+          commits++;
+        }
+        if (loseResponse) {
+          loseResponse = false;
+          return { data: null, error: { code: 'NETWORK' } };
+        }
+        return { data: [structuredClone(remote)], error: null };
+      }
       if (remote?.write_id !== args.operation_id) {
         if (
+          (args.expected_epoch ?? 0) !== (remote?.epoch ?? 0) ||
           conflicts-- > 0 ||
           args.expected_revision !== (remote?.revision ?? 0)
         )
           return { data: null, error: { code: 'PT409' } };
         remote = {
+          epoch: remote?.epoch ?? 0,
           user_id: args.account_id,
           revision: args.expected_revision + 1,
           save: args.payload,

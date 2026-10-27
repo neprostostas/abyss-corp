@@ -49,6 +49,7 @@ export class GameSession {
   private lastTick: number;
   private lastTimestamp: number;
   private active = false;
+  private locked = false;
   private suspendedAt: number | null = null;
   private loading: Promise<void> | null = null;
   private saving: Promise<void> | null = null;
@@ -132,7 +133,23 @@ export class GameSession {
     this.publish({ offlineReport: null });
   };
 
+  /** Freeze commands and automatic saves while account data changes. */
+  async lock() {
+    this.setActive(false);
+    this.locked = true;
+    this.pendingSave = null;
+    await this.saving;
+  }
+
+  unlockAfterAccountChange() {
+    this.locked = false;
+    this.lastTick = this.clock.now();
+    this.lastTimestamp = this.clock.timestamp();
+    this.suspendedAt = this.clock.timestamp();
+  }
+
   setActive(active: boolean) {
+    if (this.locked) return;
     if (active === this.active) return;
     this.tick();
     if (!active) this.suspendedAt = this.clock.timestamp();
@@ -170,7 +187,7 @@ export class GameSession {
   };
 
   private command(action: (world: WorldState) => WorldState) {
-    if (this.snapshot.status !== 'ready') return;
+    if (this.locked || this.snapshot.status !== 'ready') return;
     this.tick();
     const world = action(this.snapshot.world);
     if (world === this.snapshot.world) return;
@@ -242,6 +259,7 @@ export class GameSession {
 
   save = (retry = false): Promise<void> => {
     if (
+      this.locked ||
       this.snapshot.status !== 'ready' ||
       (this.snapshot.saveStatus === 'error' && !retry)
     )

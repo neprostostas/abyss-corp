@@ -113,3 +113,25 @@ void test('edits after an unacknowledged transfer survive reload and sync', asyn
   assert.equal(validateSave(readRemote()?.save).world.credits, 789);
   assert.equal(h.commits, 2);
 });
+
+void test('guest restart replaces progress, clears its transfer and fences other open tabs', async () => {
+  const storage = new MemoryStorage();
+  const current = new GuestSaveRepository(() => storage);
+  await current.save(gameSave(100, 2));
+  const other = new GuestSaveRepository(() => storage);
+  await other.load();
+  await current.claim('old-account');
+  storage.setItem('abyss-corp.account.another', 'untouched');
+  await current.reset(gameSave());
+  assert.equal((await current.load())?.world.credits, 0);
+  assert.equal(storage.getItem(`${current.key}.transfer`), null);
+  await assert.rejects(
+    other.save(gameSave(999, 3)),
+    /restarted in another tab/,
+  );
+  assert.equal(storage.getItem('abyss-corp.account.another'), 'untouched');
+  assert.equal(
+    (await other.load())?.world.progression?.expedition?.completed,
+    0,
+  );
+});

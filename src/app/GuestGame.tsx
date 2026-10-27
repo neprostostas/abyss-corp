@@ -1,3 +1,5 @@
+import { AccountDangerActions } from '../ui/account/AccountDangerActions';
+import { createWorld } from '../domain/world';
 import { lazy, Suspense, useState } from 'react';
 import { GameSession } from '../application/GameSession';
 import { GuestSaveRepository } from '../infrastructure/persistence/GuestSaveRepository';
@@ -7,13 +9,11 @@ const GameScreen = lazy(async () => ({
   default: (await import('../ui/screens/GameScreen')).GameScreen,
 }));
 export function GuestGame({ onSignIn }: { onSignIn: () => void }) {
-  const [session] = useState(
-    () =>
-      new GameSession(
-        new GuestSaveRepository(() => window.localStorage),
-        browserClock,
-      ),
-  );
+  const [runtime] = useState(() => {
+    const repository = new GuestSaveRepository(() => window.localStorage);
+    return { repository, session: new GameSession(repository, browserClock) };
+  });
+  const { session, repository } = runtime;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const signIn = async () => {
@@ -50,6 +50,23 @@ export function GuestGame({ onSignIn }: { onSignIn: () => void }) {
         New account? Take your guest progress with you. Existing account? Resume
         its cloud save.
       </small>
+      <AccountDangerActions
+        onReset={async () => {
+          await session.lock();
+          try {
+            const fresh = {
+              version: 7 as const,
+              savedAt: browserClock.timestamp(),
+              world: createWorld(),
+            };
+            await repository.reset(fresh);
+            session.adoptCloudSave(fresh);
+          } finally {
+            session.unlockAfterAccountChange();
+            session.setActive(!document.hidden);
+          }
+        }}
+      />
       {error && (
         <p className="form-error" role="alert">
           {error}

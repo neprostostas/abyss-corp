@@ -188,3 +188,100 @@ void test('a recovery backup prevents silently starting a new game when the clou
   assert.equal(h.storage.getItem(`${repository.key}.backup`), backup);
   assert.equal(h.requests, 0);
 });
+
+void test('reset epoch discards old device expeditions and legacy recovery backups on reload', async () => {
+  const h = cloudFixture(),
+    repository = h.repository();
+  await repository.load();
+  await repository.save(gameSave(900, 2));
+  await repository.backup(gameSave(800, 1));
+  assert(h.remote);
+  h.remote = {
+    ...h.remote,
+    epoch: 1,
+    revision: 5,
+    save: z.json().parse(gameSave()),
+  };
+  const fresh = h.repository();
+  const save = await fresh.load();
+  assert.equal(save?.world.credits, 0);
+  assert.equal(save.world.progression?.expedition?.completed, 0);
+  assert.equal(h.storage.getItem(`${repository.key}.backup`), null);
+});
+void test('an already running old tab adopts a reset without restoring completed expeditions', async () => {
+  const h = cloudFixture(),
+    repository = h.repository();
+  await repository.load();
+  await repository.save(gameSave(999, 3));
+  assert(h.remote);
+  h.remote = {
+    ...h.remote,
+    epoch: 1,
+    revision: 5,
+    save: z.json().parse(gameSave()),
+  };
+  await repository.flush();
+  assert.equal(
+    repository.takeRemoteUpdate()?.world.progression?.expedition?.completed,
+    0,
+  );
+  assert.equal(credits(h.remote.save), 0);
+  assert.equal(h.commits, 0);
+});
+void test('a legacy tab backup cannot revive milestones after a reset in a current cache', async () => {
+  const h = cloudFixture();
+  assert(h.remote);
+  h.remote = { ...h.remote, epoch: 1, revision: 5 };
+  const first = h.repository();
+  await first.load();
+  h.storage.setItem(`${first.key}.backup`, JSON.stringify(gameSave(1000, 3)));
+  const next = h.repository();
+  assert.equal(
+    (await next.load())?.world.progression?.expedition?.completed,
+    0,
+  );
+});
+
+void test('reset waits for in-flight uploads and replaces milestones, without deleting another account cache', async () => {
+  const h = cloudFixture(),
+    repository = h.repository();
+  await repository.load();
+  await repository.save(gameSave(200, 2));
+  h.storage.setItem('abyss-corp.account.other', 'keep');
+  const gate = h.holdNextWrite();
+  const upload = repository.flush();
+  const reset = repository.reset(gameSave());
+  assert.equal(h.requests, 1);
+  gate.resolve();
+  await upload;
+  await reset;
+  assert.equal(h.remote?.epoch, 1);
+  assert.equal(credits(h.remote.save), 0);
+  assert.equal(
+    repository.takeRemoteUpdate()?.world.progression?.expedition?.completed,
+    0,
+  );
+  assert.equal(h.storage.getItem('abyss-corp.account.other'), 'keep');
+});
+void test('a lost reset response retries the same operation without advancing the epoch twice', async () => {
+  const h = cloudFixture(),
+    repository = h.repository();
+  await repository.load();
+  h.loseNextResponse();
+  await repository.reset(gameSave());
+  assert.equal(h.remote?.epoch, 1);
+  assert.equal(h.commits, 1);
+  assert.equal(repository.getSnapshot().status, 'saved');
+});
+void test('a failed offline reset preserves progress and resumes ordinary saving', async () => {
+  const h = cloudFixture(),
+    repository = h.repository();
+  await repository.load();
+  await repository.save(gameSave(200, 2));
+  h.offline(true);
+  await assert.rejects(repository.reset(gameSave()), /Could not reset/);
+  h.offline(false);
+  await repository.save(gameSave(300, 2));
+  await repository.flush();
+  assert.equal(credits(h.remote?.save), 300);
+});

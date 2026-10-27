@@ -11,6 +11,7 @@ import { createExpedition, getProgression } from '../../domain/progression';
 
 const cacheSchema = z
   .object({
+    epoch: z.number().int().nonnegative().default(0),
     revision: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),
     dirty: z.boolean(),
     save: z.unknown(),
@@ -21,6 +22,7 @@ const cacheSchema = z
   })
   .strict();
 interface CachedSave {
+  epoch?: number;
   revision: number;
   dirty: boolean;
   save: GameSave;
@@ -37,6 +39,7 @@ export class AccountSaveRepository implements AccountSavePort {
   private cache: CachedSave | null = null;
   private flushing: Promise<void> | null = null;
   private loaded = false;
+  private paused = false;
   private remoteUpdate: GameSave | null = null;
   readonly key: string;
   constructor(
@@ -105,11 +108,19 @@ export class AccountSaveRepository implements AccountSavePort {
       },
     });
   }
-  private readBackup(): GameSave | null {
+  private readBackup(epoch = 0): GameSave | null {
     const raw = this.storage().getItem(`${this.key}.backup`);
     if (!raw) return null;
     try {
-      return validateSave(JSON.parse(raw));
+      const parsed: unknown = JSON.parse(raw);
+      if (
+        parsed &&
+        typeof parsed === 'object' &&
+        'epoch' in parsed &&
+        'save' in parsed
+      )
+        return parsed.epoch === epoch ? validateSave(parsed.save) : null;
+      return epoch === 0 ? validateSave(parsed) : null;
     } catch (error) {
       console.warn('Ignoring an invalid account progress backup.', error);
       return null;
@@ -149,9 +160,15 @@ export class AccountSaveRepository implements AccountSavePort {
         local = null;
         corruptCache = true;
       }
-      const previous = local?.save;
-      const backup = this.readBackup();
+      let previous = local?.save;
       const remote = await this.remote();
+      let backup = this.readBackup(remote?.epoch ?? 0);
+      if (remote && remote.epoch !== (local?.epoch ?? 0)) {
+        local = null;
+        previous = undefined;
+        backup = null;
+        this.clearArchives();
+      }
       const firstUploadPending = local?.dirty && local.revision === 0;
       if (
         !remote &&
@@ -164,6 +181,7 @@ export class AccountSaveRepository implements AccountSavePort {
         );
       if (local?.pendingWrite && remote?.write_id === local.pendingWrite.id) {
         local = {
+          epoch: remote.epoch,
           revision: remote.revision,
           dirty:
             JSON.stringify(local.save) !==
@@ -179,6 +197,7 @@ export class AccountSaveRepository implements AccountSavePort {
         ? local
         : remote
           ? {
+              epoch: remote.epoch,
               revision: remote.revision,
               dirty: false,
               save: validateSave(remote.save),
@@ -192,7 +211,7 @@ export class AccountSaveRepository implements AccountSavePort {
           ...(backup ? [backup] : []),
         );
         if (save !== selected.save)
-          selected = { save, revision: selected.revision, dirty: true };
+          selected = { ...selected, save, dirty: true };
       }
       if (!selected && this.initialSave) {
         const initial = await this.initialSave();
@@ -223,13 +242,20 @@ export class AccountSaveRepository implements AccountSavePort {
     return new Promise((resolve) => {
       this.storage().setItem(
         `${this.key}.backup`,
-        JSON.stringify(validateSave(save)),
+        JSON.stringify({
+          epoch: this.cache?.epoch ?? 0,
+          save: validateSave(save),
+        }),
       );
       resolve();
     });
   }
   save(save: GameSave): Promise<void> {
     return new Promise((resolve) => {
+      if (this.paused) {
+        resolve();
+        return;
+      }
       if (!this.loaded)
         throw new Error('Account progress must load before saving.');
       this.store({
@@ -243,13 +269,67 @@ export class AccountSaveRepository implements AccountSavePort {
     });
   }
   flush = (): Promise<void> => {
-    if (!this.loaded || !this.cache?.dirty) return Promise.resolve();
+    if (this.paused || !this.loaded || !this.cache?.dirty)
+      return Promise.resolve();
     if (this.flushing) return this.flushing;
     this.flushing = this.upload().finally(() => {
       this.flushing = null;
     });
     return this.flushing;
   };
+  private clearArchives() {
+    for (const suffix of ['.backup', '.corrupt'])
+      this.storage().removeItem(`${this.key}${suffix}`);
+  }
+  async pause() {
+    this.paused = true;
+    await this.flushing;
+  }
+  resume() {
+    this.paused = false;
+  }
+  clearDeviceData() {
+    this.clearArchives();
+    this.storage().removeItem(this.key);
+    this.cache = null;
+  }
+  async reset(save: GameSave) {
+    await this.pause();
+    try {
+      const args = {
+        account_id: this.userId,
+        payload: z.json().parse(validateSave(save)),
+        operation_id: crypto.randomUUID(),
+      };
+      let result = await this.client.rpc('reset_game_save', args);
+      // A lost HTTP response retries the same operation, never a second reset.
+      if (result.error) result = await this.client.rpc('reset_game_save', args);
+      const { data, error } = result;
+      const row = data?.[0];
+      if (error || !row)
+        throw new Error(
+          'Could not reset cloud progress. Check your connection and try again.',
+        );
+      const canonical = validateSave(row.save);
+      // Publish the new cloud state even when device storage is unavailable.
+      this.cache = {
+        save: canonical,
+        epoch: row.epoch,
+        revision: row.revision,
+        dirty: false,
+      };
+      this.remoteUpdate = canonical;
+      try {
+        this.clearArchives();
+        this.store(this.cache);
+      } catch {
+        /* Epoch fencing discards stale device data on the next load. */
+      }
+      this.publish({ status: 'saved', error: null, syncedAt: row.updated_at });
+    } finally {
+      this.resume();
+    }
+  }
   private async upload(attempt = 0): Promise<void> {
     let captured = this.cache;
     if (!captured) return;
@@ -264,6 +344,7 @@ export class AccountSaveRepository implements AccountSavePort {
       const { data, error } = await this.client.rpc('write_game_save', {
         account_id: this.userId,
         expected_revision: captured.revision,
+        expected_epoch: captured.epoch ?? 0,
         payload: z.json().parse(validateSave(pendingWrite.save)),
         operation_id: pendingWrite.id,
       });
@@ -272,11 +353,20 @@ export class AccountSaveRepository implements AccountSavePort {
         if (!remote)
           throw new Error('Account progress is unavailable. Retry syncing.');
         const current = this.cache ?? captured;
-        await this.backup(current.save);
+        const reset = remote.epoch !== (current.epoch ?? 0);
+        if (reset) this.clearArchives();
+        else await this.backup(current.save);
         const canonical = validateSave(remote.save);
-        const save = this.preserveExpeditions(canonical, current.save);
+        const save = reset
+          ? canonical
+          : this.preserveExpeditions(canonical, current.save);
         const dirty = save !== canonical;
-        this.store({ save, revision: remote.revision, dirty });
+        this.store({
+          save,
+          epoch: remote.epoch,
+          revision: remote.revision,
+          dirty,
+        });
         this.remoteUpdate = save;
         this.publish({
           status: dirty ? 'pending' : 'saved',
@@ -301,7 +391,12 @@ export class AccountSaveRepository implements AccountSavePort {
       const current = this.cache ?? captured;
       const dirty =
         JSON.stringify(current.save) !== JSON.stringify(pendingWrite.save);
-      this.store({ save: current.save, revision: row.revision, dirty });
+      this.store({
+        save: current.save,
+        epoch: row.epoch,
+        revision: row.revision,
+        dirty,
+      });
       this.publish({
         status: dirty ? 'pending' : 'saved',
         syncedAt: row.updated_at,

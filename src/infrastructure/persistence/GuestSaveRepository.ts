@@ -3,16 +3,64 @@ import { validateSave } from './saveSchema';
 
 export class GuestSaveRepository implements SaveRepository {
   readonly key = 'abyss-corp.guest.v1';
+  private generation: string | null | undefined;
   constructor(private readonly storage: () => Storage) {}
   load(): Promise<GameSave | null> {
     return new Promise((resolve) => {
       const raw = this.storage().getItem(this.key);
-      resolve(raw ? validateSave(JSON.parse(raw)) : null);
+      const data: unknown = raw ? JSON.parse(raw) : null;
+      if (
+        data &&
+        typeof data === 'object' &&
+        'generation' in data &&
+        'save' in data &&
+        typeof data.generation === 'string'
+      ) {
+        this.generation = data.generation;
+        resolve(validateSave(data.save));
+      } else {
+        this.generation = null;
+        resolve(data ? validateSave(data) : null);
+      }
     });
   }
   save(save: GameSave): Promise<void> {
     return new Promise((resolve) => {
-      this.storage().setItem(this.key, JSON.stringify(validateSave(save)));
+      const raw = this.storage().getItem(this.key);
+      const current: unknown = raw ? JSON.parse(raw) : null;
+      const generation =
+        current &&
+        typeof current === 'object' &&
+        'generation' in current &&
+        typeof current.generation === 'string'
+          ? current.generation
+          : null;
+      if (this.generation === undefined) this.generation = generation;
+      if (generation !== this.generation)
+        throw new Error(
+          'This game was restarted in another tab. Reload to continue.',
+        );
+      const data = validateSave(save);
+      this.storage().setItem(
+        this.key,
+        JSON.stringify(generation ? { generation, save: data } : data),
+      );
+      resolve();
+    });
+  }
+  reset(save: GameSave): Promise<void> {
+    return new Promise((resolve) => {
+      const generation = crypto.randomUUID();
+      this.storage().setItem(
+        this.key,
+        JSON.stringify({ generation, save: validateSave(save) }),
+      );
+      this.generation = generation;
+      try {
+        this.storage().removeItem(`${this.key}.transfer`);
+      } catch {
+        /* The new game is already stored atomically. */
+      }
       resolve();
     });
   }

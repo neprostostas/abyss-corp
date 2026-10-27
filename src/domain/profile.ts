@@ -1,3 +1,4 @@
+import { customAvatar } from '../data/avatars';
 import { normalizeCaptainName } from './captainName';
 
 export function needsCaptainName(
@@ -62,6 +63,7 @@ export function accountProfileDetails(
   );
   return {
     avatar:
+      customAvatar(user.user_metadata) ??
       active.avatar ??
       primary.avatar ??
       others.find((details) => details.avatar)?.avatar ??

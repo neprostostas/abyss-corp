@@ -1,3 +1,6 @@
+import { AvatarPicker } from '../src/ui/account/AvatarPicker';
+import { AccountDangerActions } from '../src/ui/account/AccountDangerActions';
+import { deferred } from './fixtures';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
@@ -336,5 +339,90 @@ void test('linked providers remain visible when disabled for new sign-ins, with 
     /TelegramCurrent session/,
   );
   assert(document.querySelector('[aria-label="Connect Email"]'));
+  await reset();
+});
+
+void test('destructive controls require exact confirmation and block duplicate submissions', async () => {
+  let resets = 0,
+    deletions = 0;
+  const gate = deferred();
+  await ui(() => {
+    root.render(
+      createElement(AccountDangerActions, {
+        onReset: async () => {
+          resets++;
+          await gate.promise;
+        },
+        onDelete: () => {
+          deletions++;
+          return Promise.resolve();
+        },
+      }),
+    );
+  });
+  await click('Start a new game');
+  await fill('confirmation', 'reset');
+  assert.equal(resets, 0);
+  assert(document.querySelector<HTMLButtonElement>('.danger-button')?.disabled);
+  await fill('confirmation', 'RESET');
+  await click('Start new game');
+  assert.equal(resets, 1);
+  assert(document.querySelector<HTMLButtonElement>('.danger-button')?.disabled);
+  await ui(() => {
+    document
+      .querySelector('form')
+      ?.dispatchEvent(
+        new dom.window.Event('submit', { bubbles: true, cancelable: true }),
+      );
+  });
+  assert.equal(resets, 1);
+  await ui(() => {
+    gate.resolve();
+  });
+  await click('Delete account');
+  await fill('confirmation', 'DELETE');
+  await click('Cancel');
+  assert.equal(deletions, 0);
+  await click('Delete account');
+  await fill('confirmation', 'DELETE');
+  await click('Delete permanently');
+  assert.equal(deletions, 1);
+  await reset();
+});
+
+void test('all 20 avatars can be selected without changing provider data', async () => {
+  let update: unknown = null;
+  const client = {
+    auth: {
+      updateUser: (value: unknown) => {
+        update = value;
+        return Promise.resolve({ error: null });
+      },
+    },
+  } as unknown as SupabaseClient<Database>;
+  const user = {
+    id: 'captain',
+    user_metadata: {},
+    identities: [],
+  } as unknown as User;
+  await ui(() => {
+    root.render(createElement(AvatarPicker, { client, user }));
+  });
+  await click('Change photo');
+  assert.equal(document.querySelectorAll('.avatar-grid button').length, 20);
+  await ui(() => {
+    document
+      .querySelector<HTMLButtonElement>('button[aria-label="Jellyfish"]')
+      ?.click();
+  });
+  assert.deepEqual(update, {
+    data: { abyss_avatar: 'jellyfish', abyss_avatar_url: null },
+  });
+  assert.equal(document.querySelector('.avatar-grid'), null);
+  await click('Change photo');
+  await click('Use social photo');
+  assert.deepEqual(update, {
+    data: { abyss_avatar: 'social', abyss_avatar_url: null },
+  });
   await reset();
 });
