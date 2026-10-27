@@ -110,3 +110,13 @@ PostHog EU: проєкт **Abyss Corp**, ID `321898`. Серверний клю�
 Безплатний Netlify не дозволяє розділяти scopes змінних: вони доступні build та server runtime. `POSTHOG_READ_KEY` не має VITE-префікса й не імпортується клієнтським кодом; тільки Netlify Function читає його через `process.env`. Доступ до значень у налаштуваннях має лише команда Netlify.
 
 Локальні звіти аналітики використовують Vite-проксі до production Netlify Function: потрібен інтернет і вхід адміністратора, приватний PostHog-ключ локально не потрібен. Міграція `20261027000100_admin_overview.sql` додає лише захищений read-only огляд. `20261027000200_expedition_saves.sql` дозволяє збереження v6 і v7; її потрібно застосувати до публікації нового клієнта. Нових таблиць немає. Після оновлення до save v7 відкриті старі вкладки гри слід оновити.
+
+## Container package
+
+GitHub Actions publishes `ghcr.io/neprostostas/abyss-corp:latest` on pushes to `main`, plus an immutable tag for each commit. Version tags such as `v0.1.0` publish a matching container tag. Every image is built and checked before publishing.
+
+```sh
+docker run --rm -p 5173:80 ghcr.io/neprostostas/abyss-corp:latest
+```
+
+The image contains the frontend and Nginx. Public frontend settings come from `netlify.toml` during the build; local `.env` files are excluded. Accounts and saves use the existing Supabase project. Private analytics requests pass through to the existing Netlify function with its normal administrator checks. No database or private provider keys are bundled. Email links use the configured Supabase redirect destinations. Container hosting does not replace those external services.

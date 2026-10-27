@@ -1,0 +1,67 @@
+name: Publish game container
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: container-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - name: Read public frontend configuration
+        run: |
+          python3 - <<'PY'
+          import os, tomllib
+          with open('netlify.toml', 'rb') as file:
+              config = tomllib.load(file)['build']['environment']
+          with open(os.environ['GITHUB_ENV'], 'a') as file:
+              for key in ('VITE_SUPABASE_URL', 'VITE_SUPABASE_PUBLISHABLE_KEY', 'VITE_POSTHOG_KEY'):
+                  file.write(f'{key}={config[key]}\n')
+          PY
+      - name: Build game image
+        run: |
+          docker build --tag abyss-corp:check \
+            --build-arg VITE_SUPABASE_URL \
+            --build-arg VITE_SUPABASE_PUBLISHABLE_KEY \
+            --build-arg VITE_POSTHOG_KEY \
+            --label org.opencontainers.image.source="https://github.com/$GITHUB_REPOSITORY" \
+            --label org.opencontainers.image.revision="$GITHUB_SHA" \
+            --label org.opencontainers.image.title="Abyss Corp" \
+            --label org.opencontainers.image.description="An underwater idle tycoon. Build, automate and explore the abyss." .
+      - name: Verify container routes and preview image
+        run: |
+          docker run --detach --name abyss-check --publish 8080:80 abyss-corp:check
+          trap 'docker logs abyss-check; docker rm --force abyss-check' EXIT
+          curl --retry 10 --retry-connrefused --retry-delay 1 --fail http://localhost:8080/ -o /tmp/home.html
+          grep -q 'property="og:image"' /tmp/home.html
+          curl --fail http://localhost:8080/reset-password -o /tmp/recovery.html
+          cmp /tmp/home.html /tmp/recovery.html
+          curl --fail http://localhost:8080/social/og-image.png -o /tmp/og.png
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/.netlify/functions/analytics)" = 401
+      - name: Publish to GitHub Packages
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          printf '%s' "$REGISTRY_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          docker tag abyss-corp:check "$image:sha-$GITHUB_SHA"
+          docker push "$image:sha-$GITHUB_SHA"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            tag="$GITHUB_REF_NAME"
+          else
+            tag=latest
+          fi
+          docker tag abyss-corp:check "$image:$tag"
+          docker push "$image:$tag"
