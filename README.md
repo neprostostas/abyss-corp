@@ -8,8 +8,6 @@ Build your underwater empire. Mine crystals, automate your outposts, and explore
 
 </div>
 
-![Abyss Corp gameplay](docs/images/abyss-corp-gameplay.png)
-
 ### Start small. Go deeper.
 
 - **Build a living base.** Watch your drill, submarine, refinery, and warehouse work together.
@@ -19,12 +17,4 @@ Build your underwater empire. Mine crystals, automate your outposts, and explore
 
 Jump into Quick play without an account, or sign in to keep your progress across devices. Choose your captain name and manage your profile in-game. Play on your phone or settle in on a bigger screen.
 
-### Local checks
-
-```sh
-npm ci
-npm run check
-npm run build
-```
-
-`check` includes TypeScript, lint, formatting and deterministic regression tests. Use `npm test` to run only tests or `npm run test:watch` during a fix. Tests use local fixtures and never contact player accounts or send email.
+![Abyss Corp gameplay](docs/images/abyss-corp-gameplay.png)
