@@ -1147,3 +1147,64 @@
     height: 16px;
   }
 }
+
+.game-shell .stage-bottom {
+  width: var(--production-width, 350px);
+  grid-template-columns: minmax(0, 1fr) var(--sale-width, 112px);
+  transition:
+    width 220ms ease,
+    grid-template-columns 220ms ease;
+}
+.game-shell .production-readout > div > span {
+  text-align: center;
+}
+.game-shell .production-readout b {
+  justify-content: center;
+}
+.game-shell .stock-count {
+  width: var(--stock-width, 2ch);
+}
+.depth-selection {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--depth-width, 0px);
+  height: var(--depth-height, 0px);
+  transform: translate(var(--depth-left, 0px), var(--depth-top, 0px));
+  border: 1px solid #c7ebe82b;
+  border-radius: 14px;
+  background: #c7ebe811;
+  pointer-events: none;
+  transition:
+    transform 260ms cubic-bezier(0.22, 0.7, 0.25, 1),
+    height 260ms ease,
+    width 260ms ease;
+}
+.game-shell .depth-node.selected {
+  border-color: transparent;
+  background: transparent;
+}
+.game-shell .depth-node {
+  transition: color 180ms ease;
+}
+.game-shell .upgrade-tile button,
+.game-shell .sell-button {
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+@media (max-width: 760px) {
+  .depth-selection {
+    border-radius: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell .stage-bottom,
+  .depth-selection,
+  .game-shell .depth-node,
+  .game-shell .upgrade-tile button,
+  .game-shell .sell-button {
+    transition: none;
+  }
+}

@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from 'react';
 import { ResourceGlyph } from '../world/ResourceGlyph';
 import { LAYERS, LAYER_IDS } from '../../data/layers';
 import type { LayerId } from '../../data/layers';
@@ -13,8 +14,43 @@ export function DepthNavigation({
   onSelect: (id: LayerId) => void;
   onUnlock: (id: LayerId) => void;
 }) {
+  const rail = useRef<HTMLElement>(null);
+  const unlocked = LAYER_IDS.map((id) => !!world.layers[id]).join();
+  useLayoutEffect(() => {
+    const element = rail.current;
+    if (!element) return;
+    const update = () => {
+      const selected = element.querySelector<HTMLElement>(
+        '[aria-current="location"]',
+      );
+      if (!selected) return;
+      element.style.setProperty(
+        '--depth-top',
+        `${String(selected.offsetTop)}px`,
+      );
+      element.style.setProperty(
+        '--depth-height',
+        `${String(selected.offsetHeight)}px`,
+      );
+      element.style.setProperty(
+        '--depth-left',
+        `${String(selected.offsetLeft)}px`,
+      );
+      element.style.setProperty(
+        '--depth-width',
+        `${String(selected.offsetWidth)}px`,
+      );
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+    };
+  }, [world.selectedLayerId, unlocked]);
   return (
-    <nav className="depth-rail" aria-label="Depths">
+    <nav className="depth-rail" aria-label="Depths" ref={rail}>
+      <span className="depth-selection" aria-hidden="true" />
       <span className="depth-line" />
       {LAYER_IDS.map((id, index) => {
         const layer = LAYERS[id];
