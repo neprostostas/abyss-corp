@@ -203,14 +203,6 @@ button:disabled {
   align-items: center;
   gap: 24px;
 }
-.depth-line {
-  position: absolute;
-  width: 2px;
-  left: 33px;
-  top: 25px;
-  bottom: 30px;
-  background: linear-gradient(#d1dcb94f, #9fbac31a);
-}
 .depth-node {
   position: relative;
   display: flex;
@@ -1231,9 +1223,6 @@ button:disabled {
   .depth-orb .game-icon {
     width: 22px;
     height: 22px;
-  }
-  .depth-line {
-    left: 28px;
   }
   .depth-node b {
     font-size: 10px;

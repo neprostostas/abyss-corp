@@ -69,6 +69,16 @@ export class GuestSaveRepository implements SaveRepository {
     const storage = this.storage();
     const archiveKey = `${this.key}.transfer`;
     const raw = storage.getItem(archiveKey);
+    let staleArchive = false;
+    const currentRaw = storage.getItem(this.key);
+    const current: unknown = currentRaw ? JSON.parse(currentRaw) : null;
+    const generation =
+      current &&
+      typeof current === 'object' &&
+      'generation' in current &&
+      typeof current.generation === 'string'
+        ? current.generation
+        : null;
     if (raw) {
       const transfer: unknown = JSON.parse(raw);
       if (
@@ -80,8 +90,14 @@ export class GuestSaveRepository implements SaveRepository {
         throw new Error(
           'Guest transfer is unavailable. Your device progress has been kept.',
         );
-      if (transfer.userId === userId) return validateSave(transfer.save);
-      return null;
+      const transferGeneration =
+        'generation' in transfer ? transfer.generation : null;
+      if (transferGeneration === generation) {
+        if (transfer.userId === userId) return validateSave(transfer.save);
+        return null;
+      }
+      // A reset invalidates even an archive whose cleanup failed.
+      staleArchive = true;
     }
     const beforeLoad = storage.getItem(this.key);
     const save = await this.load();
@@ -91,8 +107,12 @@ export class GuestSaveRepository implements SaveRepository {
       );
     if (!save) return null;
     // Another claim may have completed while the device save was loading.
-    if (storage.getItem(archiveKey)) return this.claim(userId);
-    storage.setItem(archiveKey, JSON.stringify({ userId, save }));
+    if (
+      storage.getItem(archiveKey) &&
+      (!staleArchive || storage.getItem(archiveKey) !== raw)
+    )
+      return this.claim(userId);
+    storage.setItem(archiveKey, JSON.stringify({ userId, save, generation }));
     return save;
   }
 }

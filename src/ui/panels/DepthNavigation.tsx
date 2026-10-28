@@ -51,7 +51,6 @@ export function DepthNavigation({
   return (
     <nav className="depth-rail" aria-label="Depths" ref={rail}>
       <span className="depth-selection" aria-hidden="true" />
-      <span className="depth-line" />
       {LAYER_IDS.map((id, index) => {
         const layer = LAYERS[id];
         const offer = getUnlockOffer(world, id);

@@ -157,3 +157,30 @@ void test('guest transfer refuses an older snapshot when a newer device save app
   assert.equal(storage.getItem(`${guest.key}.transfer`), null);
   assert.equal((await guest.claim('captain'))?.world.credits, 50);
 });
+
+void test('a failed transfer archive cleanup cannot revive progress from before reset', async () => {
+  const storage = new MemoryStorage();
+  const guest = new GuestSaveRepository(() => storage);
+  await guest.save(gameSave(999, 2));
+  await guest.claim('captain');
+  storage.removeItem = () => {
+    throw new Error('Removal unavailable');
+  };
+  await guest.reset(gameSave());
+  const transferred = await guest.claim('captain');
+  assert.equal(transferred?.world.credits, 0);
+  assert.equal(transferred.world.progression?.expedition?.completed, 0);
+});
+
+void test('reset generation permits a fresh transfer to a different account even if old cleanup failed', async () => {
+  const storage = new MemoryStorage();
+  const guest = new GuestSaveRepository(() => storage);
+  await guest.save(gameSave(999));
+  await guest.claim('old-account');
+  storage.removeItem = () => {
+    throw new Error('Removal unavailable');
+  };
+  await guest.reset(gameSave(25));
+  assert.equal((await guest.claim('new-account'))?.world.credits, 25);
+  assert.equal(await guest.claim('old-account'), null);
+});

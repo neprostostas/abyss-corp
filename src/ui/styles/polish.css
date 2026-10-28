@@ -499,9 +499,6 @@
   left: 100px;
   right: 24px;
   bottom: 12px;
-  gap: 0;
-  flex-wrap: nowrap;
-  width: fit-content;
   max-width: calc(100% - 124px);
   margin-inline: auto;
   padding: 6px;
@@ -511,7 +508,6 @@
   box-shadow: 0 8px 24px #03172330;
 }
 .game-shell .production-readout {
-  flex: 1;
   min-width: 0;
   height: 52px;
   min-height: 52px;
@@ -549,7 +545,6 @@
 .game-shell .sell-button {
   height: 52px;
   min-height: 52px;
-  min-width: 126px;
   padding: 9px 16px;
   flex-direction: row;
   gap: 14px;
@@ -654,9 +649,6 @@
   border-radius: 20px;
   background: color-mix(in srgb, var(--ocean-panel-bottom) 84%, transparent);
   box-shadow: 0 6px 18px #03172320;
-}
-.game-shell .depth-line {
-  display: none;
 }
 .game-shell .depth-node {
   width: 54px;
@@ -775,7 +767,6 @@
     height: 17px;
   }
   .game-shell .sell-button {
-    min-width: 108px;
     padding-inline: 10px;
     gap: 8px;
   }

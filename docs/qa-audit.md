@@ -95,3 +95,17 @@ Additional passing scenarios:
 At the owner's request, real email/signup/reset/delete testing is **cancelled**.
 The earlier remaining-scenarios list records coverage gaps, not pending permission
 or a commitment to run those destructive scenarios. No test account was created.
+
+## Source audit and cleanup (no computer use)
+
+- Reproduced a stale guest-transfer archive surviving a successful reset when
+  `removeItem` failed. Transfer archives now carry the guest generation and cannot
+  revive a previous generation. Tests cover the same and a different destination
+  account, with the old archive deliberately retained.
+- Removed the permanently hidden legacy depth-line element and its styles,
+  superseded production-width CSS declarations, and an unused submarine motion
+  state field. Import/reference scanning found no orphan TypeScript modules to
+  delete. Kept deployment files, migrations, license files and used assets.
+- Production dependency audit: zero reported vulnerabilities at audit time.
+- No browser/device interactions were performed for this follow-up. Changes to
+  CSS remove declarations already overridden by later rules; no visual redesign.

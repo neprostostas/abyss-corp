@@ -21,7 +21,6 @@ export function useSubmarineMotion(
     to: position(phase, progress),
     started: 0,
     duration: 100,
-    phase,
     layerId,
     lastTick: 0,
   });
@@ -43,7 +42,6 @@ export function useSubmarineMotion(
         150,
         Math.max(16, previous.lastTick ? now - previous.lastTick : 100),
       ),
-      phase,
       layerId,
       lastTick: now,
     };
