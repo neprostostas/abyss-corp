@@ -343,6 +343,64 @@ void test('linked providers remain visible when disabled for new sign-ins, with 
   await reset();
 });
 
+void test('sign-in methods wait for fresh identities and keep provider order stable', async () => {
+  const { ConnectedAccounts } =
+    await import('../src/ui/account/ConnectedAccounts');
+  let resolveIdentities: ((value: unknown) => void) | undefined;
+  const fresh = new Promise((resolve) => {
+    resolveIdentities = resolve;
+  });
+  const user = {
+    id: 'player',
+    identities: [{ provider: 'github', identity_id: 'gh' }],
+  } as unknown as User;
+  const client = {
+    auth: { getUserIdentities: () => fresh },
+  } as unknown as SupabaseClient<Database>;
+  try {
+    await ui(() => {
+      root.render(
+        createElement(ConnectedAccounts, {
+          client,
+          user,
+          current: 'github',
+          onSave: () => Promise.resolve(),
+        }),
+      );
+    });
+    assert(document.querySelector('[aria-busy="true"]'));
+    assert.equal(
+      document.querySelector('.connection-list'),
+      null,
+      'do not flash cached identities',
+    );
+    await ui(() => {
+      assert(resolveIdentities);
+      resolveIdentities({
+        data: {
+          identities: [
+            { provider: 'custom:steam', identity_id: 'steam' },
+            { provider: 'github', identity_id: 'gh' },
+            { provider: 'google', identity_id: 'google' },
+          ],
+        },
+        error: null,
+      });
+    });
+    assert.equal(document.querySelector('[aria-busy="true"]'), null);
+    assert.deepEqual(
+      [
+        ...document.querySelectorAll(
+          '.connection-list > .connection-row .connection-name strong',
+        ),
+      ].map((el) => el.textContent),
+      ['Google', 'GitHub', 'Steam'],
+    );
+  } finally {
+    await reset();
+  }
+});
+
 void test('destructive controls require exact confirmation and block duplicate submissions', async () => {
   let resets = 0,
     deletions = 0;

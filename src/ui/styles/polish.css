@@ -493,3 +493,321 @@
   background: #c7ebe80c;
   color: #d0dfda;
 }
+
+/* One visual language for production, equipment and depth navigation. */
+.game-shell .stage-bottom {
+  left: 100px;
+  right: 24px;
+  bottom: 12px;
+  gap: 0;
+  flex-wrap: nowrap;
+  width: fit-content;
+  max-width: calc(100% - 124px);
+  margin-inline: auto;
+  padding: 6px;
+  border: 1px solid #c7ebe820;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 94%, transparent);
+  box-shadow: 0 8px 24px #03172330;
+}
+.game-shell .production-readout {
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  min-height: 52px;
+  padding: 8px 14px;
+  gap: 12px;
+  flex-wrap: nowrap;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.game-shell .production-readout > div {
+  gap: 7px;
+}
+.game-shell .production-readout small {
+  font: 500 10px / 1.2 var(--font-body);
+  text-transform: none;
+  letter-spacing: 0;
+  color: #adc5c3;
+}
+.game-shell .production-readout b {
+  font: 650 17px / 1.2 var(--font-body);
+  color: #eef4ed;
+  white-space: nowrap;
+}
+.game-shell .production-readout em {
+  font-size: 11px;
+  color: #9cb7b8;
+}
+.game-shell .production-readout > div > .game-icon {
+  width: 21px;
+  height: 21px;
+}
+.game-shell .sell-button {
+  height: 52px;
+  min-height: 52px;
+  min-width: 126px;
+  padding: 9px 16px;
+  flex-direction: row;
+  gap: 14px;
+  border: 1px solid #ffe5a04d;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #efd48f, #dcb86d);
+  box-shadow: inset 0 1px #fff3ce55;
+  color: #253b3e;
+}
+.game-shell .sell-button > span {
+  font: 700 12px var(--font-body);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.game-shell .sell-button > span > .game-icon {
+  display: none;
+}
+.game-shell .sell-button strong {
+  font: 750 18px / 1 var(--font-body);
+  font-variant-numeric: tabular-nums;
+  gap: 5px;
+}
+.game-shell .sell-button:disabled {
+  border-color: #c7ebe812;
+  background: #c7ebe80b;
+  box-shadow: none;
+  color: #8ca8aa;
+}
+.game-shell > .upgrade-deck {
+  width: min(920px, 100%);
+  gap: 10px;
+  padding: 10px 20px 12px;
+}
+.game-shell .upgrade-tile {
+  grid-template-columns: 46px minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+  gap: 8px 10px;
+  padding: 12px;
+  border: 1px solid #c7ebe820;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 92%, transparent);
+  color: #e4eee6;
+  box-shadow: 0 5px 16px #03172320;
+  text-align: left;
+}
+.game-shell .upgrade-art,
+.game-shell .machine-portrait {
+  width: 42px;
+  height: 40px;
+}
+.game-shell .upgrade-info h3 {
+  justify-content: flex-start;
+  font: 650 13px / 1.35 var(--font-body);
+  color: #e4eee6;
+}
+.game-shell .upgrade-info > span {
+  display: block;
+  font: 500 11px / 1.5 var(--font-body);
+  color: #a5c1bf;
+}
+.game-shell .upgrade-info b {
+  color: #d9dbb1;
+  font-weight: 500;
+}
+.game-shell .upgrade-tile button {
+  grid-column: 1 / -1;
+  min-height: 44px;
+  height: auto;
+  padding: 8px;
+  margin: 0;
+  gap: 6px;
+  border: 1px solid #e6cc8c36;
+  border-radius: 10px;
+  background: #e6cc8c18;
+  color: #efdaa6;
+  box-shadow: none;
+  font: 650 12px var(--font-body);
+}
+.game-shell .upgrade-tile button:disabled {
+  border-color: transparent;
+  background: #c7ebe809;
+  color: #8daaaa;
+  opacity: 1;
+  box-shadow: none;
+}
+.game-shell .upgrade-tile.can-upgrade {
+  border-color: #e6cc8c6b;
+  box-shadow: none;
+}
+.game-shell .upgrade-tile.selected {
+  border-color: var(--ocean-panel-accent);
+  box-shadow: none;
+}
+.game-shell .depth-rail {
+  top: 50%;
+  transform: translateY(-60%);
+  left: 16px;
+  width: 68px;
+  gap: 5px;
+  padding: 6px;
+  border: 1px solid #c7ebe820;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 84%, transparent);
+  box-shadow: 0 6px 18px #03172320;
+}
+.game-shell .depth-line {
+  display: none;
+}
+.game-shell .depth-node {
+  width: 54px;
+  min-height: 68px;
+  padding: 8px 4px;
+  gap: 4px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  box-shadow: none;
+  color: #a9c4c7;
+}
+.game-shell .depth-orb {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+}
+.game-shell .depth-orb .game-icon,
+.game-shell .depth-resource {
+  width: 24px;
+  height: 24px;
+}
+.game-shell .depth-node.selected {
+  border-color: #c7ebe81f;
+  background: #c7ebe811;
+  color: #f3e2b4;
+}
+.game-shell .depth-node.selected .depth-orb {
+  box-shadow: none;
+  border: 0;
+}
+.game-shell .depth-node b {
+  font: 650 11px / 1.2 var(--font-body);
+}
+.game-shell .depth-price {
+  font-size: 9px;
+}
+.game-shell .depth-node.can-unlock {
+  border-color: #e6cc8c55;
+}
+.game-shell .depth-node.can-unlock .depth-orb {
+  box-shadow: none;
+}
+.connection-loading > div {
+  display: grid;
+  gap: 10px;
+}
+.connection-loading i {
+  display: block;
+  height: 60px;
+  border-radius: 11px;
+  background: color-mix(
+    in srgb,
+    var(--ocean-panel-bottom) 68%,
+    var(--ocean-panel-top)
+  );
+}
+@media (max-width: 760px) {
+  .game-shell .stage-bottom {
+    left: 12px;
+    right: 12px;
+    max-width: calc(100% - 24px);
+  }
+  .game-shell > .upgrade-deck {
+    gap: 6px;
+    padding: 8px 10px 10px;
+  }
+  .game-shell .upgrade-tile {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    text-align: center;
+    padding: 8px 5px;
+    gap: 5px;
+    border-radius: 13px;
+  }
+  .game-shell .upgrade-art {
+    margin: 0 auto;
+  }
+  .game-shell .upgrade-info h3 {
+    justify-content: center;
+    font-size: 11px;
+  }
+  .game-shell .upgrade-info > span {
+    font-size: 10px;
+  }
+  .game-shell .depth-rail {
+    left: 10px;
+    width: 56px;
+    border-radius: 16px;
+    padding: 4px;
+  }
+  .game-shell .depth-node {
+    width: 46px;
+    min-height: 60px;
+    padding: 6px 2px;
+    border-radius: 11px;
+  }
+}
+@media (max-width: 420px) {
+  .game-shell .production-readout {
+    gap: 8px;
+    padding-inline: 8px;
+  }
+  .game-shell .production-readout .refinery-readout,
+  .game-shell .production-readout .flow-arrow {
+    display: none;
+  }
+  .game-shell .production-readout b {
+    font-size: 15px;
+  }
+  .game-shell .production-readout > div > .game-icon {
+    width: 17px;
+    height: 17px;
+  }
+  .game-shell .sell-button {
+    min-width: 108px;
+    padding-inline: 10px;
+    gap: 8px;
+  }
+  .game-shell .sell-button strong {
+    font-size: 16px;
+  }
+}
+@media (max-height: 650px) {
+  .game-shell .depth-rail {
+    top: 12px;
+    transform: none;
+    gap: 3px;
+    padding: 4px;
+  }
+  .game-shell .depth-node {
+    min-height: 52px;
+    padding-block: 5px;
+    gap: 2px;
+  }
+  .game-shell .depth-orb {
+    width: 24px;
+    height: 24px;
+  }
+  .game-shell .depth-resource,
+  .game-shell .depth-orb .game-icon {
+    width: 22px;
+    height: 22px;
+  }
+  .game-shell .depth-node b {
+    font-size: 10px;
+  }
+  .game-shell .depth-price {
+    font-size: 8px;
+  }
+}

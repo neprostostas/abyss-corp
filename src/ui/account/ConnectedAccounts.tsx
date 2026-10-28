@@ -27,6 +27,7 @@ export function ConnectedAccounts({
   const [identities, setIdentities] = useState<UserIdentity[]>(
     user.identities ?? [],
   );
+  const [loading, setLoading] = useState(true);
   const [providers, setProviders] = useState<SocialProvider[]>([]);
   const [busy, setBusy] = useState<LoginProvider | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -35,42 +36,36 @@ export function ConnectedAccounts({
   const [email, setEmail] = useState('');
   useEffect(() => {
     let active = true;
-    void loadSocialProviders()
-      .then((list) => {
-        if (active) setProviders(list);
-      })
-      .catch(() => {
-        if (active)
-          setError(
-            'Could not load sign-in options. Reopen your profile to retry.',
-          );
-      });
-    void client.auth
-      .getUserIdentities()
-      .then(({ data, error: failure }) => {
-        if (active) {
-          if (failure) setError('Could not refresh connected accounts.');
-          else setIdentities(data.identities);
-        }
-      })
-      .catch(() => {
-        if (active) setError('Could not refresh connected accounts.');
-      });
+    void Promise.allSettled([
+      loadSocialProviders(),
+      client.auth.getUserIdentities(),
+    ]).then(([available, accounts]) => {
+      if (!active) return;
+      if (available.status === 'fulfilled') setProviders(available.value);
+      if (accounts.status === 'fulfilled' && !accounts.value.error) {
+        setIdentities(accounts.value.data.identities);
+      }
+      if (
+        available.status === 'rejected' ||
+        accounts.status === 'rejected' ||
+        accounts.value.error
+      ) {
+        setError(
+          'Could not refresh sign-in methods. Reopen this section to retry.',
+        );
+      }
+      setLoading(false);
+    });
     return () => {
       active = false;
     };
-  }, [client, user]);
+  }, [client]);
   const connected = new Set(identities.map((identity) => identity.provider));
   const methods: LoginProvider[] = [
-    ...new Set<LoginProvider>([
-      ...providers,
-      ...identities
-        .map((i) => i.provider)
-        .filter((p): p is SocialProvider =>
-          SOCIAL_PROVIDERS.includes(p as SocialProvider),
-        ),
-      'email',
-    ]),
+    ...SOCIAL_PROVIDERS.filter(
+      (value) => providers.includes(value) || connected.has(value),
+    ),
+    'email',
   ];
   const emailConnected = connected.has('email') && !!user.email_confirmed_at;
   const link = async (value: SocialProvider) => {
@@ -128,6 +123,23 @@ export function ConnectedAccounts({
   };
   const isLinked = (value: LoginProvider) =>
     value === 'email' ? emailConnected : connected.has(value);
+  if (loading)
+    return (
+      <section
+        className="connected-accounts connection-loading"
+        aria-label="Sign-in methods"
+        aria-busy="true"
+      >
+        <span className="sr-only" role="status">
+          Loading sign-in methods…
+        </span>
+        <div aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </div>
+      </section>
+    );
   return (
     <section className="connected-accounts" aria-label="Sign-in methods">
       <div className="connection-list">

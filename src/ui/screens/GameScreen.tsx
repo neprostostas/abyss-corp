@@ -285,7 +285,7 @@ function GameBoard({
                 >
                   <span>
                     <GameIcon name="storage" />
-                    Sell cargo
+                    Sell
                   </span>
                   <strong>
                     <GameIcon name="coin" />
