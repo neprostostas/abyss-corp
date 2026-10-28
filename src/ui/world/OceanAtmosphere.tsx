@@ -54,6 +54,28 @@ export function OceanAtmosphere({ layerId }: { layerId: LayerId }) {
           <path d="M0 0H1200V100l-73-25-72 70-89-103-121 65-87-78-127 50-65-38-114 83-72-90-129 39L160 30 0 128Z" />
         </g>
       )}
+      {layerId === 'thermal-vents' && (
+        <g opacity=".45" stroke="#ffad83" fill="none">
+          <path
+            d="m48 780 25-51 18 20 20-39 23 70M1040 780l28-67 21 38 18-19 28 48"
+            fill="#18343d"
+            strokeWidth="3"
+          />
+          <path
+            d="M84 710q-22-50 0-90t0-90M1090 700q20-45 0-85t0-85"
+            strokeWidth="8"
+            opacity=".16"
+          />
+        </g>
+      )}
+      {layerId === 'midnight-rift' && (
+        <g fill="#99bfff" opacity=".4">
+          <path d="m52 660 12-27 10 32-10 12ZM1110 615l14-35 13 39-13 13Z" />
+          <circle cx="90" cy="420" r="2" />
+          <circle cx="1070" cy="360" r="3" />
+          <circle cx="1140" cy="470" r="2" />
+        </g>
+      )}
       <path
         d="M0 743q145-53 265-5t235 7 252-6 448-10v51H0Z"
         fill="#0c3449"

@@ -134,7 +134,7 @@ function AccountGame({
         await session.lock();
         try {
           await repository.reset({
-            version: 7,
+            version: 8,
             savedAt: browserClock.timestamp(),
             world: createWorld(),
           });

@@ -1,3 +1,5 @@
+import { getCampaign } from './campaign';
+import { INFRASTRUCTURE, PRESTIGE } from '../data/campaign';
 import { EXPEDITION_TRADE_BONUS } from '../data/expeditions';
 import {
   MISSION_IDS,
@@ -7,13 +9,13 @@ import {
 } from '../data/progression';
 import type { MissionId, ResearchId } from '../data/progression';
 import { LAYERS, LAYER_IDS } from '../data/layers';
-import type { LayerId, ProductionConfig } from '../data/layers';
+import type { LayerId, CoreLayerId, ProductionConfig } from '../data/layers';
 import type { WorldState } from './world';
 
 export interface ExpeditionState {
   readonly completed: number;
   readonly active: boolean;
-  readonly delivered: Readonly<Record<LayerId, number>>;
+  readonly delivered: Readonly<Record<CoreLayerId, number>>;
 }
 export function createExpedition(): ExpeditionState {
   return {
@@ -59,14 +61,20 @@ export function getLayerProduction(
   const base = LAYERS[id].production;
   const progression = getProgression(world);
   const research = progression.research;
+  const campaign = getCampaign(world);
   return {
     ...base,
-    storageBonus: research.storage * RESEARCH.storage.bonusPerLevel,
+    storageBonus:
+      research.storage * RESEARCH.storage.bonusPerLevel +
+      campaign.infrastructure.depot * INFRASTRUCTURE.depot.bonusPerLevel,
     resource: {
       ...base.resource,
       refinedValue: Math.floor(
         (base.resource.refinedValue *
           (100 +
+            campaign.rank * PRESTIGE.bonusPerRank +
+            campaign.infrastructure.exchange *
+              INFRASTRUCTURE.exchange.bonusPerLevel +
             research.trade * RESEARCH.trade.bonusPerLevel +
             (progression.expedition?.completed ?? 0) *
               EXPEDITION_TRADE_BONUS)) /

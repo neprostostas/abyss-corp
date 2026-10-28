@@ -3,6 +3,7 @@ export interface PlayerStanding {
   readonly id: string;
   readonly captainName: string;
   readonly position: number;
+  readonly prestige: number;
   readonly depthMeters: number;
   readonly upgrades: number;
   readonly research: number;

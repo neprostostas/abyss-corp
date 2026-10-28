@@ -52,6 +52,7 @@ export type Database = {
           automation: number;
           captain_name: string;
           credits: number;
+          prestige: number;
           depth_m: number;
           id: string;
           outposts: number;
@@ -63,6 +64,7 @@ export type Database = {
           automation?: number;
           captain_name: string;
           credits?: number;
+          prestige?: number;
           depth_m?: number;
           id: string;
           outposts?: number;
@@ -74,6 +76,7 @@ export type Database = {
           automation?: number;
           captain_name?: string;
           credits?: number;
+          prestige?: number;
           depth_m?: number;
           id?: string;
           outposts?: number;
@@ -116,6 +119,7 @@ export type Database = {
           automation: number | null;
           captain_name: string | null;
           credits: number | null;
+          prestige: number | null;
           depth_m: number | null;
           id: string | null;
           outposts: number | null;
@@ -147,6 +151,17 @@ export type Database = {
         Returns: Json;
       };
       is_database_admin: { Args: never; Returns: boolean };
+      prestige_game_save: {
+        Args: {
+          account_id: string;
+          payload: Json;
+          operation_id: string;
+          expected_epoch: number;
+          expected_revision: number;
+          expected_rank: number;
+        };
+        Returns: Database['public']['Tables']['game_saves']['Row'][];
+      };
       reset_game_save: {
         Args: { account_id: string; payload: Json; operation_id: string };
         Returns: Database['public']['Tables']['game_saves']['Row'][];

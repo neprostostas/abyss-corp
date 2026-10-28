@@ -21,10 +21,16 @@ interface LayerDefinition {
   };
 }
 
-export const LAYER_IDS = [
+export const CORE_LAYER_IDS = [
   'shallows',
   'golden-trench',
   'pearl-caverns',
+] as const;
+export type CoreLayerId = (typeof CORE_LAYER_IDS)[number];
+export const LAYER_IDS = [
+  ...CORE_LAYER_IDS,
+  'thermal-vents',
+  'midnight-rift',
 ] as const;
 export type LayerId = (typeof LAYER_IDS)[number];
 export const LAYERS = {
@@ -79,6 +85,40 @@ export const LAYERS = {
       oceanTop: '#36518b',
       oceanBottom: '#171f49',
       coral: '#e9a9ff',
+      formation: 'cavern',
+    },
+  },
+  'thermal-vents': {
+    name: 'Thermal vents',
+    depthMeters: 900,
+    unlockCost: 4800,
+    description: 'Titanium seams beneath the volcanic shelf.',
+    production: {
+      resource: RESOURCES.titanium,
+      durationMultiplier: 2.5,
+      upgradeCostMultiplier: 8,
+    },
+    visual: {
+      oceanTop: '#204654',
+      oceanBottom: '#142c39',
+      coral: '#ff9b6a',
+      formation: 'trench',
+    },
+  },
+  'midnight-rift': {
+    name: 'Midnight rift',
+    depthMeters: 1900,
+    unlockCost: 18000,
+    description: 'Luminous cores at the edge of the known ocean.',
+    production: {
+      resource: RESOURCES.lumens,
+      durationMultiplier: 3,
+      upgradeCostMultiplier: 16,
+    },
+    visual: {
+      oceanTop: '#233c65',
+      oceanBottom: '#0b192d',
+      coral: '#89baff',
       formation: 'cavern',
     },
   },

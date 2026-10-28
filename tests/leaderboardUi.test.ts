@@ -140,6 +140,7 @@ void test('rankings show a player once, use generated tags and omit redundant ex
     id: 'db1ca8fb-9ba2-4633-a4ce-c7b804fedc3c',
     captainName: 'Captain DB1CA8FB',
     position: 1,
+    prestige: 0,
     depthMeters: 50,
     upgrades: 0,
     research: 0,

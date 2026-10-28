@@ -6,6 +6,9 @@ export type IconName =
   | 'transport'
   | 'processing'
   | 'storage'
+  | 'map'
+  | 'sonar'
+  | 'prestige'
   | 'research'
   | 'trade-network'
   | 'modular-storage'
@@ -137,10 +140,29 @@ const shapes: Record<IconName, ReactNode> = {
       <path d="M10 11h4v5h-4Z" />
     </>
   ),
+  map: (
+    <>
+      <path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2ZM9 3v16m6-14v16" />
+      <circle cx="15" cy="10" r="2" />
+    </>
+  ),
+  sonar: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <path d="m12 12 6-6M12 3v2M3 12h2M12 19v2m7-9h2" />
+    </>
+  ),
+  prestige: (
+    <>
+      <path d="m12 3 3 5 6 1-4 5 1 7-6-3-6 3 1-7-4-5 6-1Z" />
+      <path d="m10 12 2 2 3-4" />
+    </>
+  ),
   research: (
     <>
-      <path d="M8 3h5l3 7-4 2-4-7ZM12 12a5 5 0 0 1-5 7M5 21h15M14 15h6M8 17a6 6 0 0 1 0-12" />
-      <circle cx="6" cy="15" r="2" />
+      <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9ZM4 7.5l8 4.5 8-4.5M12 12v9" />
+      <path d="m8 5.3 8 4.5" />
     </>
   ),
   'trade-network': (

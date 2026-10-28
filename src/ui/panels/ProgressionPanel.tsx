@@ -15,8 +15,8 @@ const goals: Record<MissionId, string> = {
   automate: 'Install a sales module',
   expand: 'Open 2 outposts',
   discover: 'Complete your first research',
-  explore: 'Open all 3 depths',
-  network: 'Automate all 3 outposts',
+  explore: 'Open 3 depths',
+  network: 'Automate 3 outposts',
   research: 'Complete all 6 research levels',
 };
 export function ProgressionPanel({

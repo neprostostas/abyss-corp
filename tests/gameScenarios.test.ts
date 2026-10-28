@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { LAYER_IDS } from '../src/data/layers';
+import { LAYER_IDS, CORE_LAYER_IDS } from '../src/data/layers';
 import { MISSIONS, MISSION_IDS } from '../src/data/progression';
 import { OFFLINE_LIMIT_MS } from '../src/data/automation';
 import {
@@ -42,7 +42,7 @@ void test('a full offline window with all pilots and an active expedition matche
   }
   assert.deepEqual(reloaded, whole);
   assert(whole.credits > 0);
-  for (const id of LAYER_IDS)
+  for (const id of CORE_LAYER_IDS)
     assert((whole.progression?.expedition?.delivered[id] ?? 0) > 0);
 });
 void test('every mission rewards once across reloads and never overflows the wallet', () => {

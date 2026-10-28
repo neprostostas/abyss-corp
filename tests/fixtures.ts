@@ -1,3 +1,5 @@
+import { validateSave } from '../src/infrastructure/persistence/saveSchema';
+import { getCampaign, getPrestigeOffer } from '../src/domain/campaign';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import type { Clock, GameSave, SaveRepository } from '../src/application/ports';
@@ -38,7 +40,7 @@ export class DeviceSave implements SaveRepository {
 export function gameSave(credits = 0, completed = 0): GameSave {
   const world = createWorld();
   return {
-    version: 7,
+    version: 8,
     savedAt: 1_000_000,
     world: {
       ...world,
@@ -121,7 +123,9 @@ export function cloudFixture() {
   let conflicts = 0;
   let requests = 0;
   let commits = 0;
-  type Write = Database['public']['Functions']['write_game_save']['Args'];
+  type Write = Database['public']['Functions']['write_game_save']['Args'] & {
+    expected_rank?: number;
+  };
   // Only the used transport surface is faked; production save validation still runs.
   const client = {
     from: () => ({
@@ -141,8 +145,21 @@ export function cloudFixture() {
       gate = null;
       if (waiting) await waiting.promise;
       if (offline) return { data: null, error: { code: 'NETWORK' } };
-      if (name === 'reset_game_save') {
+      if (name === 'reset_game_save' || name === 'prestige_game_save') {
         if (remote?.write_id !== args.operation_id) {
+          if (name === 'prestige_game_save') {
+            const current = remote ? validateSave(remote.save).world : null;
+            const next = validateSave(args.payload).world;
+            if (
+              !current ||
+              args.expected_epoch !== remote?.epoch ||
+              args.expected_revision !== remote?.revision ||
+              args.expected_rank !== getCampaign(current).rank ||
+              getCampaign(next).rank !== getCampaign(current).rank + 1 ||
+              !getPrestigeOffer(current).canPrestige
+            )
+              return { data: null, error: { code: 'PT409' } };
+          }
           remote = {
             user_id: args.account_id,
             revision: (remote?.revision ?? 0) + 1,

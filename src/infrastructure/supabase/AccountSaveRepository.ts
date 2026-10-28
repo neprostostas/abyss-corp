@@ -1,3 +1,4 @@
+import { getCampaign } from '../../domain/campaign';
 import { z } from 'zod';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database, SaveRow } from './database.types';
@@ -90,15 +91,18 @@ export class AccountSaveRepository implements AccountSavePort {
   ): GameSave {
     const completed = Math.max(
       save.world.progression?.expedition?.completed ?? 0,
-      ...sources.map(
-        (source) => source.world.progression?.expedition?.completed ?? 0,
-      ),
+      ...sources
+        .filter(
+          (source) =>
+            getCampaign(source.world).rank === getCampaign(save.world).rank,
+        )
+        .map((source) => source.world.progression?.expedition?.completed ?? 0),
     );
     if (completed === (save.world.progression?.expedition?.completed ?? 0))
       return save;
     return validateSave({
       ...save,
-      version: 7,
+      version: 8,
       world: {
         ...save.world,
         progression: {
@@ -293,7 +297,21 @@ export class AccountSaveRepository implements AccountSavePort {
     this.storage().removeItem(this.key);
     this.cache = null;
   }
-  async reset(save: GameSave) {
+  async prestige(current: GameSave, next: GameSave) {
+    if (
+      !this.cache ||
+      getCampaign(this.cache.save.world).rank !==
+        getCampaign(current.world).rank ||
+      getCampaign(next.world).rank !== getCampaign(current.world).rank + 1
+    )
+      throw new Error('Progress changed. Sync and review the new run.');
+    await this.save(current);
+    await this.flush();
+    if (this.snapshot.status !== 'saved')
+      throw new Error('Sync your progress before starting a new run.');
+    await this.reset(next, true);
+  }
+  async reset(save: GameSave, prestige = false) {
     await this.pause();
     try {
       const args = {
@@ -301,9 +319,18 @@ export class AccountSaveRepository implements AccountSavePort {
         payload: z.json().parse(validateSave(save)),
         operation_id: crypto.randomUUID(),
       };
-      let result = await this.client.rpc('reset_game_save', args);
+      const perform = () =>
+        prestige
+          ? this.client.rpc('prestige_game_save', {
+              ...args,
+              expected_epoch: this.cache?.epoch ?? 0,
+              expected_revision: this.cache?.revision ?? 0,
+              expected_rank: getCampaign(save.world).rank - 1,
+            })
+          : this.client.rpc('reset_game_save', args);
+      let result = await perform();
       // A lost HTTP response retries the same operation, never a second reset.
-      if (result.error) result = await this.client.rpc('reset_game_save', args);
+      if (result.error) result = await perform();
       const { data, error } = result;
       const row = data?.[0];
       if (error || !row)

@@ -48,6 +48,19 @@ export class GuestSaveRepository implements SaveRepository {
       resolve();
     });
   }
+  async prestige(current: GameSave, next: GameSave): Promise<void> {
+    await this.save(current);
+    // Verify that another tab has not advanced the generation during the await.
+    const raw = this.storage().getItem(this.key);
+    const stored: unknown = raw ? JSON.parse(raw) : null;
+    const generation =
+      stored && typeof stored === 'object' && 'generation' in stored
+        ? stored.generation
+        : null;
+    if (generation !== this.generation)
+      throw new Error('Progress changed in another tab. Reload to continue.');
+    await this.reset(next);
+  }
   reset(save: GameSave): Promise<void> {
     return new Promise((resolve) => {
       const generation = crypto.randomUUID();

@@ -1,3 +1,6 @@
+import { getCampaign } from '../domain/campaign';
+import type { InfrastructureId } from '../data/campaign';
+import { buyInfrastructure, prestigeWorld } from '../domain/world';
 import { startExpedition, claimExpedition } from '../domain/expeditions';
 import type { ResearchId, MissionId } from '../data/progression';
 import {
@@ -50,6 +53,8 @@ export class GameSession {
   private lastTimestamp: number;
   private active = false;
   private locked = false;
+  private prestiging = false;
+  private resumeAfterPrestige: boolean | null = null;
   private suspendedAt: number | null = null;
   private loading: Promise<void> | null = null;
   private saving: Promise<void> | null = null;
@@ -149,7 +154,10 @@ export class GameSession {
   }
 
   setActive(active: boolean) {
-    if (this.locked) return;
+    if (this.locked) {
+      if (this.prestiging) this.resumeAfterPrestige = active;
+      return;
+    }
     if (active === this.active) return;
     this.tick();
     if (!active) this.suspendedAt = this.clock.timestamp();
@@ -194,6 +202,48 @@ export class GameSession {
     this.publish({ world });
     void this.save();
   }
+
+  infrastructure = (id: InfrastructureId) => {
+    this.command((world) => buyInfrastructure(world, id));
+  };
+
+  /** A prestige is an epoch-fenced reset, never an ordinary autosave. */
+  prestige = async (expectedRank: number): Promise<void> => {
+    if (this.prestiging || this.locked || this.snapshot.status !== 'ready')
+      throw new Error('Progress is busy. Try again.');
+    if (!this.repository.prestige)
+      throw new Error('Prestige is unavailable on this device.');
+    this.prestiging = true;
+    const wasActive = this.active;
+    this.resumeAfterPrestige = wasActive;
+    try {
+      await this.lock();
+      const current = this.snapshot.world;
+      if (getCampaign(current).rank !== expectedRank)
+        throw new Error('Progress changed. Review the new run again.');
+      const world = prestigeWorld(current);
+      if (world === current)
+        throw new Error(
+          'Reach the rift and keep 25,000 credits to start a new run.',
+        );
+      const save: GameSave = {
+        version: 8,
+        savedAt: this.clock.timestamp(),
+        world,
+      };
+      await this.repository.prestige(
+        { version: 8, savedAt: this.clock.timestamp(), world: current },
+        save,
+      );
+      this.adoptCloudSave(save);
+    } finally {
+      const resumeActive = this.resumeAfterPrestige;
+      this.resumeAfterPrestige = null;
+      this.prestiging = false;
+      this.unlockAfterAccountChange();
+      this.setActive(resumeActive);
+    }
+  };
 
   startExpedition = () => {
     this.command(startExpedition);
@@ -267,7 +317,7 @@ export class GameSession {
     // Match the persisted timestamp to the production state, even between timer ticks.
     this.tick();
     this.pendingSave = {
-      version: 7,
+      version: 8,
       savedAt: this.suspendedAt ?? this.clock.timestamp(),
       world: this.snapshot.world,
     };

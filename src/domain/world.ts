@@ -1,3 +1,12 @@
+import {
+  createCampaign,
+  getCampaign,
+  getInfrastructureOffer,
+  getPrestigeOffer,
+} from './campaign';
+import type { CampaignState } from './campaign';
+import type { InfrastructureId } from '../data/campaign';
+import { INFRASTRUCTURE, PRESTIGE } from '../data/campaign';
 import { supplyExpedition } from './expeditions';
 import {
   createProgression,
@@ -30,6 +39,7 @@ export type LayerState = Omit<GameState, 'credits'> & {
   readonly automation?: AutomationState;
 };
 export interface WorldState {
+  readonly campaign?: CampaignState;
   readonly progression?: ProgressionState;
   readonly credits: number;
   readonly selectedLayerId: LayerId;
@@ -58,6 +68,7 @@ export function createLayer(): LayerState {
 }
 export function createWorld(): WorldState {
   return {
+    campaign: createCampaign(),
     progression: createProgression(),
     credits: 0,
     selectedLayerId: 'shallows',
@@ -153,7 +164,10 @@ export function getUnlockOffer(world: WorldState, id: LayerId) {
   const unlocked = world.layers[id] !== undefined;
   const prerequisiteMet =
     previous === undefined || world.layers[previous] !== undefined;
-  const cost = LAYERS[id].unlockCost;
+  const discount =
+    getCampaign(world).infrastructure.sonar *
+    INFRASTRUCTURE.sonar.bonusPerLevel;
+  const cost = Math.floor((LAYERS[id].unlockCost * (100 - discount)) / 100);
   return {
     cost,
     unlocked,
@@ -293,4 +307,41 @@ export function claimMission(world: WorldState, id: MissionId): WorldState {
       claimedMissions: [...progression.claimedMissions, id],
     },
   };
+}
+
+/** Shared facilities belong to this run. Buying capacity settles blocked work without advancing time. */
+export function buyInfrastructure(
+  world: WorldState,
+  id: InfrastructureId,
+): WorldState {
+  const offer = getInfrastructureOffer(world, id);
+  if (!offer.affordable || offer.cost === null) return world;
+  const campaign = getCampaign(world);
+  let next: WorldState = {
+    ...world,
+    credits: world.credits - offer.cost,
+    campaign: {
+      ...campaign,
+      infrastructure: { ...campaign.infrastructure, [id]: offer.level + 1 },
+    },
+  };
+  if (id === 'depot')
+    for (const layerId of LAYER_IDS) {
+      if (!next.layers[layerId]) continue;
+      next = replaceLayer(
+        next,
+        layerId,
+        settleProduction(
+          getLayerGame(next, layerId),
+          getLayerProduction(next, layerId),
+        ),
+      );
+    }
+  return next;
+}
+/** Pure reset policy. Persistence must fence other devices before adopting this world. */
+export function prestigeWorld(world: WorldState): WorldState {
+  const offer = getPrestigeOffer(world);
+  if (!offer.canPrestige || offer.rank >= PRESTIGE.maxRank) return world;
+  return { ...createWorld(), campaign: createCampaign(offer.rank + 1) };
 }

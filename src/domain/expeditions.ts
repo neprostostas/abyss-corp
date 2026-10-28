@@ -1,5 +1,5 @@
 import { EXPEDITIONS } from '../data/expeditions';
-import { LAYER_IDS } from '../data/layers';
+import { CORE_LAYER_IDS } from '../data/layers';
 import type { LayerId, ProductionConfig } from '../data/layers';
 import { UPGRADE_IDS, UPGRADES } from '../data/balance';
 import { RESEARCH, RESEARCH_IDS } from '../data/progression';
@@ -13,7 +13,7 @@ export function getExpeditionOffer(world: WorldState) {
   const state = progression.expedition ?? createExpedition();
   const definition = EXPEDITIONS[state.completed];
   const unlocked =
-    LAYER_IDS.every((id) => {
+    CORE_LAYER_IDS.every((id) => {
       const layer = world.layers[id];
       return (
         layer &&
@@ -26,13 +26,13 @@ export function getExpeditionOffer(world: WorldState) {
     RESEARCH_IDS.every(
       (id) => progression.research[id] === RESEARCH[id].costs.length,
     );
-  const pilotsReady = LAYER_IDS.every(
+  const pilotsReady = CORE_LAYER_IDS.every(
     (id) => world.layers[id]?.running && world.layers[id].automation?.enabled,
   );
   const ready =
     !!definition &&
     state.active &&
-    LAYER_IDS.every((id) => state.delivered[id] >= definition.targets[id]);
+    CORE_LAYER_IDS.every((id) => state.delivered[id] >= definition.targets[id]);
   return {
     state,
     definition,
@@ -80,10 +80,12 @@ export function supplyExpedition(
   const progression = getProgression(world);
   const state = progression.expedition;
   const definition = state?.active ? EXPEDITIONS[state.completed] : undefined;
-  if (!state || !definition) return { world, game };
+  if (!state || !definition || !CORE_LAYER_IDS.some((core) => core === id))
+    return { world, game };
+  const coreId = id as (typeof CORE_LAYER_IDS)[number];
   const amount = Math.min(
     game.refined,
-    definition.targets[id] - state.delivered[id],
+    definition.targets[coreId] - state.delivered[coreId],
   );
   if (amount <= 0) return { world, game };
   return {
@@ -93,7 +95,10 @@ export function supplyExpedition(
         ...progression,
         expedition: {
           ...state,
-          delivered: { ...state.delivered, [id]: state.delivered[id] + amount },
+          delivered: {
+            ...state.delivered,
+            [coreId]: state.delivered[coreId] + amount,
+          },
         },
       },
     },

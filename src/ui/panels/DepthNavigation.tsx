@@ -5,6 +5,10 @@ import type { LayerId } from '../../data/layers';
 import { getUnlockOffer } from '../../domain/world';
 import type { WorldState } from '../../domain/world';
 import { GameIcon } from '../components/GameIcon';
+const compactCredits = new Intl.NumberFormat('en-US', {
+  notation: 'compact',
+  maximumFractionDigits: 1,
+});
 export function DepthNavigation({
   world,
   onSelect,
@@ -48,10 +52,15 @@ export function DepthNavigation({
       observer.disconnect();
     };
   }, [world.selectedLayerId, unlocked]);
+  // The full route lives on the map; keep nearby depths clear of the production controls.
+  const index = LAYER_IDS.indexOf(world.selectedLayerId);
+  const start = Math.max(0, Math.min(index - 1, LAYER_IDS.length - 3));
+  const nearby = LAYER_IDS.slice(start, start + 3);
   return (
     <nav className="depth-rail" aria-label="Depths" ref={rail}>
       <span className="depth-selection" aria-hidden="true" />
-      {LAYER_IDS.map((id, index) => {
+      {nearby.map((id) => {
+        const index = LAYER_IDS.indexOf(id);
         const layer = LAYERS[id];
         const offer = getUnlockOffer(world, id);
         const selected = id === world.selectedLayerId;
@@ -106,7 +115,7 @@ export function DepthNavigation({
             {!offer.unlocked && (
               <span className="depth-price">
                 <GameIcon name="coin" />
-                {offer.cost}
+                {compactCredits.format(offer.cost)}
               </span>
             )}
           </button>

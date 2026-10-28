@@ -55,7 +55,7 @@ export function GuestGame({ onSignIn }: { onSignIn: () => void }) {
           await session.lock();
           try {
             const fresh = {
-              version: 7 as const,
+              version: 8 as const,
               savedAt: browserClock.timestamp(),
               world: createWorld(),
             };

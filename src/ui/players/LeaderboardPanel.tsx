@@ -43,6 +43,7 @@ function StandingRow({
           {own && <small>You</small>}
         </strong>
         <span>
+          {player.prestige > 0 && <>P{player.prestige} · </>}
           {player.upgrades} upgrades · {credits.format(player.credits)}
         </span>
       </span>

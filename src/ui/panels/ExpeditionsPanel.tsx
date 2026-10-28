@@ -1,5 +1,5 @@
 import { EXPEDITIONS, EXPEDITION_TRADE_BONUS } from '../../data/expeditions';
-import { LAYERS, LAYER_IDS } from '../../data/layers';
+import { LAYERS, CORE_LAYER_IDS } from '../../data/layers';
 import { getExpeditionOffer } from '../../domain/expeditions';
 import type { WorldState } from '../../domain/world';
 import { ProgressBar } from '../components/ProgressBar';
@@ -38,7 +38,7 @@ export function ExpeditionsPanel({
           ? 'Pilots supply the expedition before selling cargo.'
           : 'Send cargo from all three bases.'}
       </p>
-      {LAYER_IDS.map((id) => (
+      {CORE_LAYER_IDS.map((id) => (
         <div className="expedition-cargo" key={id}>
           <span>{LAYERS[id].production.resource.name}</span>
           <b>
@@ -74,8 +74,7 @@ export function ExpeditionsPanel({
       )}
       {offer.state.completed > 0 && (
         <small>
-          Permanent cargo bonus: +
-          {offer.state.completed * EXPEDITION_TRADE_BONUS}%
+          Run cargo bonus: +{offer.state.completed * EXPEDITION_TRADE_BONUS}%
         </small>
       )}
     </section>

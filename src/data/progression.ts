@@ -69,14 +69,14 @@ export const MISSIONS = {
   },
   explore: {
     name: 'Ocean explorer',
-    description: 'Unlock all three depths.',
+    description: 'Unlock three depths.',
     metric: 'layers',
     target: 3,
     reward: 80,
   },
   network: {
     name: 'An independent network',
-    description: 'Install sales modules at all three outposts.',
+    description: 'Install sales modules at three outposts.',
     metric: 'modules',
     target: 3,
     reward: 100,

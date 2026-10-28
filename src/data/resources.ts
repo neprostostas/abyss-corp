@@ -5,7 +5,7 @@ export interface ResourceDefinition {
   readonly batchSize: number;
   readonly refinedValue: number;
   readonly color: string;
-  readonly shape: 'crystal' | 'ingot' | 'pearl';
+  readonly shape: 'crystal' | 'ingot' | 'pearl' | 'alloy' | 'core';
 }
 
 export const RESOURCES = {
@@ -35,5 +35,23 @@ export const RESOURCES = {
     refinedValue: 64,
     color: '#f7c5ff',
     shape: 'pearl',
+  },
+  titanium: {
+    name: 'Titanium',
+    unit: 'titanium ore',
+    refinedName: 'Titanium alloy',
+    batchSize: 3,
+    refinedValue: 150,
+    color: '#ffaf83',
+    shape: 'alloy',
+  },
+  lumens: {
+    name: 'Lumens',
+    unit: 'lumen shards',
+    refinedName: 'Luminous cores',
+    batchSize: 3,
+    refinedValue: 360,
+    color: '#9bbaff',
+    shape: 'core',
   },
 } as const satisfies Record<string, ResourceDefinition>;

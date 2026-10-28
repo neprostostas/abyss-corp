@@ -1,3 +1,6 @@
+import { createCampaign, getCampaign } from '../src/domain/campaign';
+import { LAYER_IDS } from '../src/data/layers';
+import { createLayer, prestigeWorld } from '../src/domain/world';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { z } from 'zod';
@@ -284,4 +287,69 @@ void test('a failed offline reset preserves progress and resumes ordinary saving
   await repository.save(gameSave(300, 2));
   await repository.flush();
   assert.equal(credits(h.remote?.save), 300);
+});
+
+function prestigeReadySave() {
+  const base = gameSave(40000, 3);
+  return {
+    ...base,
+    world: {
+      ...base.world,
+      layers: Object.fromEntries(LAYER_IDS.map((id) => [id, createLayer()])),
+    },
+  };
+}
+void test('cloud prestige uploads the eligible run, increments epoch once and fences old devices', async () => {
+  const h = cloudFixture();
+  const repository = h.repository();
+  await repository.load();
+  const current = prestigeReadySave();
+  const next = { ...current, world: prestigeWorld(current.world) };
+  await repository.prestige(current, next);
+  assert.equal(h.remote?.epoch, 1);
+  assert.equal(getCampaign(validateSave(h.remote.save).world).rank, 1);
+  const update = repository.takeRemoteUpdate();
+  assert(update);
+  assert.equal(update.world.credits, 0);
+  assert.equal(update.world.progression?.expedition?.completed, 0);
+  await assert.rejects(repository.prestige(current, next), /changed/);
+  assert.equal(h.remote.epoch, 1);
+});
+void test('lost cloud prestige response retries the same operation without repeating the reward', async () => {
+  const h = cloudFixture();
+  assert(h.remote);
+  const current = prestigeReadySave();
+  h.remote = { ...h.remote, save: z.json().parse(current) };
+  const repository = h.repository();
+  await repository.load();
+  h.loseNextResponse();
+  await repository.reset(
+    { ...current, world: prestigeWorld(current.world) },
+    true,
+  );
+  assert.equal(h.remote.epoch, 1);
+  assert.equal(h.commits, 1);
+  assert.equal(repository.getSnapshot().status, 'saved');
+});
+void test('a post-prestige cloud copy cannot inherit expedition rewards from an older rank backup', async () => {
+  const h = cloudFixture();
+  assert(h.remote);
+  const save = gameSave();
+  h.remote = {
+    ...h.remote,
+    save: z.json().parse({
+      ...save,
+      world: { ...save.world, campaign: createCampaign(1) },
+    }),
+  };
+  const repository = h.repository();
+  h.storage.setItem(
+    `${repository.key}.backup`,
+    JSON.stringify(gameSave(9999, 3)),
+  );
+  const loaded = await repository.load();
+  assert(loaded);
+  assert.equal(getCampaign(loaded.world).rank, 1);
+  assert.equal(loaded.world.progression?.expedition?.completed, 0);
+  assert.equal(loaded.world.credits, 0);
 });

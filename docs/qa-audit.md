@@ -124,3 +124,22 @@ or a commitment to run those destructive scenarios. No test account was created.
 - 122 automated tests, typecheck, lint, formatting and production build pass.
   Production dependency audit reports zero known vulnerabilities at audit time.
   No real photo upload, browser rendering or physical-device test was performed.
+
+## Ocean campaign expansion (no computer use)
+
+- Added two depths, three shared facilities, an interactive ocean map and
+  confirmed prestige resets. Existing three-base expeditions keep their targets.
+- Save v8 migrates v3–v7 without resetting existing accounts. Cloud prestige uses
+  an authenticated, revision-checked RPC and advances the reset epoch. Local guest
+  prestige advances the existing generation fence. Recovery milestones are scoped
+  to prestige rank.
+- Added scenarios for five-base offline production and partitioned reloads,
+  infrastructure capacity settlement, duplicate taps, failed writes, lost replies,
+  stale devices/backups, SQL permissions, idempotency and backgrounding while a
+  prestige is pending. UI tests exercise map visits, facility upgrades and explicit
+  prestige confirmation/cancellation through native clicks.
+- The database migration expands leaderboard bounds and ranks prestige before
+  depth. It does not rewrite or reset existing saves. Verified the live prestige
+  column and authenticated-only RPC permissions after applying the migration.
+- 137 automated tests pass with typecheck, lint and formatting. No real account
+  prestige/reset, Computer Use or physical-device visual check was performed.

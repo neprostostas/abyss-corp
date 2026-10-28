@@ -15,6 +15,7 @@ function standing(row: StandingRow): PlayerStanding {
     id: row.id,
     captainName: row.captain_name,
     position: row.position,
+    prestige: row.prestige ?? 0,
     depthMeters: row.depth_m ?? 0,
     upgrades: row.upgrades ?? 0,
     research: row.research ?? 0,

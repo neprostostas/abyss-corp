@@ -1,3 +1,5 @@
+import { LAYER_IDS } from '../src/data/layers';
+import { createLayer, prestigeWorld } from '../src/domain/world';
 import { gameSave } from './fixtures';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
@@ -176,6 +178,91 @@ void test('Telegram and Steam identities provision email-less players without tr
       [ids[2], payload, '20000000-0000-4000-8000-000000000003'],
     );
     assert.equal(write.rows[0]?.revision, 2);
+    const prestigeOperation = '20000000-0000-4000-8000-000000000004';
+    const newRun = JSON.stringify({
+      ...gameSave(),
+      world: {
+        ...gameSave().world,
+        campaign: {
+          rank: 1,
+          infrastructure: { depot: 0, exchange: 0, sonar: 0 },
+        },
+      },
+    });
+    await assert.rejects(
+      db.query('select * from public.prestige_game_save($1,$2,$3,1,2,0)', [
+        owner,
+        newRun,
+        prestigeOperation,
+      ]),
+      /requirements/,
+    );
+    const established = {
+      ...gameSave(30000),
+      world: {
+        ...gameSave(30000).world,
+        layers: Object.fromEntries(LAYER_IDS.map((id) => [id, createLayer()])),
+      },
+    };
+    await db.query('select * from public.write_game_save($1,2,$2,$3,1)', [
+      owner,
+      JSON.stringify(established),
+      '20000000-0000-4000-8000-000000000005',
+    ]);
+    const resetPayload = JSON.stringify({
+      ...established,
+      world: prestigeWorld(established.world),
+    });
+    await assert.rejects(
+      db.query('select * from public.prestige_game_save($1,$2,$3,1,2,0)', [
+        owner,
+        resetPayload,
+        prestigeOperation,
+      ]),
+      /Progress changed/,
+    );
+    await assert.rejects(
+      db.query('select * from public.prestige_game_save($1,$2,$3,1,3,0)', [
+        other,
+        resetPayload,
+        prestigeOperation,
+      ]),
+      /Sign in again/,
+    );
+    const prestige = await db.query<{ epoch: number; revision: number }>(
+      'select * from public.prestige_game_save($1,$2,$3,1,3,0)',
+      [owner, resetPayload, prestigeOperation],
+    );
+    assert.equal(prestige.rows[0]?.epoch, 2);
+    assert.equal(prestige.rows[0].revision, 4);
+    const prestigeReplay = await db.query<{ epoch: number }>(
+      'select * from public.prestige_game_save($1,$2,$3,1,3,0)',
+      [owner, resetPayload, prestigeOperation],
+    );
+    assert.equal(prestigeReplay.rows[0]?.epoch, 2);
+    const ranking = await db.query<{ prestige: number; depth_m: number }>(
+      'select prestige,depth_m from public.leaderboard where id=$1',
+      [owner],
+    );
+    assert.equal(ranking.rows[0]?.prestige, 1);
+    assert.equal(ranking.rows[0].depth_m, 50);
+    await assert.rejects(
+      db.query('select * from public.prestige_game_save($1,$2,$3,1,3,0)', [
+        owner,
+        resetPayload,
+        '20000000-0000-4000-8000-000000000006',
+      ]),
+      /Progress changed/,
+    );
+    await assert.rejects(
+      db.query('select * from public.write_game_save($1,3,$2,$3,1)', [
+        owner,
+        JSON.stringify(established),
+        '20000000-0000-4000-8000-000000000007',
+      ]),
+      /Progress changed/,
+    );
+
     await db.exec('reset role');
     await db.query('delete from auth.sessions where id=$1', [session]);
     await db.exec('set role authenticated');

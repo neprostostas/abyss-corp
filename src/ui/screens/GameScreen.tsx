@@ -1,3 +1,5 @@
+import { OceanPanel } from '../panels/OceanPanel';
+import { getPrestigeOffer } from '../../domain/campaign';
 import { OceanAtmosphere } from '../world/OceanAtmosphere';
 import { getExpeditionOffer } from '../../domain/expeditions';
 import { ExpeditionsPanel } from '../panels/ExpeditionsPanel';
@@ -36,8 +38,10 @@ import { ProductionPanel } from '../panels/ProductionPanel';
 import { ProgressionPanel } from '../panels/ProgressionPanel';
 import { AutomationPanel } from '../panels/AutomationPanel';
 
-type WindowName = 'research' | 'missions' | 'crew' | 'leaderboard' | 'settings';
+type WindowName =
+  'ocean' | 'research' | 'missions' | 'crew' | 'leaderboard' | 'settings';
 const windows: Record<WindowName, { title: string; icon: IconName }> = {
+  ocean: { title: 'Ocean', icon: 'map' },
   leaderboard: { title: 'Leaders', icon: 'trophy' },
   research: { title: 'Research', icon: 'research' },
   missions: { title: 'Missions', icon: 'missions' },
@@ -137,6 +141,7 @@ function GameBoard({
   ).length;
   const crewReady = getAutomationOffer(world).affordable;
   const badges: Partial<Record<WindowName, number>> = {
+    ocean: getPrestigeOffer(world).canPrestige ? 1 : 0,
     research: researchReady,
     crew: crewReady ? 1 : 0,
     missions: missionsReady,
@@ -336,39 +341,39 @@ function GameBoard({
         ))}
       </section>
       <nav className="game-dock" aria-label="Game menu">
-        {(['research', 'missions', 'crew', 'leaderboard'] as const).map(
-          (name) => (
-            <button
-              key={name}
-              className={`dock-button${drawer.open && windowName === name ? ' active-room' : ''}${badges[name] ? ' has-opportunity' : ''}${name === 'crew' && automation?.enabled ? ' crew-active' : ''}`}
-              aria-expanded={drawer.open && windowName === name}
-              aria-label={windows[name].title}
-              title={
-                badges[name]
-                  ? `${windows[name].title}: ${String(badges[name])} available`
-                  : windows[name].title
-              }
-              onClick={() => {
-                drawer.toggle(name);
-              }}
-              disabled={status !== 'ready'}
-            >
-              <span className="dock-icon">
-                <GameIcon name={windows[name].icon} />
-                {!!badges[name] && (
-                  <b className="notification-badge">
-                    {name === 'research' || name === 'crew'
-                      ? '↑'
-                      : badges[name]}
-                  </b>
-                )}
-              </span>
-              <span className="dock-label" aria-hidden="true">
-                {windows[name].title}
-              </span>
-            </button>
-          ),
-        )}
+        {(
+          ['ocean', 'research', 'missions', 'crew', 'leaderboard'] as const
+        ).map((name) => (
+          <button
+            key={name}
+            className={`dock-button${drawer.open && windowName === name ? ' active-room' : ''}${badges[name] ? ' has-opportunity' : ''}${name === 'crew' && automation?.enabled ? ' crew-active' : ''}`}
+            aria-expanded={drawer.open && windowName === name}
+            aria-label={windows[name].title}
+            title={
+              badges[name]
+                ? `${windows[name].title}: ${String(badges[name])} available`
+                : windows[name].title
+            }
+            onClick={() => {
+              drawer.toggle(name);
+            }}
+            disabled={status !== 'ready'}
+          >
+            <span className="dock-icon">
+              <GameIcon name={windows[name].icon} />
+              {!!badges[name] && (
+                <b className="notification-badge">
+                  {name === 'research' || name === 'crew' || name === 'ocean'
+                    ? '↑'
+                    : badges[name]}
+                </b>
+              )}
+            </span>
+            <span className="dock-label" aria-hidden="true">
+              {windows[name].title}
+            </span>
+          </button>
+        ))}
       </nav>
       {windowName && (
         <GamePanel
@@ -376,13 +381,15 @@ function GameBoard({
           profile={windowName === 'settings'}
           title={windows[windowName].title}
           context={
-            windowName === 'research' || windowName === 'missions'
-              ? 'All outposts'
-              : windowName === 'leaderboard'
-                ? 'Ocean network'
-                : windowName === 'settings'
-                  ? 'Account'
-                  : layer.name
+            windowName === 'ocean'
+              ? 'Global network'
+              : windowName === 'research' || windowName === 'missions'
+                ? 'All outposts'
+                : windowName === 'leaderboard'
+                  ? 'Ocean network'
+                  : windowName === 'settings'
+                    ? 'Account'
+                    : layer.name
           }
           icon={windows[windowName].icon}
           onClose={drawer.close}
@@ -401,6 +408,9 @@ function GameBoard({
               onResearch={session.research}
               onClaim={session.claimMission}
             />
+          )}
+          {windowName === 'ocean' && (
+            <OceanPanel world={world} session={session} />
           )}
           {windowName === 'crew' && (
             <AutomationPanel

@@ -34,7 +34,7 @@ void test('account save versions 3–7 migrate without changing money, levels or
           : {}),
       },
     });
-    assert.equal(migrated.version, 7);
+    assert.equal(migrated.version, 8);
     assert.equal(migrated.world.credits, 123);
     assert.deepEqual(migrated.world.layers.shallows, layer);
     assert.equal(migrated.world.progression?.expedition?.completed, 0);
