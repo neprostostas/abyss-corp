@@ -139,7 +139,7 @@ const shapes: Record<IconName, ReactNode> = {
   ),
   research: (
     <>
-      <path d="M8 3h5l3 7-4 2-4-7ZM12 12a5 5 0 0 1-5 7M5 21h15M14 15h6M6 17a7 7 0 0 1 0-14" />
+      <path d="M8 3h5l3 7-4 2-4-7ZM12 12a5 5 0 0 1-5 7M5 21h15M14 15h6M8 17a6 6 0 0 1 0-12" />
       <circle cx="6" cy="15" r="2" />
     </>
   ),
