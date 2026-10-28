@@ -83,7 +83,12 @@ export class GuestSaveRepository implements SaveRepository {
       if (transfer.userId === userId) return validateSave(transfer.save);
       return null;
     }
+    const beforeLoad = storage.getItem(this.key);
     const save = await this.load();
+    if (storage.getItem(this.key) !== beforeLoad)
+      throw new Error(
+        'Guest progress changed or was restarted while preparing transfer. Please try again.',
+      );
     if (!save) return null;
     // Another claim may have completed while the device save was loading.
     if (storage.getItem(archiveKey)) return this.claim(userId);

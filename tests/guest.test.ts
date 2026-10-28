@@ -135,3 +135,25 @@ void test('guest restart replaces progress, clears its transfer and fences other
     0,
   );
 });
+
+void test('a guest transfer cannot archive progress reset while its load is awaiting', async () => {
+  const storage = new MemoryStorage();
+  const guest = new GuestSaveRepository(() => storage);
+  await guest.save(gameSave(999));
+  const pending = guest.claim('captain');
+  await guest.reset(gameSave());
+  await assert.rejects(pending, /restarted/);
+  assert.equal(storage.getItem(`${guest.key}.transfer`), null);
+  assert.equal((await guest.load())?.world.credits, 0);
+});
+
+void test('guest transfer refuses an older snapshot when a newer device save appears', async () => {
+  const storage = new MemoryStorage();
+  const guest = new GuestSaveRepository(() => storage);
+  await guest.save(gameSave(10));
+  const transfer = guest.claim('captain');
+  await guest.save(gameSave(50));
+  await assert.rejects(transfer, /changed/);
+  assert.equal(storage.getItem(`${guest.key}.transfer`), null);
+  assert.equal((await guest.claim('captain'))?.world.credits, 50);
+});

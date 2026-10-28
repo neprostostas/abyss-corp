@@ -74,3 +74,24 @@ owner's production session. The resulting production game used normal save logic
   browser. Current failure coverage is deterministic fake transport/PGlite.
 
 Do not mark these remaining scenarios passed from the automated count alone.
+
+## Follow-up: guest transfer and mobile lifecycle
+
+Current automated suite: **117 tests**. Added regression coverage for a reset or
+newer device save racing the asynchronous guest-claim preparation. Previously the
+older snapshot could be archived for transfer after the device progress changed.
+The claim now rejects that stale snapshot; a retry reads current progress.
+
+Additional passing scenarios:
+
+- Duplicate mobile visibility/page lifecycle transitions do not duplicate offline
+  income. Background saves retain the suspension timestamp until resume.
+- A slow device write followed by newer commands persists the latest world.
+- Stale command handlers from a previously selected depth cannot buy, sell or
+  toggle automation on the current depth.
+- Browser mobile guest sale + reload preserved the observed balance (130 credits).
+  Missions remained open while their contents scrolled.
+
+At the owner's request, real email/signup/reset/delete testing is **cancelled**.
+The earlier remaining-scenarios list records coverage gaps, not pending permission
+or a commitment to run those destructive scenarios. No test account was created.

@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { GameSession } from '../src/application/GameSession';
 import { advanceWorld, createLayer, createWorld } from '../src/domain/world';
 import { OFFLINE_LIMIT_MS } from '../src/data/automation';
-import { DeviceSave, FakeClock, gameSave } from './fixtures';
+import { DeviceSave, FakeClock, gameSave, deferred } from './fixtures';
 
 async function sessionFixture(away = 0) {
   const clock = new FakeClock();
@@ -148,4 +148,69 @@ void test('account changes freeze commands, timer saves and visibility resumes u
   h.session.setActive(true);
   await h.session.save(true);
   assert(h.repository.writes.length > writes);
+});
+
+void test('mobile background saves and duplicate page lifecycle events consume offline time once', async () => {
+  const h = await sessionFixture();
+  h.clock.advance(1250);
+  h.session.tick();
+  h.session.setActive(false);
+  await h.session.save();
+  const suspended = h.session.getSnapshot().world;
+  const suspendedAt = h.repository.saved?.savedAt;
+  h.clock.advance(60000);
+  await h.session.save();
+  h.session.setActive(false);
+  assert.equal(h.repository.saved?.savedAt, suspendedAt);
+  h.session.setActive(true);
+  h.session.setActive(true);
+  await h.session.save();
+  assert.deepEqual(
+    h.session.getSnapshot().world,
+    advanceWorld(suspended, 60000),
+  );
+  const reload = new GameSession(h.repository, h.clock);
+  reload.setActive(true);
+  await reload.initialize();
+  assert.deepEqual(reload.getSnapshot().world, h.session.getSnapshot().world);
+});
+void test('commands during a slow device write persist the latest world', async () => {
+  const clock = new FakeClock();
+  const repository = new DeviceSave(gameSave(1000));
+  const session = new GameSession(repository, clock);
+  session.setActive(true);
+  await session.initialize();
+  const gate = deferred();
+  const write = repository.save.bind(repository);
+  let first = true;
+  repository.save = async (save) => {
+    if (first) {
+      first = false;
+      await gate.promise;
+    }
+    await write(save);
+  };
+  session.upgrade('mining');
+  session.upgrade('transport');
+  clock.advance(1000);
+  const pending = session.save();
+  const latest = session.getSnapshot().world;
+  gate.resolve();
+  await pending;
+  assert.deepEqual(repository.saved?.world, latest);
+  assert.equal(session.getSnapshot().saveStatus, 'saved');
+});
+void test('old layer command handlers cannot spend or sell on the newly selected depth', async () => {
+  const repository = new DeviceSave(gameSave(1000));
+  const session = new GameSession(repository, new FakeClock());
+  session.setActive(true);
+  await session.initialize();
+  session.unlock('golden-trench');
+  await session.save();
+  const before = session.getSnapshot().world;
+  session.upgrade('mining', 'shallows');
+  session.upgradeAutomation('shallows');
+  session.toggleAutomation('shallows');
+  assert.equal(session.sell('shallows'), 0);
+  assert.deepEqual(session.getSnapshot().world, before);
 });

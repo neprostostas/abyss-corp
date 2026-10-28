@@ -1,4 +1,3 @@
-import { useProductionLayout } from '../hooks/useProductionLayout';
 import { OceanAtmosphere } from '../world/OceanAtmosphere';
 import { getExpeditionOffer } from '../../domain/expeditions';
 import { ExpeditionsPanel } from '../panels/ExpeditionsPanel';
@@ -129,10 +128,6 @@ function GameBoard({
   const production = getProductionSummary(game, config);
   const progress = game.phaseElapsedMs / getPhaseDuration(game, config);
   const saleValue = getSaleValue(game, config);
-  const productionRef = useProductionLayout(
-    production.capacity,
-    compact.format(production.capacity * config.resource.refinedValue),
-  );
   const expedition = getExpeditionOffer(world);
   const missionsReady =
     getReadyMissionCount(world) +
@@ -271,7 +266,7 @@ function GameBoard({
                 </button>
               </div>
             )}
-            <div className="stage-bottom" ref={productionRef}>
+            <div className="stage-bottom">
               <ProductionPanel game={game} config={config} />
               <div className="sell-control">
                 {saleFlash && (
