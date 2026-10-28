@@ -289,7 +289,9 @@ function GameBoard({
                   </span>
                   <strong>
                     <GameIcon name="coin" />
-                    {compact.format(saleValue)}
+                    <span className="sale-value">
+                      {compact.format(saleValue)}
+                    </span>
                   </strong>
                 </button>
               </div>

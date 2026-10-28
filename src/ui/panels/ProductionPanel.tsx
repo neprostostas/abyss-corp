@@ -25,7 +25,7 @@ export function ProductionPanel({
         <span>
           <small>Raw</small>
           <b>
-            {game.raw}
+            <span className="stock-count">{game.raw}</span>
             <em>/{production.capacity}</em>
           </b>
         </span>
@@ -46,7 +46,7 @@ export function ProductionPanel({
         <span>
           <small>Ready</small>
           <b>
-            {game.refined}
+            <span className="stock-count">{game.refined}</span>
             <em>/{production.capacity}</em>
           </b>
         </span>
