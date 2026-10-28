@@ -44,12 +44,24 @@ export function GamePanel({
     if (open) closeRef.current?.focus({ preventScroll: true });
   }, [open]);
   useEffect(() => {
+    const outside = (event: PointerEvent) => {
+      const target = event.target;
+      if (
+        open &&
+        target instanceof Element &&
+        !panelRef.current?.contains(target) &&
+        !target.closest('.game-dock, .settings-trigger')
+      )
+        onClose();
+    };
     const escape = (event: KeyboardEvent) => {
       if (open && event.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', escape);
+    document.addEventListener('pointerdown', outside);
     return () => {
       window.removeEventListener('keydown', escape);
+      document.removeEventListener('pointerdown', outside);
     };
   }, [onClose, open]);
   return (

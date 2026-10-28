@@ -353,3 +353,62 @@
     height: 18px;
   }
 }
+
+/* Overlay drawers keep the ocean, upgrades and navigation in place. */
+.game-shell,
+.game-shell.panel-open {
+  grid-template-columns: minmax(0, 1fr);
+  transition:
+    --ocean-panel-top 320ms ease,
+    --ocean-panel-bottom 320ms ease,
+    --ocean-panel-accent 320ms ease;
+}
+.game-shell.panel-open:has(.game-panel-profile) > .game-hud {
+  grid-column: 1 / -1;
+}
+.game-shell > .game-panel {
+  position: absolute;
+  grid-column: 1;
+  grid-row: 2 / 4;
+  inset: 8px 12px 12px auto;
+  width: min(390px, calc(100% - 24px));
+  height: auto;
+  max-height: none;
+  z-index: 8;
+  border: 1px solid
+    color-mix(in srgb, var(--ocean-panel-accent) 22%, transparent);
+  border-radius: 18px;
+  box-shadow: -12px 12px 40px #03172350;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(calc(100% + 24px));
+  transition:
+    transform var(--drawer-duration, 280ms) var(--drawer-easing),
+    opacity var(--drawer-duration, 280ms) var(--drawer-easing);
+}
+.game-shell.panel-open > .game-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+.game-panel .panel-content {
+  flex: 1;
+  min-height: 0;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ocean-panel-accent) transparent;
+}
+@media (max-width: 760px) {
+  .game-shell > .game-panel {
+    grid-row: 1 / 4;
+    inset: max(8px, env(safe-area-inset-top)) 8px 8px;
+    width: auto;
+    border-radius: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell > .game-panel {
+    transition: none;
+  }
+}
