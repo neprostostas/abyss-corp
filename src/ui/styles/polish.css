@@ -412,3 +412,84 @@
     transition: none;
   }
 }
+
+/* Consistent text fields for profile, connections and confirmation forms. */
+.game-panel
+  input:not([type='file']):not([type='checkbox']):not([type='radio']) {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid
+    color-mix(in srgb, var(--ocean-panel-accent) 26%, transparent);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 82%, #071e2a);
+  color: #eef4ed;
+  font: 500 16px / 1.4 var(--font-body);
+  box-shadow: inset 0 1px 2px #03172320;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+.game-panel input::placeholder {
+  color: #91abaa;
+  opacity: 1;
+}
+.game-panel input:focus-visible {
+  outline: 2px solid var(--ocean-panel-accent);
+  outline-offset: 2px;
+  border-color: var(--ocean-panel-accent);
+  box-shadow: none;
+}
+.game-panel input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.game-panel .danger-confirm {
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e7a59c24;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 90%, #743e3a);
+}
+.game-panel .danger-confirm > strong {
+  color: #f1c2b5;
+  font-size: 16px;
+}
+.game-panel .danger-confirm label {
+  margin: 4px 0 -4px;
+  color: #c6d7d3;
+  font-size: 12px;
+}
+.game-panel .danger-confirm input {
+  letter-spacing: 1.5px;
+}
+.game-panel .danger-buttons {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 4px;
+}
+.game-panel .danger-buttons button {
+  min-height: 46px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+.game-panel .danger-buttons .danger-button {
+  border: 1px solid #d9998b55;
+  background: #874b46;
+  color: #fff2ed;
+}
+.game-panel .danger-buttons .danger-button:disabled {
+  background: #874b462e;
+  border-color: #d9998b20;
+  color: #bd9f99;
+  opacity: 0.65;
+}
+.game-panel .danger-buttons .text-button {
+  background: #c7ebe80c;
+  color: #d0dfda;
+}

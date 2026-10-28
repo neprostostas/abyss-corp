@@ -94,6 +94,13 @@ function GameBoard({
       /* Optional return navigation. */
     }
   }, []);
+  useEffect(() => {
+    if (!offlineReport || offlineReport.credits <= 0) return;
+    const timeout = window.setTimeout(session.dismissOfflineReport, 8000);
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [offlineReport, session]);
   const windowName = drawer.name;
   const [selected, setSelected] = useState<UpgradeId | null>(null);
   const [saleFlash, setSaleFlash] = useState<{

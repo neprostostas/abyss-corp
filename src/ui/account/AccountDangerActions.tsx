@@ -73,7 +73,7 @@ export function AccountDangerActions({
           <strong>
             {action === 'delete' ? 'Delete your account?' : 'Start from zero?'}
           </strong>
-          <p>
+          <p id="danger-description">
             {action === 'delete'
               ? 'Account, progress and uploaded photos will be deleted permanently.'
               : 'Erase all game progress. Keep your profile and sign-in methods.'}
@@ -83,6 +83,10 @@ export function AccountDangerActions({
             id="danger-confirmation"
             name="confirmation"
             autoComplete="off"
+            autoCapitalize="characters"
+            autoCorrect="off"
+            placeholder={word}
+            aria-describedby="danger-description"
             spellCheck={false}
             value={confirmation}
             disabled={busy}

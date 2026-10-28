@@ -50,7 +50,7 @@ export function GamePanel({
         open &&
         target instanceof Element &&
         !panelRef.current?.contains(target) &&
-        !target.closest('.game-dock, .settings-trigger')
+        !target.closest('.game-dock, .settings-trigger, .depth-rail')
       )
         onClose();
     };
