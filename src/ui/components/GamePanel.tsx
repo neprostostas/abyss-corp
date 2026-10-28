@@ -44,13 +44,15 @@ export function GamePanel({
     if (open) closeRef.current?.focus({ preventScroll: true });
   }, [open]);
   useEffect(() => {
-    const outside = (event: PointerEvent) => {
+    const outside = (event: MouseEvent) => {
       const target = event.target;
       if (
         open &&
         target instanceof Element &&
         !panelRef.current?.contains(target) &&
-        !target.closest('.game-dock, .settings-trigger, .depth-rail')
+        !target.closest(
+          '.game-dock, .settings-trigger, .depth-rail, .game-panel-backdrop',
+        )
       )
         onClose();
     };
@@ -58,39 +60,50 @@ export function GamePanel({
       if (open && event.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', escape);
-    document.addEventListener('pointerdown', outside);
+    document.addEventListener('click', outside);
     return () => {
       window.removeEventListener('keydown', escape);
-      document.removeEventListener('pointerdown', outside);
+      document.removeEventListener('click', outside);
     };
   }, [onClose, open]);
   return (
-    <aside
-      ref={panelRef}
-      className={`game-panel${profile ? ' game-panel-profile' : ''}`}
-      aria-labelledby="panel-title"
-      aria-hidden={!open}
-      inert={!open}
-    >
-      <header className="panel-heading">
-        <GameIcon name={icon} />
-        <div>
-          <small>{context}</small>
-          <h2 id="panel-title">{title}</h2>
-        </div>
+    <>
+      {open && (
         <button
-          ref={closeRef}
-          className="icon-button"
-          aria-label="Close panel"
-          title="Close · Esc"
+          type="button"
+          className="game-panel-backdrop"
+          tabIndex={-1}
+          aria-hidden="true"
           onClick={onClose}
-        >
-          <GameIcon name="close" />
-        </button>
-      </header>
-      <div className="panel-content" key={title}>
-        {children}
-      </div>
-    </aside>
+        />
+      )}
+      <aside
+        ref={panelRef}
+        className={`game-panel${profile ? ' game-panel-profile' : ''}`}
+        aria-labelledby="panel-title"
+        aria-hidden={!open}
+        inert={!open}
+      >
+        <header className="panel-heading">
+          <GameIcon name={icon} />
+          <div>
+            <small>{context}</small>
+            <h2 id="panel-title">{title}</h2>
+          </div>
+          <button
+            ref={closeRef}
+            className="icon-button"
+            aria-label="Close panel"
+            title="Close · Esc"
+            onClick={onClose}
+          >
+            <GameIcon name="close" />
+          </button>
+        </header>
+        <div className="panel-content" key={title}>
+          {children}
+        </div>
+      </aside>
+    </>
   );
 }
