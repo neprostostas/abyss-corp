@@ -1495,3 +1495,218 @@
     transition: none;
   }
 }
+
+/* Artwork-inspired headings; readable, stronger small text. */
+.game-shell .panel-heading h2,
+.game-panel .mission-content h3,
+.game-panel .research-card h3,
+.game-panel .crew-description h3,
+.game-panel .leaderboard-heading strong,
+.game-panel .expedition-card h3,
+.auth-card h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.1px;
+  overflow-wrap: anywhere;
+}
+.brand-lockup .brand-name,
+.brand-lockup .brand-name > span,
+.brand-lockup .brand-name > small {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+.brand-lockup .brand-name > span {
+  text-transform: uppercase;
+  letter-spacing: -0.4px;
+}
+.brand-lockup .brand-name > small {
+  letter-spacing: 1px;
+}
+.game-shell .upgrade-info h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.game-panel .mission-content p,
+.game-panel .research-card p,
+.game-panel .crew-description p,
+.game-panel .crew-card .crew-next,
+.game-panel .standing-captain > span,
+.game-panel .leaderboard-heading small,
+.game-panel .your-standing-label,
+.game-panel .connection-name small,
+.game-shell .production-readout small,
+.game-shell .production-readout em,
+.game-shell .upgrade-info > span,
+.game-shell .game-dock .dock-button {
+  font-weight: 600;
+}
+.game-panel .research-card p,
+.game-panel .crew-card .crew-next,
+.game-panel .standing-captain > span {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #b6cdca;
+}
+.game-panel
+  :is(
+    .mission-row,
+    .research-card,
+    .crew-card,
+    .standing-row,
+    .expedition-card
+  ) {
+  min-width: 0;
+  max-width: 100%;
+}
+.game-panel
+  :is(
+    .mission-content,
+    .crew-description,
+    .standing-captain,
+    .research-card h3,
+    .research-bonus
+  ) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.game-panel
+  :is(.mission-row, .research-card, .crew-actions, .standing-pagination)
+  button {
+  min-height: 44px;
+  flex-shrink: 0;
+}
+.game-panel .research-card button {
+  max-width: 100%;
+  white-space: normal;
+}
+.game-panel .crew-description h3 small {
+  font-family: var(--font-body);
+  font-weight: 650;
+  display: inline-block;
+  white-space: nowrap;
+}
+.game-panel .crew-actions {
+  flex-wrap: wrap;
+}
+.game-panel .crew-upgrade {
+  flex: 1 1 120px;
+}
+.game-panel .crew-toggle {
+  flex: 0 0 auto;
+  min-width: 82px;
+}
+.game-panel .standing-captain > strong {
+  line-height: 1.5;
+}
+.game-panel .standing-captain > span {
+  overflow-wrap: anywhere;
+}
+.game-panel .standing-pagination button {
+  min-width: 44px;
+}
+.game-panel .captain-rename {
+  min-width: 0;
+}
+.game-panel .expedition-card {
+  padding: 12px;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.game-panel .expedition-card h3 {
+  font-size: 15px;
+  line-height: 1.5;
+}
+.game-panel .expedition-card p {
+  margin: 0;
+  font-weight: 500;
+}
+.game-panel .expedition-cargo {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+@media (max-width: 760px) {
+  .game-shell .upgrade-info h3 {
+    font-size: 10px;
+  }
+  .game-panel .mission-content h3,
+  .game-panel .research-card h3 {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .game-panel .mission-content p {
+    font-size: 12px;
+  }
+  .game-panel .research-bonus {
+    font-size: 16px;
+  }
+}
+@media (max-width: 360px) {
+  .game-panel .research-card {
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 6px 8px;
+  }
+  .game-panel .research-illustration {
+    grid-area: 1 / 1 / 3 / 2;
+    width: 28px;
+  }
+  .game-panel .research-card h3 {
+    grid-area: 1 / 2;
+  }
+  .game-panel .research-card .level-pips {
+    grid-area: 2 / 2;
+  }
+  .game-panel .research-bonus {
+    grid-area: 3 / 1 / 4 / 3;
+  }
+  .game-panel .research-card p {
+    grid-area: 4 / 1 / 5 / 3;
+  }
+  .game-panel .research-card button {
+    grid-area: 5 / 1 / 6 / 3;
+    width: 100%;
+    margin-top: 3px;
+  }
+  .game-panel .research-card button > span {
+    display: inline;
+  }
+  .game-panel .mission-row {
+    padding: 10px;
+    gap: 8px;
+  }
+  .game-panel .mission-row button {
+    min-width: 48px;
+    padding-inline: 7px;
+  }
+  .game-panel .crew-card {
+    padding: 10px;
+  }
+  .game-panel .crew-description h3 {
+    font-size: 14px;
+  }
+  .game-panel .standing-row {
+    grid-template-columns: 20px 26px minmax(0, 1fr) auto;
+    gap: 5px;
+    padding-inline: 3px;
+  }
+  .game-panel .captain-avatar {
+    width: 26px;
+    height: 28px;
+  }
+  .game-panel .standing-depth {
+    font-size: 14px;
+  }
+  .game-panel .your-standing-label {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .game-panel .captain-rename {
+    flex-wrap: wrap;
+  }
+  .game-panel .captain-rename input {
+    flex: 1 1 140px;
+  }
+  .game-panel .captain-rename button {
+    min-height: 44px;
+  }
+}

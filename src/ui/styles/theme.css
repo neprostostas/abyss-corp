@@ -1,4 +1,11 @@
 @font-face {
+  font-family: 'Russo One';
+  src: url('/fonts/russo-one.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
   font-family: 'Manrope';
   src: url('/fonts/manrope-variable.ttf') format('truetype');
   font-weight: 200 800;
@@ -16,7 +23,7 @@
   color-scheme: dark;
   font-family: 'Manrope', 'Segoe UI', sans-serif;
   --font-body: 'Manrope', 'Segoe UI', sans-serif;
-  --font-display: 'Oxanium', 'Manrope', sans-serif;
+  --font-display: 'Russo One', 'Manrope', sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
