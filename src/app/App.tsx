@@ -1,3 +1,7 @@
+import {
+  authCallbackError,
+  clearAuthCallbackError,
+} from '../infrastructure/supabase/authCallbackError';
 import { createWorld } from '../domain/world';
 import { sessionProvider } from '../infrastructure/supabase/sessionProvider';
 import type { LoginProvider } from '../infrastructure/supabase/sessionProvider';
@@ -243,9 +247,7 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(() =>
-    new URLSearchParams(window.location.hash.slice(1)).has('error_description')
-      ? 'The sign-in link failed or expired. Please try again.'
-      : null,
+    authCallbackError(window.location.href),
   );
   const [recovery, setRecovery] = useState(
     window.location.pathname === '/reset-password',
@@ -253,6 +255,7 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
   useEffect(() => {
     if (!client) return;
     let live = true;
+    const callbackError = authCallbackError(window.location.href);
     const {
       data: { subscription },
     } = client.auth.onAuthStateChange((event, session) => {
@@ -274,20 +277,25 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
       .getSession()
       .then(({ error: failure }) => {
         if (live && failure) {
-          setError('Could not restore your sign-in. Refresh to retry.');
+          setError(
+            callbackError ??
+              'Could not restore your sign-in. Refresh to retry.',
+          );
           setLoading(false);
         }
       })
       .catch(() => {
         if (live) {
-          setError('Connection failed. Refresh to retry.');
+          setError(callbackError ?? 'Connection failed. Refresh to retry.');
           setLoading(false);
         }
       });
-    const parameters = new URLSearchParams(window.location.hash.slice(1));
-    const callbackError = parameters.get('error_description');
     if (callbackError) {
-      window.history.replaceState(null, '', window.location.pathname);
+      window.history.replaceState(
+        null,
+        '',
+        clearAuthCallbackError(window.location.href),
+      );
     }
     return () => {
       live = false;
