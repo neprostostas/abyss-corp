@@ -1046,79 +1046,101 @@
   }
 }
 
-/* Reserve space for changing stock counts and sale amounts. */
+/* Stable outer geometry with separate stock and sale tracks. */
 .game-shell .stage-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 136px;
   width: min(460px, calc(100% - 124px));
 }
 .game-shell .production-readout {
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12px 28px 12px minmax(0, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+.game-shell .production-readout > div {
+  min-width: 0;
 }
 .game-shell .production-readout > div > span {
   display: block;
-  min-width: 5ch;
-}
-.game-shell .production-readout b,
-.game-shell .sell-button strong {
-  font-variant-numeric: tabular-nums;
-}
-.game-shell .sell-control {
-  flex: 0 0 144px;
+  width: auto;
   min-width: 0;
 }
-.game-shell .sell-button {
-  width: 100%;
-  min-width: 0;
-  justify-content: space-between;
-  gap: 8px;
-  padding-inline: 12px;
-}
-.game-shell .sell-button strong {
-  justify-content: flex-end;
-  white-space: nowrap;
-}
-@media (max-width: 760px), (max-width: 1000px) and (max-height: 500px) {
-  .game-shell .stage-bottom {
-    width: min(420px, calc(100% - 24px));
-  }
-}
-@media (max-width: 420px) {
-  .game-shell .sell-control {
-    flex-basis: 124px;
-  }
-  .game-shell .production-readout {
-    padding-inline: 6px;
-    gap: 6px;
-  }
-  .game-shell .production-readout > div {
-    gap: 4px;
-  }
-  .game-shell .production-readout > div > span {
-    min-width: 0;
-    width: 5ch;
-  }
-  .game-shell .sell-button {
-    padding-inline: 10px;
-  }
-}
-
 .game-shell .production-readout b {
   display: inline-flex;
   align-items: baseline;
+  font-variant-numeric: tabular-nums;
 }
 .game-shell .stock-count {
   display: inline-block;
   width: 2ch;
   text-align: right;
 }
+.game-shell .production-readout em {
+  margin-left: 1px;
+  white-space: nowrap;
+}
+.game-shell .sell-control {
+  width: 100%;
+  min-width: 0;
+}
+.game-shell .sell-button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  width: 100%;
+  min-width: 0;
+  gap: 8px;
+  padding-inline: 12px;
+  text-align: left;
+}
+.game-shell .sell-button strong {
+  justify-content: flex-start;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
 .game-shell .sale-value {
   display: inline-block;
-  width: 5ch;
-  text-align: right;
+  width: auto;
+  text-align: left;
 }
-@media (max-width: 420px) {
+@media (max-width: 760px), (max-width: 1000px) and (max-height: 500px) {
+  .game-shell .stage-bottom {
+    width: min(420px, calc(100% - 24px));
+  }
+}
+@media (max-width: 600px) {
+  .game-shell .stage-bottom {
+    grid-template-columns: minmax(0, 1fr) 116px;
+  }
+  .game-shell .production-readout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding-inline: 8px;
+  }
+  .game-shell .production-readout .refinery-readout,
+  .game-shell .production-readout .flow-arrow {
+    display: none;
+  }
+  .game-shell .production-readout > div {
+    gap: 4px;
+  }
+  .game-shell .production-readout > div > .game-icon {
+    width: 16px;
+    height: 16px;
+  }
+  .game-shell .production-readout b {
+    font-size: 14px;
+  }
+  .game-shell .production-readout em {
+    font-size: 10px;
+  }
+  .game-shell .sell-button {
+    padding-inline: 9px;
+    gap: 6px;
+  }
   .game-shell .sell-button strong {
     font-size: 15px;
-    gap: 4px;
   }
   .game-shell .sell-button strong .game-icon {
     width: 16px;
