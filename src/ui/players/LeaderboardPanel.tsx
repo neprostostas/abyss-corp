@@ -76,7 +76,10 @@ export function LeaderboardPanel({
   useEffect(() => {
     let active = true;
     let latestRequest = 0;
+    let inFlight = false;
     const load = () => {
+      if (inFlight) return;
+      inFlight = true;
       const request = ++latestRequest;
       const isCurrent = () => active && request === latestRequest;
       void loadPage(page)
@@ -91,6 +94,7 @@ export function LeaderboardPanel({
             setError(failure instanceof Error ? failure.message : 'Try again.');
         })
         .finally(() => {
+          inFlight = false;
           if (isCurrent()) setBusy(false);
         });
     };

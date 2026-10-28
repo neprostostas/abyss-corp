@@ -59,7 +59,7 @@ export function ConnectedAccounts({
     return () => {
       active = false;
     };
-  }, [client]);
+  }, [client, user]);
   const connected = new Set(identities.map((identity) => identity.provider));
   const methods: LoginProvider[] = [
     ...SOCIAL_PROVIDERS.filter(

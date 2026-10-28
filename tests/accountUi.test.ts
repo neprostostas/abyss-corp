@@ -401,6 +401,56 @@ void test('sign-in methods wait for fresh identities and keep provider order sta
   }
 });
 
+void test('connected methods refresh after auth user changes without showing loading again', async () => {
+  const { ConnectedAccounts } =
+    await import('../src/ui/account/ConnectedAccounts');
+  const identities = [{ provider: 'google', identity_id: 'google' }];
+  let reads = 0;
+  const client = {
+    auth: {
+      getUserIdentities: () => {
+        reads++;
+        return Promise.resolve({
+          data: { identities: [...identities] },
+          error: null,
+        });
+      },
+    },
+  } as unknown as SupabaseClient<Database>;
+  const initialUser = {
+    id: 'player',
+    identities: [...identities],
+  } as unknown as User;
+  const render = (user: User) => {
+    root.render(
+      createElement(ConnectedAccounts, {
+        client,
+        user,
+        current: 'google',
+        onSave: () => Promise.resolve(),
+      }),
+    );
+  };
+  try {
+    await ui(() => {
+      render(initialUser);
+    });
+    assert.equal(reads, 1);
+    identities.push({ provider: 'custom:telegram', identity_id: 'tg' });
+    await ui(() => {
+      render({
+        ...initialUser,
+        identities: [...identities],
+      } as unknown as User);
+    });
+    assert.equal(reads, 2, 'updated auth user must refresh connected methods');
+    assert(document.querySelector('[aria-label="Telegram connected"]'));
+    assert.equal(document.querySelector('[aria-busy="true"]'), null);
+  } finally {
+    await reset();
+  }
+});
+
 void test('destructive controls require exact confirmation and block duplicate submissions', async () => {
   let resets = 0,
     deletions = 0;

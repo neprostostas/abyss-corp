@@ -63,3 +63,71 @@ void test('leaderboard sync does not restart when saving rerenders its parent', 
     });
   }
 });
+
+void test('slow leaderboard requests do not overlap periodic refreshes', async () => {
+  const container = document.getElementById('root');
+  assert(container);
+  const root = createRoot(container);
+  const originalInterval = window.setInterval.bind(window);
+  const originalClear = window.clearInterval.bind(window);
+  let poll: (() => void) | undefined;
+  let finish: (() => void) | undefined;
+  const pending = new Promise<void>((resolve) => {
+    finish = resolve;
+  });
+  let saves = 0;
+  window.setInterval = ((handler: () => void) => {
+    poll = handler;
+    return 1;
+  }) as typeof window.setInterval;
+  window.clearInterval = () => undefined;
+  try {
+    await act(async () => {
+      root.render(
+        createElement(LeaderboardPanel, {
+          gateway: {
+            loadLeaderboard: () => Promise.resolve(empty),
+            renameCaptain: () => Promise.resolve(),
+          },
+          synchronize: () => {
+            saves++;
+            return pending;
+          },
+        }),
+      );
+      await Promise.resolve();
+    });
+    assert(poll);
+    await act(async () => {
+      poll?.();
+      poll?.();
+      await Promise.resolve();
+    });
+    assert.equal(
+      saves,
+      1,
+      'a slow request must not launch another save every 30 seconds',
+    );
+    await act(async () => {
+      assert(finish);
+      finish();
+      await pending;
+    });
+    await act(async () => {
+      poll?.();
+      await Promise.resolve();
+    });
+    assert.equal(
+      saves,
+      2,
+      'polling resumes after the previous request finishes',
+    );
+  } finally {
+    await act(async () => {
+      root.unmount();
+      await Promise.resolve();
+    });
+    window.setInterval = originalInterval;
+    window.clearInterval = originalClear;
+  }
+});
