@@ -69,6 +69,20 @@ void test('panel dismissal waits for a completed click and preserves navigation'
     assert.equal(closes, 0, 'scroll/cancelled gestures must not dismiss');
     depth.click();
     assert.equal(closes, 0, 'changing depth must leave the panel open');
+    const content = document.querySelector('.panel-content');
+    assert(content);
+    const cancel = document.createElement('button');
+    cancel.textContent = 'Cancel';
+    cancel.onclick = () => {
+      cancel.remove();
+    };
+    content.append(cancel);
+    cancel.click();
+    assert.equal(
+      closes,
+      0,
+      'an internal action that removes its button must not dismiss',
+    );
     backdrop.click();
     assert.equal(closes, 1, 'one backdrop tap must close once');
     assert.equal(sales, 0, 'backdrop must not activate the game behind it');

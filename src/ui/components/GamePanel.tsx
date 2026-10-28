@@ -49,7 +49,8 @@ export function GamePanel({
       if (
         open &&
         target instanceof Element &&
-        !panelRef.current?.contains(target) &&
+        panelRef.current &&
+        !event.composedPath().includes(panelRef.current) &&
         !target.closest(
           '.game-dock, .settings-trigger, .depth-rail, .game-panel-backdrop',
         )
