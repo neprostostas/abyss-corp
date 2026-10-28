@@ -17,9 +17,6 @@ export function AutomationPanel({
   return (
     <div className="crew-card">
       <div className="crew-intro">
-        <span className="crew-symbol">
-          <GameIcon name="robot" />
-        </span>
         <div className="crew-description">
           <h3>
             Cargo pilot <small>Lv {offer.level}</small>

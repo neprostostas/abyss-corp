@@ -1,3 +1,4 @@
+import { avatarUploadFormat } from '../../infrastructure/images/avatarUploadFormat';
 import { useRef, useState } from 'react';
 import type { SupabaseClient, User } from '@supabase/supabase-js';
 import type { Database } from '../../infrastructure/supabase/database.types';
@@ -107,10 +108,11 @@ export function AvatarPicker({
               if (!selected) return;
               void run(async () => {
                 const image = await prepareAvatar(selected);
-                const path = `${user.id}/${crypto.randomUUID()}.webp`;
+                const format = avatarUploadFormat(image);
+                const path = `${user.id}/${crypto.randomUUID()}.${format.extension}`;
                 const bucket = client.storage.from('avatars');
                 const { error: failure } = await bucket.upload(path, image, {
-                  contentType: 'image/webp',
+                  contentType: format.contentType,
                   upsert: false,
                 });
                 if (failure)

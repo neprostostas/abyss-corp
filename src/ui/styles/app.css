@@ -847,19 +847,6 @@ button:disabled {
   color: #44797b;
   filter: drop-shadow(0 3px 0 #a5c0b1);
 }
-.research-orbit {
-  position: absolute;
-  width: 95px;
-  height: 95px;
-  border-radius: 50%;
-  background: #afcfc0;
-  border: 1px solid #7aa89a44;
-  box-shadow: 0 0 0 8px #a4c9b521;
-}
-.research-storage .research-orbit {
-  background: #dacfa4;
-  box-shadow: 0 0 0 8px #d2bf8c1f;
-}
 .research-storage .research-illustration > .game-icon {
   color: #a08047;
 }
@@ -966,79 +953,6 @@ button:disabled {
   text-align: center;
   max-width: 320px;
   margin: auto;
-}
-.crew-portrait {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  margin: 6px auto 22px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: radial-gradient(#709c94, #284d60);
-  border: 2px solid #87a99e66;
-  box-shadow: 0 0 0 10px #99bc9d0a;
-}
-.robot-face {
-  position: relative;
-  width: 93px;
-  height: 70px;
-  border-radius: 23px;
-  background: linear-gradient(#f0ead0, #bfcfbe);
-  border: 3px solid #284c59;
-  box-shadow:
-    inset 0 -8px #a6c0b4,
-    0 7px 0 #163c4a;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-}
-.robot-face::before {
-  content: '';
-  position: absolute;
-  top: -25px;
-  left: 42px;
-  width: 4px;
-  height: 24px;
-  background: #e6cf93;
-}
-.robot-face::after {
-  content: '';
-  position: absolute;
-  left: 37px;
-  top: -29px;
-  width: 14px;
-  height: 10px;
-  border-radius: 50%;
-  background: #f9d076;
-  box-shadow: 0 0 12px #f7cf7788;
-}
-.robot-face > span {
-  width: 12px;
-  height: 16px;
-  border-radius: 5px;
-  background: #287489;
-  box-shadow: inset 0 3px #a2efdc;
-}
-.robot-face > i {
-  position: absolute;
-  bottom: 12px;
-  width: 24px;
-  height: 3px;
-  background: #4b8185;
-  border-radius: 4px;
-}
-.crew-level {
-  position: absolute;
-  bottom: -8px;
-  padding: 4px 15px;
-  border-radius: 8px;
-  font-size: 11px;
-  color: #344f54;
-  background: #e9cc8a;
-  border: 2px solid #274958;
-  font-weight: 850;
 }
 .crew-card h3 {
   font-size: 22px;
@@ -1339,10 +1253,6 @@ button:disabled {
   }
   .research-illustration {
     height: 88px;
-  }
-  .research-orbit {
-    width: 77px;
-    height: 77px;
   }
   .research-illustration > .game-icon {
     width: 49px;

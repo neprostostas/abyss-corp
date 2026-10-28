@@ -23,23 +23,6 @@
 .leaderboard-heading > button {
   margin-left: auto;
 }
-.leaderboard-emblem {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid #f3c76877;
-  border-radius: 15px;
-  color: #ffe49a;
-  background: radial-gradient(ellipse at top, #8c79465c, #284443);
-  box-shadow:
-    inset 0 1px #ffdfa733,
-    0 4px 14px #001c3140;
-}
-.leaderboard-emblem .game-icon {
-  width: 28px;
-  height: 28px;
-}
 .your-standing {
   padding: 12px 10px;
   border: 1px solid #80d0bc80;
@@ -149,10 +132,6 @@
 }
 .is-you .captain-avatar {
   border-color: #a0d5b2;
-}
-.ranking-rule {
-  color: #9ab6ad;
-  font-size: 10px;
 }
 .captain-rename {
   display: flex;

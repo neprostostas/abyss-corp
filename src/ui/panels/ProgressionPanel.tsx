@@ -112,8 +112,9 @@ export function ProgressionPanel({
             key={id}
           >
             <div className="research-illustration">
-              <span className="research-orbit" />
-              <GameIcon name={id === 'trade' ? 'research' : 'storage'} />
+              <GameIcon
+                name={id === 'trade' ? 'trade-network' : 'modular-storage'}
+              />
             </div>
             <h3>{id === 'trade' ? 'Deep-sea trade' : 'Warehousing'}</h3>
             <div

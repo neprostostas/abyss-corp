@@ -109,3 +109,18 @@ or a commitment to run those destructive scenarios. No test account was created.
 - Production dependency audit: zero reported vulnerabilities at audit time.
 - No browser/device interactions were performed for this follow-up. Changes to
   CSS remove declarations already overridden by later rules; no visual redesign.
+
+## Icon cleanup and avatar encoding follow-up (no computer use)
+
+- Crew keeps its robot icon only in the panel heading. Research uses distinct
+  trade-network and modular-storage glyphs plus a separate microscope for the
+  section; removed the former decorative orbit markup.
+- Removed unused robot portrait, orbit, duplicate trophy and ranking-rule styles.
+  Import/reference scanning found no orphan source modules to delete.
+- Fixed avatar upload metadata: canvas encoding can return PNG when WebP encoding
+  is unavailable. Filename extension and upload MIME now follow the actual Blob
+  type; unknown output types fail before upload. A regression test covers both
+  supported encoded formats and rejects unknown formats.
+- 122 automated tests, typecheck, lint, formatting and production build pass.
+  Production dependency audit reports zero known vulnerabilities at audit time.
+  No real photo upload, browser rendering or physical-device test was performed.

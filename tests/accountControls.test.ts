@@ -1,3 +1,4 @@
+import { avatarUploadFormat } from '../src/infrastructure/images/avatarUploadFormat';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { deleteOwnAccount } from '../netlify/lib/deleteAccount';
@@ -112,4 +113,16 @@ void test('avatar uploads reject SVG, empty and oversized files before decoding'
     ),
     /5 MB/,
   );
+});
+
+void test('canvas PNG fallback keeps its real upload extension and MIME type', () => {
+  assert.deepEqual(
+    avatarUploadFormat(new Blob(['encoded'], { type: 'image/png' })),
+    { extension: 'png', contentType: 'image/png' },
+  );
+  assert.deepEqual(
+    avatarUploadFormat(new Blob(['encoded'], { type: 'image/webp' })),
+    { extension: 'webp', contentType: 'image/webp' },
+  );
+  assert.throws(() => avatarUploadFormat(new Blob(['unknown'])), /encode/);
 });

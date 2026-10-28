@@ -7,6 +7,8 @@ export type IconName =
   | 'processing'
   | 'storage'
   | 'research'
+  | 'trade-network'
+  | 'modular-storage'
   | 'missions'
   | 'trophy'
   | 'refresh'
@@ -137,13 +139,20 @@ const shapes: Record<IconName, ReactNode> = {
   ),
   research: (
     <>
-      <path
-        d="M9 3h6v2h-1v5l6 9a1.5 1.5 0 0 1-1.3 2H5.3A1.5 1.5 0 0 1 4 19l6-9V5H9Z"
-        fill="currentColor"
-        stroke="none"
-      />
-      <path d="m8 16-2 3h12l-2-3Z" fill="#245463" stroke="none" />
-      <circle cx="12" cy="12" r="1.3" fill="#245463" stroke="none" />
+      <path d="M8 3h5l3 7-4 2-4-7ZM12 12a5 5 0 0 1-5 7M5 21h15M14 15h6M6 17a7 7 0 0 1 0-14" />
+      <circle cx="6" cy="15" r="2" />
+    </>
+  ),
+  'trade-network': (
+    <>
+      <path d="M4 8h15m-3-3 3 3-3 3M20 16H5m3-3-3 3 3 3" />
+      <circle cx="4" cy="4" r="1.5" />
+      <circle cx="20" cy="20" r="1.5" />
+    </>
+  ),
+  'modular-storage': (
+    <>
+      <path d="m3 7 4-2 4 2-4 2Zm0 0v5l4 2 4-2V7M7 9v5M13 7l4-2 4 2-4 2Zm0 0v5l4 2 4-2V7M17 9v5M8 16l4-2 4 2-4 2Zm0 0v5l4 2 4-2v-5M12 18v5" />
     </>
   ),
   missions: (
