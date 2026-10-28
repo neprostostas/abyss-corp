@@ -3,7 +3,7 @@ import {
   captainInitial,
   normalizeCaptainName,
 } from '../../domain/captainName';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import type {
   LeaderboardPage,
   PlayerGateway,
@@ -67,14 +67,19 @@ export function LeaderboardPanel({
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
   const [renaming, setRenaming] = useState(false);
+  // Saving updates the parent cloud state. Read the latest services without
+  // treating their new object/function identities as a request to save again.
+  const loadPage = useEffectEvent(async (requestedPage: number) => {
+    await synchronize();
+    return gateway.loadLeaderboard(requestedPage);
+  });
   useEffect(() => {
     let active = true;
     let latestRequest = 0;
     const load = () => {
       const request = ++latestRequest;
       const isCurrent = () => active && request === latestRequest;
-      void synchronize()
-        .then(() => gateway.loadLeaderboard(page))
+      void loadPage(page)
         .then((result) => {
           if (isCurrent()) {
             setData(result);
@@ -95,7 +100,7 @@ export function LeaderboardPanel({
       active = false;
       window.clearInterval(interval);
     };
-  }, [gateway, synchronize, page, refresh]);
+  }, [page, refresh]);
   const rename = async () => {
     if (renaming) return;
     setRenaming(true);
