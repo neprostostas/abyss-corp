@@ -17,20 +17,14 @@ export function AutomationPanel({
   return (
     <div className="crew-card">
       <div className="crew-intro">
-        <div className="crew-portrait">
-          <div className="robot-face" aria-hidden="true">
-            <span />
-            <span />
-            <i />
-          </div>
-          <span className="crew-level">LV {offer.level}</span>
-        </div>
+        <span className="crew-symbol">
+          <GameIcon name="robot" />
+        </span>
         <div className="crew-description">
-          <h3>Cargo pilot</h3>
-          <p>
-            Auto-sells cargo<span className="crew-offline">, even offline</span>
-            .
-          </p>
+          <h3>
+            Cargo pilot <small>Lv {offer.level}</small>
+          </h3>
+          <p>Automatic sales · works offline</p>
         </div>
       </div>
       {automation && offer.intervalMs && (
@@ -43,48 +37,51 @@ export function AutomationPanel({
             {!automation.enabled
               ? 'Off duty'
               : !layer.running
-                ? 'Outpost paused'
+                ? 'Paused'
                 : 'On duty'}
           </span>
-          <b>Every {offer.intervalMs / 1000}s</b>
+          <b>{offer.intervalMs / 1000}s / sale</b>
           <ProgressBar
             label="Next sale"
             value={automation.elapsedMs / offer.intervalMs}
           />
         </div>
       )}
-      <button
-        className="wide-button"
-        disabled={!offer.affordable}
-        onClick={onUpgrade}
-      >
-        {offer.cost === null ? (
-          <>
-            <GameIcon name="check" />
-            Max level
-          </>
-        ) : (
-          <>
-            {offer.level === 0 ? 'Hire' : 'Upgrade'}
-            <GameIcon name="coin" />
-            {offer.cost}
-          </>
+      <div className="crew-actions">
+        <button
+          className="crew-upgrade"
+          disabled={!offer.affordable}
+          onClick={onUpgrade}
+        >
+          {offer.cost === null ? (
+            <>
+              <GameIcon name="check" />
+              Max level
+            </>
+          ) : (
+            <>
+              {offer.level === 0 ? 'Hire' : 'Upgrade'}
+              <GameIcon name="coin" />
+              {offer.cost}
+            </>
+          )}
+        </button>
+        {automation && (
+          <button
+            className="crew-toggle"
+            onClick={onToggle}
+            aria-pressed={automation.enabled}
+            aria-label="Automatic sales"
+          >
+            <span>{automation.enabled ? 'On' : 'Off'}</span>
+            <i aria-hidden="true" />
+          </button>
         )}
-      </button>
+      </div>
       {offer.nextIntervalMs && (
         <small className="crew-next">
-          {offer.level ? 'Next: ' : 'Every '}
-          {offer.nextIntervalMs / 1000}s
+          {offer.level ? 'Next' : 'Sells every'} {offer.nextIntervalMs / 1000}s
         </small>
-      )}
-      {automation && (
-        <button
-          className="secondary-button wide-button"
-          onClick={onToggle}
-          aria-pressed={automation.enabled}
-        >
-          {automation.enabled ? 'Take off duty' : 'Put on duty'}
-        </button>
       )}
     </div>
   );

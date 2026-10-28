@@ -1,6 +1,7 @@
 import {
   CAPTAIN_NAME_LIMITS,
   captainInitial,
+  displayPlayerName,
   normalizeCaptainName,
 } from '../../domain/captainName';
 import { useEffect, useEffectEvent, useState } from 'react';
@@ -22,6 +23,7 @@ function StandingRow({
   player: PlayerStanding;
   own?: boolean;
 }) {
+  const name = displayPlayerName(player.captainName, player.id);
   return (
     <li
       className={`standing-row${own ? ' is-you' : ''}${player.position <= 3 ? ' top-captain' : ''}`}
@@ -30,19 +32,18 @@ function StandingRow({
         className={`standing-place place-${String(player.position)}`}
         aria-label={`Rank ${String(player.position)}`}
       >
-        {player.position <= 3 && <GameIcon name="trophy" />}
         <b>{player.position}</b>
       </span>
       <span className="captain-avatar" aria-hidden="true">
-        {captainInitial(player.captainName)}
+        {captainInitial(name)}
       </span>
       <span className="standing-captain">
         <strong>
-          {player.captainName}
+          {name}
           {own && <small>You</small>}
         </strong>
         <span>
-          {player.upgrades} upgrades · {credits.format(player.credits)} CR
+          {player.upgrades} upgrades · {credits.format(player.credits)}
         </span>
       </span>
       <strong className="standing-depth">
@@ -120,15 +121,12 @@ export function LeaderboardPanel({
     }
   };
   return (
-    <section className="leaderboard-panel" aria-label="Captain rankings">
+    <section className="leaderboard-panel" aria-label="Player rankings">
       <div className="leaderboard-heading">
-        <span className="leaderboard-emblem">
-          <GameIcon name="trophy" />
-        </span>
         <div>
-          <strong>Captain standings</strong>
+          <strong>Rankings</strong>
           <small>
-            {data ? `${String(data.total)} captains` : 'Connecting…'}
+            {data ? `${String(data.total)} players` : 'Connecting…'}
           </small>
         </div>
         <button
@@ -146,7 +144,7 @@ export function LeaderboardPanel({
       {data?.currentPlayer && (
         <div className="your-standing">
           <div className="your-standing-label">
-            <span>Your captain</span>
+            <span>Your rank #{data.currentPlayer.position}</span>
             <button
               className="text-button"
               disabled={renaming}
@@ -186,25 +184,21 @@ export function LeaderboardPanel({
                 {renaming ? 'Saving…' : 'Save'}
               </button>
             </form>
-          ) : (
+          ) : !data.players.some(
+              (player) => player.id === data.currentPlayer?.id,
+            ) ? (
             <ol>
               <StandingRow player={data.currentPlayer} own />
             </ol>
-          )}
+          ) : null}
         </div>
       )}
-      <p
-        className="ranking-rule"
-        title="Depth → upgrades → research → automation → credits"
-      >
-        Depth first. Upgrades break ties.
-      </p>
       {error && (
         <p role="alert" className="form-error">
           {error}
         </p>
       )}
-      {busy && !data && <p role="status">Loading captains…</p>}
+      {busy && !data && <p role="status">Loading players…</p>}
       {data && (
         <>
           <ol className="captain-list">
@@ -217,7 +211,7 @@ export function LeaderboardPanel({
             ))}
           </ol>
           {!data.players.length && (
-            <p className="empty-standings">No captains here yet.</p>
+            <p className="empty-standings">No players here yet.</p>
           )}
           {data.total > pageSize && (
             <nav className="standing-pagination" aria-label="Ranking pages">
@@ -227,7 +221,7 @@ export function LeaderboardPanel({
                   setBusy(true);
                   setPage(page - 1);
                 }}
-                aria-label="Previous captains"
+                aria-label="Previous players"
               >
                 ←
               </button>
@@ -240,7 +234,7 @@ export function LeaderboardPanel({
                   setBusy(true);
                   setPage(page + 1);
                 }}
-                aria-label="Next captains"
+                aria-label="Next players"
               >
                 →
               </button>

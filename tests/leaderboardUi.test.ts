@@ -45,7 +45,7 @@ void test('leaderboard sync does not restart when saving rerenders its parent', 
     });
     assert.equal(saves, 1, 'opening Leaders must synchronize only once');
     assert.equal(loads, 1);
-    assert.match(container.textContent, /No captains here yet/);
+    assert.match(container.textContent, /No players here yet/);
     await act(async () => {
       const refresh = container.querySelector<HTMLButtonElement>(
         '[aria-label="Refresh leaderboard"]',
@@ -129,5 +129,53 @@ void test('slow leaderboard requests do not overlap periodic refreshes', async (
     });
     window.setInterval = originalInterval;
     window.clearInterval = originalClear;
+  }
+});
+
+void test('rankings show a player once, use generated tags and omit redundant explanations', async () => {
+  const container = document.getElementById('root');
+  assert(container);
+  const root = createRoot(container);
+  const player = {
+    id: 'db1ca8fb-9ba2-4633-a4ce-c7b804fedc3c',
+    captainName: 'Captain DB1CA8FB',
+    position: 1,
+    depthMeters: 50,
+    upgrades: 0,
+    research: 0,
+    automation: 0,
+    credits: 0,
+  };
+  try {
+    await act(async () => {
+      root.render(
+        createElement(LeaderboardPanel, {
+          gateway: {
+            loadLeaderboard: () =>
+              Promise.resolve({
+                players: [player],
+                currentPlayer: player,
+                total: 1,
+              }),
+            renameCaptain: () => Promise.resolve(),
+          },
+          synchronize: () => Promise.resolve(),
+        }),
+      );
+      await Promise.resolve();
+    });
+    assert.equal(container.querySelectorAll('.standing-row').length, 1);
+    assert.match(container.textContent, /#DB1CA8FB/);
+    assert.doesNotMatch(
+      container.textContent,
+      /Captain DB1CA8FB|Depth first|Upgrades break ties/,
+    );
+    assert.equal(container.querySelector('.leaderboard-emblem'), null);
+    assert(container.querySelector('button[aria-label="Refresh leaderboard"]'));
+  } finally {
+    await act(async () => {
+      root.unmount();
+      await Promise.resolve();
+    });
   }
 });

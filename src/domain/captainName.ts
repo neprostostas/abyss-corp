@@ -25,3 +25,9 @@ export function captainInitial(name: string): string {
   }
   return (Array.from(name)[0] ?? '?').toUpperCase();
 }
+
+/** Format only the legacy generated name; preserve player-chosen nicknames. */
+export function displayPlayerName(name: string, userId: string): string {
+  const tag = userId.replaceAll('-', '').slice(0, 8).toUpperCase();
+  return name === `Captain ${tag}` ? `#${tag}` : name;
+}
