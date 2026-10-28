@@ -9,3 +9,7 @@ in the game's artwork. It is a close stylistic choice, not an identification of
 the raster logo's original font. Small UI text remains Manrope with stronger
 weights. Source: [Google Fonts](https://github.com/google/fonts/tree/main/ofl/russoone).
 Keep `russo-one-OFL.txt` with the font.
+
+The full-interface trial uses Russo One for body text and controls as well as
+headings. Manrope remains a fallback. Russo One has one native 400 weight; heavier
+CSS weights resolve to that face without synthetic bold.

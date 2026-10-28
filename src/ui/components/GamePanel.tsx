@@ -44,40 +44,17 @@ export function GamePanel({
     if (open) closeRef.current?.focus({ preventScroll: true });
   }, [open]);
   useEffect(() => {
-    const outside = (event: MouseEvent) => {
-      const target = event.target;
-      if (
-        open &&
-        target instanceof Element &&
-        panelRef.current &&
-        !event.composedPath().includes(panelRef.current) &&
-        !target.closest(
-          '.game-dock, .settings-trigger, .depth-rail, .game-panel-backdrop',
-        )
-      )
-        onClose();
-    };
     const escape = (event: KeyboardEvent) => {
       if (open && event.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', escape);
-    document.addEventListener('click', outside);
     return () => {
       window.removeEventListener('keydown', escape);
-      document.removeEventListener('click', outside);
     };
   }, [onClose, open]);
   return (
     <>
-      {open && (
-        <button
-          type="button"
-          className="game-panel-backdrop"
-          tabIndex={-1}
-          aria-hidden="true"
-          onClick={onClose}
-        />
-      )}
+      {open && <div className="game-panel-backdrop" aria-hidden="true" />}
       <aside
         ref={panelRef}
         className={`game-panel${profile ? ' game-panel-profile' : ''}`}

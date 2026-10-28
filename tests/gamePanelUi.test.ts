@@ -13,7 +13,7 @@ Object.assign(globalThis, {
   IS_REACT_ACT_ENVIRONMENT: true,
 });
 const { createRoot } = await import('react-dom/client');
-void test('panel dismissal waits for a completed click and preserves navigation', async () => {
+void test('game actions and outside taps preserve the panel; only explicit dismissal closes it', async () => {
   const container = document.getElementById('root');
   assert(container);
   const root = createRoot(container);
@@ -56,7 +56,7 @@ void test('panel dismissal waits for a completed click and preserves navigation'
     });
     const sell = document.getElementById('sell');
     const depth = document.getElementById('depth');
-    const backdrop = document.querySelector<HTMLButtonElement>(
+    const backdrop = document.querySelector<HTMLElement>(
       '.game-panel-backdrop',
     );
     assert(sell instanceof HTMLElement);
@@ -84,11 +84,23 @@ void test('panel dismissal waits for a completed click and preserves navigation'
       'an internal action that removes its button must not dismiss',
     );
     backdrop.click();
-    assert.equal(closes, 1, 'one backdrop tap must close once');
+    assert.equal(closes, 0, 'backdrop taps must leave the panel open');
     assert.equal(sales, 0, 'backdrop must not activate the game behind it');
     sell.click();
-    assert.equal(closes, 2, 'desktop outside click still dismisses');
+    assert.equal(closes, 0, 'Sell must leave the panel open');
     assert.equal(sales, 1, 'one native click activates once');
+    document.body.click();
+    assert.equal(closes, 0, 'blank background must not dismiss');
+    window.dispatchEvent(
+      new dom.window.KeyboardEvent('keydown', { key: 'Escape' }),
+    );
+    assert.equal(closes, 1, 'Escape explicitly closes the panel');
+    const close = document.querySelector<HTMLButtonElement>(
+      '[aria-label="Close panel"]',
+    );
+    assert(close);
+    close.click();
+    assert.equal(closes, 2, 'close button explicitly closes the panel');
   } finally {
     await act(async () => {
       root.unmount();

@@ -21,8 +21,8 @@
 }
 :root {
   color-scheme: dark;
-  font-family: 'Manrope', 'Segoe UI', sans-serif;
-  --font-body: 'Manrope', 'Segoe UI', sans-serif;
+  font-family: 'Russo One', 'Manrope', sans-serif;
+  --font-body: 'Russo One', 'Manrope', sans-serif;
   --font-display: 'Russo One', 'Manrope', sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -63,7 +63,9 @@ a {
   color: inherit;
 }
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 button {

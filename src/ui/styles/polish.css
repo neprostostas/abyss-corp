@@ -1710,3 +1710,31 @@
     min-height: 44px;
   }
 }
+
+/* Single-weight display face trial throughout the UI. */
+.game-panel input,
+.auth-card input {
+  letter-spacing: 0.15px;
+  line-height: 1.5;
+}
+.game-panel .mission-content p,
+.game-panel .crew-description p,
+.game-panel .standing-captain > span {
+  line-height: 1.6;
+}
+@media (max-width: 360px) {
+  .game-shell > .game-dock {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2px;
+    align-items: center;
+  }
+  .game-shell .game-dock .dock-button {
+    flex-direction: column;
+    gap: 4px;
+    padding: 5px 2px;
+    font-size: 9px;
+    line-height: 1.3;
+    min-height: 52px;
+  }
+}
