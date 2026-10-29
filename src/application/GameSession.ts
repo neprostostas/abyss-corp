@@ -1,4 +1,6 @@
-import { getCampaign } from '../domain/campaign';
+import type { SpecialistId } from '../data/automation';
+import { getCampaign, getPrestigeOffer } from '../domain/campaign';
+import { PRESTIGE } from '../data/campaign';
 import type { InfrastructureId } from '../data/campaign';
 import { buyInfrastructure, prestigeWorld } from '../domain/world';
 import { startExpedition, claimExpedition } from '../domain/expeditions';
@@ -14,6 +16,7 @@ import {
   buyResearch,
   claimMission,
   upgradeAutomation,
+  upgradeSpecialist,
   toggleAutomation,
   createWorld,
   selectLayer,
@@ -222,10 +225,17 @@ export class GameSession {
       if (getCampaign(current).rank !== expectedRank)
         throw new Error('Progress changed. Review the new run again.');
       const world = prestigeWorld(current);
-      if (world === current)
+      if (world === current) {
+        const offer = getPrestigeOffer(current);
+        const missing = offer.requirements
+          .filter((item) => item.current < item.total)
+          .map((item) => item.label);
         throw new Error(
-          'Reach the rift and keep 25,000 credits to start a new run.',
+          offer.rank >= PRESTIGE.maxRank
+            ? 'Maximum prestige rank reached.'
+            : `Prestige requires full completion${missing.length ? ` (${missing.join(', ')})` : ''} and ${offer.requiredCredits.toLocaleString('en-US')} credits.`,
         );
+      }
       const save: GameSave = {
         version: 8,
         savedAt: this.clock.timestamp(),
@@ -260,6 +270,14 @@ export class GameSession {
   upgradeAutomation = (layerId = this.snapshot.world.selectedLayerId) => {
     this.command((world) =>
       world.selectedLayerId === layerId ? upgradeAutomation(world) : world,
+    );
+  };
+  upgradeSpecialist = (
+    id: SpecialistId,
+    layerId = this.snapshot.world.selectedLayerId,
+  ) => {
+    this.command((world) =>
+      world.selectedLayerId === layerId ? upgradeSpecialist(world, id) : world,
     );
   };
   toggleAutomation = (layerId = this.snapshot.world.selectedLayerId) => {

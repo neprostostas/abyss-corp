@@ -1,5 +1,5 @@
-import { LAYER_IDS } from '../src/data/layers';
-import { createLayer, prestigeWorld } from '../src/domain/world';
+import { completedWorld } from './fixtures';
+import { prestigeWorld } from '../src/domain/world';
 import { gameSave } from './fixtures';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
@@ -197,13 +197,7 @@ void test('Telegram and Steam identities provision email-less players without tr
       ]),
       /requirements/,
     );
-    const established = {
-      ...gameSave(30000),
-      world: {
-        ...gameSave(30000).world,
-        layers: Object.fromEntries(LAYER_IDS.map((id) => [id, createLayer()])),
-      },
-    };
+    const established = { ...gameSave(30000), world: completedWorld() };
     await db.query('select * from public.write_game_save($1,2,$2,$3,1)', [
       owner,
       JSON.stringify(established),
@@ -213,6 +207,63 @@ void test('Telegram and Steam identities provision email-less players without tr
       ...established,
       world: prestigeWorld(established.world),
     });
+    await db.exec('reset role');
+    const secondRun = {
+      ...established,
+      world: {
+        ...established.world,
+        credits: 39999,
+        campaign: { ...established.world.campaign, rank: 1 },
+      },
+    };
+    await db.query(
+      'update public.game_saves set save=$1::jsonb where user_id=$2',
+      [JSON.stringify(secondRun), owner],
+    );
+    await db.exec('set role authenticated');
+    const secondReset = JSON.stringify({
+      ...established,
+      world: prestigeWorld({ ...secondRun.world, credits: 40000 }),
+    });
+    await assert.rejects(
+      db.query('select * from public.prestige_game_save($1,$2,$3,1,3,1)', [
+        owner,
+        secondReset,
+        prestigeOperation,
+      ]),
+      /requirements/,
+    );
+    // Server rejects each incomplete category even when depth and credits qualify.
+    for (const [path, value] of [
+      [['world', 'layers', 'shallows', 'levels', 'mining'], '4'],
+      [['world', 'layers', 'shallows', 'automation', 'level'], '2'],
+      [['world', 'layers', 'shallows', 'specialists', 'broker'], '2'],
+      [['world', 'progression', 'research', 'engineering'], '4'],
+      [['world', 'campaign', 'infrastructure', 'sonar'], '2'],
+      [['world', 'progression', 'claimedMissions'], '[]'],
+      [['world', 'progression', 'expedition', 'completed'], '2'],
+    ] as const) {
+      await db.exec('reset role');
+      await db.query(
+        'update public.game_saves set save=jsonb_set($1::jsonb,$2::text[],$3::jsonb) where user_id=$4',
+        [JSON.stringify(established), [...path], value, owner],
+      );
+      await db.exec('set role authenticated');
+      await assert.rejects(
+        db.query('select * from public.prestige_game_save($1,$2,$3,1,3,0)', [
+          owner,
+          resetPayload,
+          prestigeOperation,
+        ]),
+        /before prestige/,
+      );
+    }
+    await db.exec('reset role');
+    await db.query(
+      'update public.game_saves set save=$1::jsonb where user_id=$2',
+      [JSON.stringify(established), owner],
+    );
+    await db.exec('set role authenticated');
     await assert.rejects(
       db.query('select * from public.prestige_game_save($1,$2,$3,1,2,0)', [
         owner,
@@ -287,6 +338,27 @@ void test('Telegram and Steam identities provision email-less players without tr
       /permission denied/,
     );
     await db.exec('reset role');
+    await db.query('select private.project_save($1,$2,now())', [
+      ids[2],
+      JSON.stringify({
+        ...gameSave(),
+        world: {
+          ...gameSave().world,
+          progression: {
+            research: { trade: 5, storage: 5, engineering: 5, surveying: 5 },
+          },
+        },
+      }),
+    ]);
+    assert.equal(
+      (
+        await db.query<{ research: number }>(
+          'select research from public.player_progress where id=$1',
+          [ids[2]],
+        )
+      ).rows[0]?.research,
+      20,
+    );
     await db.query('delete from auth.users where id=$1', [ids[2]]);
     for (const table of ['profiles', 'game_saves', 'player_progress']) {
       const column = table === 'game_saves' ? 'user_id' : 'id';

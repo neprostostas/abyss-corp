@@ -9,7 +9,7 @@ import {
 } from '../../domain/progression';
 import { z } from 'zod';
 import type { GameSave } from '../../application/ports';
-import { AUTOMATION_LEVELS } from '../../data/automation';
+import { SPECIALISTS, AUTOMATION_LEVELS } from '../../data/automation';
 import { UPGRADES } from '../../data/balance';
 import { LAYER_IDS, CORE_LAYER_IDS } from '../../data/layers';
 import { getLayerGame } from '../../domain/world';
@@ -38,6 +38,23 @@ const layerSchema = z
     raw: integer,
     refined: integer,
     processingElapsedMs: integer.nullable(),
+    specialists: z
+      .object({
+        quartermaster: z
+          .number()
+          .int()
+          .min(0)
+          .max(SPECIALISTS.quartermaster.costs.length)
+          .optional(),
+        broker: z
+          .number()
+          .int()
+          .min(0)
+          .max(SPECIALISTS.broker.costs.length)
+          .optional(),
+      })
+      .strict()
+      .optional(),
     automation: z
       .object({
         level: level(AUTOMATION_LEVELS.length),
@@ -104,6 +121,18 @@ const schema = z
               .optional(),
             research: z
               .object({
+                engineering: z
+                  .number()
+                  .int()
+                  .min(0)
+                  .max(RESEARCH.engineering.costs.length)
+                  .optional(),
+                surveying: z
+                  .number()
+                  .int()
+                  .min(0)
+                  .max(RESEARCH.surveying.costs.length)
+                  .optional(),
                 trade: z.number().int().min(0).max(RESEARCH.trade.costs.length),
                 storage: z
                   .number()

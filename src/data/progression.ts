@@ -1,11 +1,32 @@
-export const RESEARCH_IDS = ['trade', 'storage'] as const;
+export const RESEARCH_IDS = [
+  'trade',
+  'storage',
+  'engineering',
+  'surveying',
+] as const;
 export type ResearchId = (typeof RESEARCH_IDS)[number];
 export const RESEARCH = {
+  engineering: {
+    name: 'Efficient engineering',
+    description: 'Production upgrade costs · all depths',
+    costs: [240, 700, 1600, 6500, 18000],
+    bonusPerLevel: 5,
+    unit: '% upgrade cost',
+    icon: 'mining',
+  },
+  surveying: {
+    name: 'Seabed surveying',
+    description: 'Depth unlock costs · stacks with sonar',
+    costs: [200, 600, 1400, 5000, 14000],
+    bonusPerLevel: 4,
+    unit: '% unlock cost',
+    icon: 'sonar',
+  },
   trade: {
     name: 'Deep-sea trade',
     description:
       'Raise refined cargo prices across every outpost, including automatic and offline sales.',
-    costs: [180, 450, 900],
+    costs: [180, 450, 900, 4800, 15000],
     bonusPerLevel: 25,
     unit: '% sale value',
     icon: '↗',
@@ -14,7 +35,7 @@ export const RESEARCH = {
     name: 'Modular warehousing',
     description:
       'Add slots to both raw and refined buffers at every current and future outpost.',
-    costs: [120, 300, 650],
+    costs: [120, 300, 650, 3200, 10000],
     bonusPerLevel: 3,
     unit: ' storage slots',
     icon: '▣',
@@ -83,7 +104,7 @@ export const MISSIONS = {
   },
   research: {
     name: 'A brighter abyss',
-    description: 'Complete all six research levels.',
+    description: 'Complete six research levels.',
     metric: 'research',
     target: 6,
     reward: 150,

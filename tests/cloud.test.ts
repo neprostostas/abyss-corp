@@ -1,6 +1,6 @@
+import { completedWorld } from './fixtures';
 import { createCampaign, getCampaign } from '../src/domain/campaign';
-import { LAYER_IDS } from '../src/data/layers';
-import { createLayer, prestigeWorld } from '../src/domain/world';
+import { prestigeWorld } from '../src/domain/world';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { z } from 'zod';
@@ -290,14 +290,7 @@ void test('a failed offline reset preserves progress and resumes ordinary saving
 });
 
 function prestigeReadySave() {
-  const base = gameSave(40000, 3);
-  return {
-    ...base,
-    world: {
-      ...base.world,
-      layers: Object.fromEntries(LAYER_IDS.map((id) => [id, createLayer()])),
-    },
-  };
+  return { ...gameSave(), world: completedWorld() };
 }
 void test('cloud prestige uploads the eligible run, increments epoch once and fences old devices', async () => {
   const h = cloudFixture();

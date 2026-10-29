@@ -1,3 +1,5 @@
+import { getPrestigeCost } from '../src/data/campaign';
+import { completedWorld } from './fixtures';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
@@ -25,6 +27,7 @@ import {
 import type { WorldState } from '../src/domain/world';
 import {
   getLayerProduction,
+  getResearchOffer,
   createProgression,
 } from '../src/domain/progression';
 import { GameSession } from '../src/application/GameSession';
@@ -111,8 +114,7 @@ void test('sonar discounts only future unlocks and a depot releases blocked prod
 void test('prestige checks eligibility, resets the complete run and retains only its permanent rank', () => {
   const empty = createWorld();
   assert.equal(prestigeWorld(empty), empty);
-  let world = frontier();
-  world = buyInfrastructure(world, 'exchange');
+  const world = completedWorld();
   const tooPoor = { ...world, credits: PRESTIGE.requiredCredits - 1 };
   assert.equal(prestigeWorld(tooPoor), tooPoor);
   const next = roundtrip(prestigeWorld(world));
@@ -183,7 +185,7 @@ void test('guest prestige fences stale tabs, double taps and reloads without rep
   const storage = new MemoryStorage();
   const repository = new GuestSaveRepository(() => storage);
   const clock = new FakeClock();
-  await repository.save({ ...gameSave(), world: frontier() });
+  await repository.save({ ...gameSave(), world: completedWorld() });
   const stale = new GuestSaveRepository(() => storage);
   await stale.load();
   const session = new GameSession(repository, clock);
@@ -202,7 +204,7 @@ void test('guest prestige fences stale tabs, double taps and reloads without rep
   assert.equal(getCampaign(saved.world).rank, 1);
 });
 void test('failed prestige persistence leaves the original run intact and unlocks commands', async () => {
-  const initial = { ...gameSave(), world: frontier() };
+  const initial = { ...gameSave(), world: completedWorld() };
   const session = new GameSession(
     {
       load: () => Promise.resolve(initial),
@@ -256,7 +258,7 @@ void test('backgrounding during a pending prestige keeps the resumed session ina
   const clock = new FakeClock();
   const session = new GameSession(
     {
-      load: () => Promise.resolve({ ...gameSave(), world: frontier() }),
+      load: () => Promise.resolve({ ...gameSave(), world: completedWorld() }),
       save: () => Promise.resolve(),
       prestige: () => gate.promise,
     },
@@ -277,4 +279,156 @@ void test('backgrounding during a pending prestige keeps the resumed session ina
     session.getSnapshot().world.layers.shallows?.phaseElapsedMs,
     1000,
   );
+});
+
+void test('advanced research requires deep bases and keeps bonuses additive', () => {
+  const world: WorldState = {
+    ...createWorld(),
+    credits: 50000,
+    progression: { ...createProgression(), research: { trade: 3, storage: 3 } },
+  };
+  assert.equal(getResearchOffer(world, 'trade').affordable, false);
+  const deep = {
+    ...world,
+    layers: { ...world.layers, 'thermal-vents': createLayer() },
+  };
+  assert.equal(getResearchOffer(deep, 'trade').affordable, true);
+  assert.equal(getResearchOffer(deep, 'trade').cost, 4800);
+  const next = {
+    ...deep,
+    progression: { ...createProgression(), research: { trade: 4, storage: 4 } },
+  };
+  assert.equal(getResearchOffer(next, 'trade').affordable, false);
+  const final = {
+    ...next,
+    layers: { ...next.layers, 'midnight-rift': createLayer() },
+  };
+  assert.equal(getResearchOffer(final, 'trade').affordable, true);
+  assert.equal(getResearchOffer(final, 'storage').cost, 10000);
+  assert.equal(
+    getResearchOffer(
+      {
+        ...final,
+        progression: {
+          ...createProgression(),
+          research: { trade: 5, storage: 5 },
+        },
+      },
+      'trade',
+    ).cost,
+    null,
+  );
+});
+
+void test('prestige requires every completion category, not just depth and credits', () => {
+  const complete = completedWorld();
+  assert(getPrestigeOffer(complete).canPrestige);
+  const incomplete = [
+    {
+      ...complete,
+      layers: {
+        ...complete.layers,
+        shallows: {
+          ...createLayer(),
+          levels: { mining: 5, transport: 5, processing: 5, storage: 5 },
+        },
+      },
+    },
+    {
+      ...complete,
+      progression: {
+        ...complete.progression,
+        research: { ...complete.progression.research, surveying: 4 },
+      },
+    },
+    {
+      ...complete,
+      progression: { ...complete.progression, claimedMissions: [] },
+    },
+    {
+      ...complete,
+      progression: {
+        ...complete.progression,
+        expedition: { ...complete.progression.expedition, completed: 2 },
+      },
+    },
+    { ...complete, campaign: createCampaign() },
+  ];
+  for (const world of incomplete) {
+    assert.equal(getPrestigeOffer(world).canPrestige, false);
+    assert.equal(prestigeWorld(world), world);
+  }
+});
+
+void test('prestige cost grows faster than the additive income reward at every rank', () => {
+  assert.deepEqual(
+    [0, 1, 2, 3].map(getPrestigeCost),
+    [25000, 40000, 64000, 103000],
+  );
+  for (let rank = 1; rank < PRESTIGE.maxRank; rank++) {
+    assert(
+      getPrestigeCost(rank) / (1 + rank * 0.2) >
+        getPrestigeCost(rank - 1) / (1 + (rank - 1) * 0.2),
+    );
+    const world = {
+      ...completedWorld(),
+      credits: getPrestigeCost(rank) - 1,
+      campaign: { ...completedWorld().campaign, rank },
+    };
+    assert.equal(getPrestigeOffer(world).canPrestige, false);
+    assert.equal(
+      getPrestigeOffer({ ...world, credits: getPrestigeCost(rank) })
+        .canPrestige,
+      true,
+    );
+  }
+});
+
+void test('expedition does not demand a pilot whose contract cargo is already delivered', () => {
+  const full = completedWorld();
+  const active = {
+    ...full,
+    progression: {
+      ...full.progression,
+      expedition: {
+        completed: 0,
+        active: true,
+        delivered: { shallows: 30, 'golden-trench': 0, 'pearl-caverns': 0 },
+      },
+    },
+    layers: { ...full.layers, shallows: { ...createLayer(), running: false } },
+  };
+  assert.equal(getExpeditionOffer(active).pilotsReady, true);
+  const waiting = {
+    ...active,
+    layers: {
+      ...active.layers,
+      'golden-trench': { ...createLayer(), running: false },
+    },
+  };
+  assert.equal(getExpeditionOffer(waiting).pilotsReady, false);
+});
+
+void test('failed prestige reports the current rank cost instead of the first-run price', async () => {
+  const full = completedWorld();
+  const initial = {
+    ...gameSave(),
+    world: { ...full, credits: 25000, campaign: { ...full.campaign, rank: 1 } },
+  };
+  const session = new GameSession(
+    {
+      load: () => Promise.resolve(initial),
+      save: () => Promise.resolve(),
+      prestige: () => {
+        assert.fail('ineligible run must not reach persistence');
+      },
+    },
+    new FakeClock(),
+  );
+  session.setActive(true);
+  await session.initialize();
+  await assert.rejects(session.prestige(1), /40,000 credits/);
+  assert.equal(session.getSnapshot().world.campaign?.rank, 1);
+  session.select('golden-trench');
+  assert.equal(session.getSnapshot().world.selectedLayerId, 'golden-trench');
 });

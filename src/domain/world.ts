@@ -16,9 +16,10 @@ import {
   getLayerProduction,
 } from './progression';
 import type { ProgressionState } from './progression';
-import { MISSIONS } from '../data/progression';
+import { MISSIONS, RESEARCH } from '../data/progression';
 import type { ResearchId, MissionId } from '../data/progression';
-import { AUTOMATION_LEVELS } from '../data/automation';
+import type { SpecialistId } from '../data/automation';
+import { SPECIALISTS, AUTOMATION_LEVELS } from '../data/automation';
 import { LAYERS, LAYER_IDS } from '../data/layers';
 import type { LayerId } from '../data/layers';
 import {
@@ -37,6 +38,9 @@ export interface AutomationState {
 }
 export type LayerState = Omit<GameState, 'credits'> & {
   readonly automation?: AutomationState;
+  readonly specialists?: Readonly<
+    Partial<Record<SpecialistId, number | undefined>>
+  >;
 };
 export interface WorldState {
   readonly campaign?: CampaignState;
@@ -166,7 +170,8 @@ export function getUnlockOffer(world: WorldState, id: LayerId) {
     previous === undefined || world.layers[previous] !== undefined;
   const discount =
     getCampaign(world).infrastructure.sonar *
-    INFRASTRUCTURE.sonar.bonusPerLevel;
+      INFRASTRUCTURE.sonar.bonusPerLevel +
+    getProgression(world).research.surveying * RESEARCH.surveying.bonusPerLevel;
   const cost = Math.floor((LAYERS[id].unlockCost * (100 - discount)) / 100);
   return {
     cost,
@@ -344,4 +349,46 @@ export function prestigeWorld(world: WorldState): WorldState {
   const offer = getPrestigeOffer(world);
   if (!offer.canPrestige || offer.rank >= PRESTIGE.maxRank) return world;
   return { ...createWorld(), campaign: createCampaign(offer.rank + 1) };
+}
+
+export function getSpecialistOffer(world: WorldState, id: SpecialistId) {
+  const definition = SPECIALISTS[id];
+  const level = world.layers[world.selectedLayerId]?.specialists?.[id] ?? 0;
+  const baseCost = definition.costs[level];
+  const cost =
+    baseCost === undefined
+      ? null
+      : baseCost *
+        LAYERS[world.selectedLayerId].production.upgradeCostMultiplier;
+  return {
+    level,
+    cost,
+    bonus: level * definition.bonusPerLevel,
+    affordable: cost !== null && world.credits >= cost,
+  };
+}
+export function upgradeSpecialist(
+  world: WorldState,
+  id: SpecialistId,
+): WorldState {
+  const offer = getSpecialistOffer(world, id);
+  const layerId = world.selectedLayerId;
+  const layer = world.layers[layerId];
+  if (!layer || !offer.affordable || offer.cost === null) return world;
+  const next = {
+    ...world,
+    credits: world.credits - offer.cost,
+    layers: {
+      ...world.layers,
+      [layerId]: {
+        ...layer,
+        specialists: { ...layer.specialists, [id]: offer.level + 1 },
+      },
+    },
+  };
+  return replaceLayer(
+    next,
+    layerId,
+    settleProduction(getLayerGame(next), getLayerProduction(next)),
+  );
 }

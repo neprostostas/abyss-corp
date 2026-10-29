@@ -1,3 +1,4 @@
+import { MISSION_IDS } from '../src/data/progression';
 import { validateSave } from '../src/infrastructure/persistence/saveSchema';
 import { getCampaign, getPrestigeOffer } from '../src/domain/campaign';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -230,6 +231,36 @@ export function cloudFixture() {
     holdNextWrite() {
       gate = deferred();
       return gate;
+    },
+  };
+}
+
+/** A fully completed run eligible for prestige, with zero pending machine work. */
+export function completedWorld() {
+  return {
+    ...createWorld(),
+    credits: 100000,
+    layers: Object.fromEntries(
+      LAYER_IDS.map((id) => [
+        id,
+        {
+          ...createLayer(),
+          levels: { mining: 5, transport: 5, processing: 5, storage: 5 },
+          automation: { level: 3, enabled: true, elapsedMs: 0 },
+          specialists: { quartermaster: 3, broker: 3 },
+        },
+      ]),
+    ),
+    campaign: { rank: 0, infrastructure: { depot: 3, exchange: 3, sonar: 3 } },
+    progression: {
+      ...createProgression(),
+      research: { trade: 5, storage: 5, engineering: 5, surveying: 5 },
+      claimedMissions: [...MISSION_IDS],
+      expedition: {
+        completed: 3,
+        active: false,
+        delivered: { shallows: 0, 'golden-trench': 0, 'pearl-caverns': 0 },
+      },
     },
   };
 }

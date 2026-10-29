@@ -2,7 +2,6 @@ import { EXPEDITIONS } from '../data/expeditions';
 import { CORE_LAYER_IDS } from '../data/layers';
 import type { LayerId, ProductionConfig } from '../data/layers';
 import { UPGRADE_IDS, UPGRADES } from '../data/balance';
-import { RESEARCH, RESEARCH_IDS } from '../data/progression';
 import type { WorldState } from './world';
 import type { GameState } from './game';
 import { settleProduction } from './game';
@@ -23,11 +22,15 @@ export function getExpeditionOffer(world: WorldState) {
         layer.automation !== undefined
       );
     }) &&
-    RESEARCH_IDS.every(
-      (id) => progression.research[id] === RESEARCH[id].costs.length,
+    (['trade', 'storage'] as const).every(
+      (id) => progression.research[id] >= 3,
     );
   const pilotsReady = CORE_LAYER_IDS.every(
-    (id) => world.layers[id]?.running && world.layers[id].automation?.enabled,
+    (id) =>
+      (state.active &&
+        definition !== undefined &&
+        state.delivered[id] >= definition.targets[id]) ||
+      (world.layers[id]?.running && world.layers[id].automation?.enabled),
   );
   const ready =
     !!definition &&

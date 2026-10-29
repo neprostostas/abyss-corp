@@ -25,7 +25,17 @@ export const INFRASTRUCTURE = {
 } as const;
 export const PRESTIGE = {
   requiredCredits: 25000,
+  costGrowth: { numerator: 8, denominator: 5 },
   requiredLayer: 'midnight-rift',
   bonusPerRank: 20,
   maxRank: 25,
 } as const;
+
+/** Geometric cost growth outpaces the additive +20% income bonus. */
+export function getPrestigeCost(rank: number): number {
+  const numerator =
+    BigInt(PRESTIGE.requiredCredits) *
+    BigInt(PRESTIGE.costGrowth.numerator) ** BigInt(rank);
+  const step = BigInt(PRESTIGE.costGrowth.denominator) ** BigInt(rank) * 1000n;
+  return Number(((numerator + step - 1n) / step) * 1000n);
+}

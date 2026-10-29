@@ -11,3 +11,24 @@ export const ACTIVE_GAP_LIMIT_MS = 30000;
 
 // Ignore small differences between wall and monotonic clock sampling.
 export const ACTIVE_CLOCK_DRIFT_MS = 1000;
+
+export const SPECIALIST_IDS = ['quartermaster', 'broker'] as const;
+export type SpecialistId = (typeof SPECIALIST_IDS)[number];
+export const SPECIALISTS = {
+  quartermaster: {
+    name: 'Quartermaster',
+    description: 'Expands raw and refined storage.',
+    costs: [100, 260, 600],
+    bonusPerLevel: 4,
+    unit: ' slots',
+    icon: 'storage',
+  },
+  broker: {
+    name: 'Trade officer',
+    description: 'Better prices on every sale, online or offline.',
+    costs: [160, 400, 900],
+    bonusPerLevel: 15,
+    unit: '% sale value',
+    icon: 'trade-network',
+  },
+} as const;

@@ -214,3 +214,52 @@ void test('old layer command handlers cannot spend or sell on the newly selected
   assert.equal(session.sell('shallows'), 0);
   assert.deepEqual(session.getSnapshot().world, before);
 });
+
+void test('concurrent initialization reads once and a failed load can be retried without losing the saved game', async (context) => {
+  context.mock.method(console, 'error', () => undefined);
+  const repository = new DeviceSave(gameSave(777));
+  const clock = new FakeClock();
+  const session = new GameSession(repository, clock);
+  session.setActive(true);
+  const gate = deferred();
+  let reads = 0;
+  repository.load = async () => {
+    reads++;
+    await gate.promise;
+    throw new Error('Temporary read failure');
+  };
+  const first = session.initialize();
+  const concurrent = session.initialize();
+  assert.equal(first, concurrent);
+  assert.equal(reads, 1);
+  session.upgrade('mining');
+  gate.resolve();
+  await first;
+  assert.equal(session.getSnapshot().status, 'load-error');
+  assert.equal(repository.writes.length, 0);
+  repository.load = () => {
+    reads++;
+    return Promise.resolve(repository.saved);
+  };
+  await session.initialize();
+  assert.equal(reads, 2);
+  assert.equal(session.getSnapshot().status, 'ready');
+  assert.equal(session.getSnapshot().world.credits, 777);
+  await session.initialize();
+  assert.equal(
+    reads,
+    2,
+    'ready session does not reload and replay offline progress',
+  );
+});
+void test('stale specialist actions cannot purchase on a newly selected base', async () => {
+  const repository = new DeviceSave(gameSave(10000));
+  const session = new GameSession(repository, new FakeClock());
+  session.setActive(true);
+  await session.initialize();
+  session.unlock('golden-trench');
+  const before = session.getSnapshot().world;
+  session.upgradeSpecialist('quartermaster', 'shallows');
+  session.upgradeSpecialist('broker', 'shallows');
+  assert.equal(session.getSnapshot().world, before);
+});

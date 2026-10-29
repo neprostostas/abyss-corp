@@ -1,3 +1,4 @@
+import { SPECIALISTS } from '../data/automation';
 import { getCampaign } from './campaign';
 import { INFRASTRUCTURE, PRESTIGE } from '../data/campaign';
 import { EXPEDITION_TRADE_BONUS } from '../data/expeditions';
@@ -27,7 +28,10 @@ export function createExpedition(): ExpeditionState {
 export interface ProgressionState {
   readonly expedition?: ExpeditionState;
   readonly claimedEvents?: readonly string[];
-  readonly research: Readonly<Record<ResearchId, number>>;
+  readonly research: Readonly<
+    Record<'trade' | 'storage', number> &
+      Partial<Record<ResearchId, number | undefined>>
+  >;
   readonly claimedMissions: readonly MissionId[];
 }
 export function createProgression(): ProgressionState {
@@ -38,17 +42,30 @@ export function createProgression(): ProgressionState {
     expedition: createExpedition(),
   };
 }
-export function getProgression(world: WorldState): ProgressionState {
-  return world.progression ?? createProgression();
+export function getProgression(world: WorldState) {
+  const progression = world.progression ?? createProgression();
+  return {
+    ...progression,
+    research: {
+      ...progression.research,
+      engineering: progression.research.engineering ?? 0,
+      surveying: progression.research.surveying ?? 0,
+    },
+  };
 }
 export function getResearchOffer(world: WorldState, id: ResearchId) {
   const definition = RESEARCH[id];
   const level = getProgression(world).research[id];
   const cost = definition.costs[level] ?? null;
+  const requiredDepth: LayerId | null =
+    level === 3 ? 'thermal-vents' : level >= 4 ? 'midnight-rift' : null;
+  const unlocked = requiredDepth === null || !!world.layers[requiredDepth];
   return {
     level,
     cost,
-    affordable: cost !== null && world.credits >= cost,
+    unlocked,
+    requiredDepth,
+    affordable: unlocked && cost !== null && world.credits >= cost,
     bonus: level * definition.bonusPerLevel,
     nextBonus: cost === null ? null : (level + 1) * definition.bonusPerLevel,
   };
@@ -64,7 +81,13 @@ export function getLayerProduction(
   const campaign = getCampaign(world);
   return {
     ...base,
+    upgradeCostMultiplier:
+      (base.upgradeCostMultiplier *
+        (100 - research.engineering * RESEARCH.engineering.bonusPerLevel)) /
+      100,
     storageBonus:
+      (world.layers[id]?.specialists?.quartermaster ?? 0) *
+        SPECIALISTS.quartermaster.bonusPerLevel +
       research.storage * RESEARCH.storage.bonusPerLevel +
       campaign.infrastructure.depot * INFRASTRUCTURE.depot.bonusPerLevel,
     resource: {
@@ -76,6 +99,8 @@ export function getLayerProduction(
             campaign.infrastructure.exchange *
               INFRASTRUCTURE.exchange.bonusPerLevel +
             research.trade * RESEARCH.trade.bonusPerLevel +
+            (world.layers[id]?.specialists?.broker ?? 0) *
+              SPECIALISTS.broker.bonusPerLevel +
             (progression.expedition?.completed ?? 0) *
               EXPEDITION_TRADE_BONUS)) /
           100,

@@ -43,7 +43,7 @@ export function getUpgradeLevel(
       id === 'storage'
         ? definition.value + (config.storageBonus ?? 0)
         : Math.round(definition.value * config.durationMultiplier),
-    cost: definition.cost * config.upgradeCostMultiplier,
+    cost: Math.ceil(definition.cost * config.upgradeCostMultiplier),
   };
 }
 
