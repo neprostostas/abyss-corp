@@ -143,3 +143,103 @@ or a commitment to run those destructive scenarios. No test account was created.
   column and authenticated-only RPC permissions after applying the migration.
 - 137 automated tests pass with typecheck, lint and formatting. No real account
   prestige/reset, Computer Use or physical-device visual check was performed.
+
+## Local cleanup and rendering optimization (2026-10-29)
+
+- Consolidated 15 CSS files into six files organized by responsibility. Responsive
+  rules are included with their components. Removed obsolete atlas, panel and
+  decorative-passage styles, unused keyframes and 235 overwritten declarations.
+- CSS source decreased from 8,935 to 7,938 lines. Production CSS decreased from
+  140.01 kB to 125.80 kB; gzip decreased from 28.55 to 25.46 kB.
+- Removed the unused Oxanium font and its preload. Preload now targets Russo One;
+  Manrope remains an on-demand fallback with its license.
+- All 87 source modules remain reachable from the application entry point. No
+  component file was removed solely because of its age. Save migrations and
+  account recovery behavior were preserved.
+- Locked depth views now use the parent DepthScene transition instead of keeping
+  a second transition state. Surface readiness shares one hook implementation.
+- Stationary submarine rendering scheduled 60 animation frames per second before
+  cleanup and zero afterward in a one-second Chromium fixture measurement. The
+  motion regression test covers interpolation, completion, reduced motion,
+  background/resume and unmount cleanup.
+- Analytics and its chart are split out of the initial application chunk. The
+  initial application JavaScript decreased from 412.23 to 407.62 kB.
+- `npm run check` passes with 147 tests; production build passes. Browser overflow
+  checks pass at 14 viewport sizes from 320×568 to 2560×1440, including landscape.
+  Computed styles match the pre-cleanup baseline across 72 fixture views;
+  71 screenshots are pixel-identical, and the remaining ocean-art compositing
+  difference was visually reviewed. Fixtures use local saves and mocked
+  account/report data; no physical-device
+  testing or production deployment was performed.
+
+### Extended local audit — 2026-10-29
+
+- Full type, lint, format, test and production build checks passed (166 tests).
+- Added a deterministic mixed-gameplay audit: 12 seeds × 200 steps, 12 command categories, save validation after each step and elapsed-time partition comparisons.
+- Confirmed a LAN HTTP bug in WebKit: `crypto.randomUUID` is unavailable in this context. UUID v4 generation now falls back to `crypto.getRandomValues` for guest reset fencing, account write operations, analytics and avatar names. Tested 1,000 fallback UUIDs for format/uniqueness and stale-tab rejection after reset.
+- Mobile browser matrix: Chrome and WebKit; 320×568, 390×844, 430×932 and 844×390; opening/closing all five drawers and tapping into a locked depth.
+- Limits: browser emulation does not validate physical iOS/Android browser chrome, device gesture arbitration or real authenticated provider flows. Remote database migrations remain unapplied.
+
+### Failure-path and recovery audit
+
+- Added four persistent regression tests: failed guest reset under storage quota, blocked commands during account transition, credit saturation with retained unsold cargo, and reload without replaying the same offline reward.
+- All 170 tests, type checking, lint, formatting and production build pass.
+- Isolated Chrome/WebKit sessions over the Mac's LAN HTTP address passed reset confirmation, successful guest reset and persistence after reload. No real user save was reset.
+- Collected Node test coverage to identify gaps. Coverage applies only to loaded modules; it is not a claim that all application screens or provider integrations were exercised.
+- Remaining manual acceptance: physical iPhone/Android gestures and browser chrome, authenticated OAuth/email flows, real network interruptions and production schema rollout. These require devices/accounts or an approved staging deployment.
+
+### React render optimization — 2026-10-29
+
+Measured a 5-second foreground guest-game interval in development Chrome at 390×844, after initial load. Baseline: 56 commits, 280 registrations and 280 removals of global navigation listeners, 56 atmosphere renders and 224 upgrade-card renders reported by the React commit hook. After extraction, listener registrations/removals during the same interval are zero. Direct function-entry instrumentation confirms zero calls for the memoized HUD, atmosphere, brand, icons, depth navigation and upgrade cards during the steady interval; production components still update with simulation ticks. Strict Mode invokes active function bodies twice, so raw function-entry counts are not equated to commit counts. These are render/listener measurements, not a device FPS or battery benchmark.
+
+Navigation moved into `useDepthNavigation`; effect events read current state without recreating listeners every production tick. HUD is isolated in `GameHud`. Memoized components and SVG models retain updates for credits, levels, research-adjusted costs, capacity, selection and palette changes. Regression tests cover affordability, max level and research-modified values.
+
+### CSS cascade consolidation — 2026-10-29
+
+- Changed only `game.css`, `panels.css`, `world.css` and this audit entry. Kept
+  all pre-existing working-tree changes and React render optimizations intact.
+- Removed overwritten declarations, empty rules and styles for the removed
+  Ocean Dive action and locked-depth status. Joined compatible repeated rules
+  without crossing conflicting viewport, container or accessibility conditions.
+- Collected the final mobile viewport, HUD, upgrade row, dock and Sell rules into
+  one 760px block. Sell retains equal columns, 12px outer margins, 10px padding
+  and inset cargo outline. Width and short-height queries keep their separate
+  roles so landscape behavior matches the baseline.
+- The three files decreased from 6,315 to 6,034 lines (128,409 to 123,056 bytes),
+  with 126 fewer declarations, 71 fewer rule blocks and 11 fewer media blocks.
+- Captured baseline screenshots before editing, then completed comparison with
+  the original CSS served in isolated fixture pages. Chrome and WebKit each
+  cover 60 views at 320×568, 390×844, 430×932, 844×390 and 1440×900: game, five
+  panels including Ocean, Base Network/Prestige, locked depth, and auxiliary
+  auth/analytics/privacy screens. All element rectangles and computed properties
+  match in the final comparison. Animation and transitions were disabled for
+  these static comparisons; the simulation clock was fixed.
+- 109 of 120 screenshots are pixel-identical. The remaining 11 differ by 1–18
+  pixels per image; reviewed differences are raster/compositing noise without
+  geometry changes. WebKit comparison caught a temporary 3px→5px upgrade-heading
+  gap regression caused by moving a rule past a container query; corrected and
+  reran both complete matrices before accepting the cleanup.
+- Separate live-motion checks pass: five drawer open/close actions and locked
+  depth taps in both engines at four mobile sizes; four CDP touch swipes;
+  visible HUD below all five mobile drawers; inside/outside click, tab switching
+  and Escape. In both engines Ocean opening/open/closing keeps the dock hidden
+  with unchanged geometry.
+- `npm run check` passes (177 tests, typecheck, lint, formatting); production
+  build passes. Local artifacts and comparison scripts are in
+  `/tmp/abyss-css-refactor/`. No physical iPhone check, deployment, push or remote
+  database migration was performed. Browser emulation does not establish actual
+  iOS browser-chrome or device gesture behavior.
+
+### Physical iPhone acceptance — 2026-10-29
+
+The user reports that the current game passes their iPhone check after CSS
+consolidation. This is user-reported acceptance, separate from the automated
+Chrome/WebKit checks above; the device model and iOS version were not recorded.
+No deployment or remote migration was performed as part of this acceptance.
+
+### Release preparation — 2026-10-29
+
+Fresh full check passes with 177 tests, strict typecheck, lint and formatting;
+production build passes. User-reported iPhone acceptance is recorded above.
+The three research/prestige migrations were applied before publishing v0.3.0.
+Release includes the existing mobile/Ocean cleanup and React render isolation.

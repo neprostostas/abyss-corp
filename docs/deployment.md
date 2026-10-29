@@ -91,7 +91,7 @@ npm run dev
 
 ## Очищення проєкту
 
-Старі шрифти, невикористані модальні стилі, дубльовані нотатки та кеш CLI прибрані. Непотрібний SQLite-архів видалено після переходу на Supabase. Робочий браузерний save, акаунтні журнали й міграції не видалялись. Нові Oxanium і Manrope зберігаються локально з їхніми OFL-ліцензіями.
+Старі шрифти, невикористані модальні стилі, дубльовані нотатки та кеш CLI прибрані. Непотрібний SQLite-архів видалено після переходу на Supabase. Робочий браузерний save, акаунтні журнали й міграції не видалялись. Актуальні Russo One і Manrope зберігаються локально з їхніми OFL-ліцензіями; невикористаний Oxanium прибраний.
 
 Перевірка витоків паролів у Supabase доступна лише на платному Pro-плані та не вмикалась: [опис функції](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection). Обов’язкове підтвердження email і мінімум 10 символів залишаються активними.
 
@@ -132,3 +132,10 @@ The image contains the frontend and Nginx. Public frontend settings come from `n
 - [Facebook](https://supabase.com/docs/guides/auth/social-sign-in/auth-facebook): Meta Developer акаунт зареєстровано й перевірено через SMS. Для сценарію **Authenticate and request data from users with Facebook Login** поточна форма Meta вимагає **Business verification** та **App Review**. Власник не має ФОП/компанії для верифікації й вирішив пропустити Facebook. Meta app не створено, ключі Facebook не генерувалися й у Supabase не додавалися.
 
 Секрети вводяться тільки в панелі провайдерів/Supabase, ніколи в Git чи VITE-змінні. Email-реєстрація вимагає nickname; social та старі акаунти без обраного nickname проходять короткий onboarding. Профіль і рейтинг використовують один captain_name. Фото підтягується тільки коли провайдер його надає; email-логін не має доступу до фото поштового профілю.
+
+## Release v0.3.0 — 2026-10-29
+
+Перед публікацією застосовано локальні міграції research_specialists,
+prestige_completion і prestige_scaling. Рейтинг підтримує 20 рівнів досліджень;
+сервер перевіряє повне завершення забігу та зростання ціни престижу.
+Збереження гравців не скидаються.

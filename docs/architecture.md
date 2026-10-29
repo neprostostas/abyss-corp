@@ -7,7 +7,7 @@
 - `src/application/GameSession.ts`: elapsed-time simulation, commands, offline reports and serialized local saves through `SaveRepository`.
 - `src/application/accountPorts.ts`: account save synchronization status and canonical cloud update contract.
 - `src/infrastructure/supabase`: the configured Supabase client, generated public database types and account save repository.
-- `src/infrastructure/persistence`: strict runtime save validation, explicit version 3-7 migration for account saves.
+- `src/infrastructure/persistence`: strict runtime save validation, explicit migration from versions 3–7 into version 8.
 - `src/app`: authentication lifecycle, one game runtime per user ID, cloud sync scheduling and route selection.
 - `src/ui`: the ocean scene, upgrades, compact equipment panels, account forms and read-only database browser.
 
@@ -23,7 +23,7 @@ Authentication changes remount the game by user ID. An old runtime can write onl
 
 ## Saving and conflicts
 
-The account repository implements `SaveRepository`. Each local journal is stored under `abyss-corp.account.<user-id>` with the save, acknowledged server revision and dirty marker. Domain saves keep version 7; account identity and server revision belong to the storage envelope.
+The account repository implements `SaveRepository`. Each local journal is stored under `abyss-corp.account.<user-id>` with the save, acknowledged server revision and dirty marker. Domain saves keep version 8; account identity and server revision belong to the storage envelope.
 
 Loading reads the server before enabling gameplay. An invalid device journal is retained under the account `.corrupt` key and can be replaced only by a valid cloud copy. A missing or unreachable cloud row also blocks loading when a previously acknowledged journal or a recovery backup exists. Only a genuine first-upload draft at revision zero can resume without a server row; existing progress is never silently replaced by a new game. A clean journal follows the cloud copy. A dirty journal resumes only when its base revision still matches the server; otherwise the rejected device journal is backed up and the canonical cloud copy loads automatically. Load failures never create or overwrite a fresh cloud save.
 
@@ -35,11 +35,31 @@ Legacy device import has been removed. Account saves remain isolated by user ID.
 
 ## UI and deployment
 
-The game remains a viewport-sized ocean with a compact HUD, upgrade deck and bottom navigation. Secondary systems open in a non-modal side panel; narrow screens use a scrolling bottom panel. Affordable actions use existing domain offers. Tutorial overlays, repeated explanatory hints, experimental events and usage sharing have been removed.
+The game remains a viewport-sized ocean with a compact HUD, upgrade deck and bottom navigation. Secondary systems open in a non-modal side panel; narrow and short screens use fixed panels with independently scrolling content. Affordable actions use existing domain offers. Tutorial overlays, repeated explanatory hints, experimental events and usage sharing have been removed.
 
 The account and admin routes scroll independently on short screens. Authenticated game and admin UI are loaded separately. Netlify serves the Vite `dist` bundle and rewrites application paths to `index.html`. Supabase supplies the shared managed backend. See [deployment](deployment.md).
 
 `npm run check` validates strict TypeScript (including tests), ESLint, formatting and the regression suite. Tests use the stable Node.js test runner with `tsx` for TypeScript, fake clocks, device storage and a mocked transport. They cover seeded action sequences, elapsed-time partitioning, save validation, offline limits, interrupted writes, expedition conflicts, missing cloud rows, account journal isolation and Unicode names. They make no requests to player databases or email services. Netlify and the container build run these checks before publishing. SQL policies and real browser layout require separate integration verification.
+
+## Styles and scene ownership
+
+Styles are imported once, before rendering, in this order:
+
+- `theme.css`: typography, shared controls, progress bars and accessibility.
+- `game.css`: viewport layout, HUD, production, upgrades and bottom navigation.
+- `panels.css`: drawers, research, missions, crew and base management.
+- `account.css`: authentication, profile, standings and database tools.
+- `analytics.css`: reports, charts, cookie preferences and privacy.
+- `world.css`: ocean art, depth navigation and scene transitions.
+
+Responsive rules live with their owning components. Preserve the import order;
+shared selectors still participate in the CSS cascade. Avoid adding separate
+visual override files when changing an existing component.
+
+`DepthScene` owns transitions between established and locked depths.
+`LockedDepthScene` presents the unlock gate without a second transition state.
+`useSurfaceReady` handles the surface reveal delay for the HUD and panel controls.
+Russo One is the preloaded interface font; Manrope is a fallback loaded on demand.
 
 ## Captain standings
 
@@ -63,7 +83,7 @@ Business save conflicts use SQLSTATE `PT409` (HTTP 409). `40001` is reserved for
 
 ## Smooth submarine movement
 
-`useSubmarineMotion` updates one SVG transform through `requestAnimationFrame`, interpolating between authoritative economic snapshots. React and economy stay at their existing 10 Hz cadence; no per-frame global state is introduced. The render loop stops in hidden tabs, cleans up on unmount and respects reduced motion. Position follows the same curve in both directions and clamps at the endpoints; visual frames never award production.
+`useSubmarineMotion` updates one SVG transform through `requestAnimationFrame`, interpolating between authoritative economic snapshots. React and economy stay at their existing 10 Hz cadence; no per-frame global state is introduced. The render loop runs only while the submarine interpolates between different positions. It stops after arrival, during stationary production, in hidden tabs and for reduced motion, and cleans up on unmount. Position follows the same curve in both directions and clamps at the endpoints; visual frames never award production.
 
 ## Visitor analytics and consent
 
@@ -90,3 +110,13 @@ When an account has neither cloud progress nor an account journal/backup, Accoun
 Social buttons use the public Supabase Auth settings endpoint and appear only for enabled supported providers. The catalog includes Google, Discord, GitHub, Microsoft (azure), X (x), Twitch, LinkedIn OIDC, Telegram and Steam custom providers, plus the deferred Facebook option. Apple has been removed. Google stays prominent; other enabled providers appear in a native collapsible list with labelled local SVG icons. The deployment-reviewed public/auth-providers.json manifest supplements GoTrue settings for custom providers and X when absent from the settings response. It starts empty; adding a provider there does not configure or authenticate its backend. Telegram and Steam must not be exposed until their backend setup and email-less account onboarding are complete. OAuth returns to the primary domain; no provider secrets live in the frontend. A provider’s name and HTTPS avatar are shown in the private profile; missing/broken images use a grapheme initial. Provider identity names never become public nicknames automatically. Ordinary email sign-in does not supply a profile photo. Microsoft requests the required email scope; provider scopes avoid repository, message, channel management and bot permissions.
 
 Account UI regressions mount React in JSDOM under the Node test runner; they exercise forms, onboarding and failed avatar loading without launching a browser or calling live auth. Development/test Node versions follow JSDOM requirements in package.json.
+
+Research includes trade, storage, engineering (5% production upgrade discount per level), and surveying (4% depth unlock discount per level). Each path has five levels; later levels retain the 900 m and 1900 m requirements. Expedition eligibility continues to require only the original trade/storage paths, so existing expedition unlocks do not regress.
+
+Each outpost can hire a quartermaster (+4 slots per level) and trade officer (+15% sale value per level), both capped at three levels. Their optional `specialists` state and optional new research keys extend v8 saves; missing keys behave as level zero. Bonuses feed the shared production configuration for manual, automatic, and offline simulation. The research leaderboard projection migration expands the total to 20.
+
+Prestige now requires all five bases, 25,000 credits, max production and crew at every base, all four research paths, all shared facilities, all seven claimed missions and all three claimed expeditions. `getPrestigeOffer` exposes category counts for the Prestige checklist. The local `prestige_completion` SQL migration applies the same requirements to the persisted run before the existing atomic reset.
+
+Ocean is a separate shortcut above depth navigation; the footer holds Research, Missions, Base and Leaders. Ocean contains only centered region cards. Guest Leaders uses its own invitation instead of reusing profile/reset controls.
+
+Prestige's credit goal scales by (8/5)^rank, rounded up to the next 1,000 credits: 25k, 40k, 64k, 103k. Exact integer arithmetic avoids floating point rounding differences with Postgres numeric. The +20% sale bonus stays additive. Full completion is required on every run, and server epoch/revision checks still prevent duplicate resets.
