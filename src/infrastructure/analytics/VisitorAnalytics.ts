@@ -1,3 +1,4 @@
+import { randomId } from '../identity/randomId';
 export type Consent = 'accepted' | 'declined' | null;
 interface ConsentState {
   readonly consent: Consent;
@@ -92,8 +93,8 @@ export class VisitorAnalytics {
     // Administration traffic and recovery pages are not product analytics.
     if (path !== '/' || this.lastPage === path) return;
     this.lastPage = path;
-    const visitor = cookie(cookieName) ?? crypto.randomUUID();
-    const session = cookie(sessionCookie) ?? crypto.randomUUID();
+    const visitor = cookie(cookieName) ?? randomId();
+    const session = cookie(sessionCookie) ?? randomId();
     setCookie(cookieName, visitor, 180 * 86400);
     setCookie(sessionCookie, session, 1800);
     const payload = JSON.stringify({

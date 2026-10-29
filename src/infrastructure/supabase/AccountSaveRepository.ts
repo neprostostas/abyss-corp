@@ -1,3 +1,4 @@
+import { randomId } from '../identity/randomId';
 import { getCampaign } from '../../domain/campaign';
 import { z } from 'zod';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -317,7 +318,7 @@ export class AccountSaveRepository implements AccountSavePort {
       const args = {
         account_id: this.userId,
         payload: z.json().parse(validateSave(save)),
-        operation_id: crypto.randomUUID(),
+        operation_id: randomId(),
       };
       const perform = () =>
         prestige
@@ -363,7 +364,7 @@ export class AccountSaveRepository implements AccountSavePort {
     this.publish({ status: 'syncing', error: null });
     try {
       const pendingWrite = captured.pendingWrite ?? {
-        id: crypto.randomUUID(),
+        id: randomId(),
         save: captured.save,
       };
       captured = { ...captured, pendingWrite };

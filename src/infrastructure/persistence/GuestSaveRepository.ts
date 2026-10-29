@@ -1,3 +1,4 @@
+import { randomId } from '../identity/randomId';
 import type { GameSave, SaveRepository } from '../../application/ports';
 import { validateSave } from './saveSchema';
 
@@ -63,7 +64,7 @@ export class GuestSaveRepository implements SaveRepository {
   }
   reset(save: GameSave): Promise<void> {
     return new Promise((resolve) => {
-      const generation = crypto.randomUUID();
+      const generation = randomId();
       this.storage().setItem(
         this.key,
         JSON.stringify({ generation, save: validateSave(save) }),

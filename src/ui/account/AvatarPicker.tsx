@@ -1,3 +1,4 @@
+import { randomId } from '../../infrastructure/identity/randomId';
 import { avatarUploadFormat } from '../../infrastructure/images/avatarUploadFormat';
 import { useRef, useState } from 'react';
 import type { SupabaseClient, User } from '@supabase/supabase-js';
@@ -109,7 +110,7 @@ export function AvatarPicker({
               void run(async () => {
                 const image = await prepareAvatar(selected);
                 const format = avatarUploadFormat(image);
-                const path = `${user.id}/${crypto.randomUUID()}.${format.extension}`;
+                const path = `${user.id}/${randomId()}.${format.extension}`;
                 const bucket = client.storage.from('avatars');
                 const { error: failure } = await bucket.upload(path, image, {
                   contentType: format.contentType,
