@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { useSubmarineMotion } from './useSubmarineMotion';
 import { SUBMARINE_ROUTE, submarinePosition } from './submarineRoute';
 import { UpgradeReveal } from './UpgradeReveal';
@@ -36,6 +37,7 @@ export function OutpostIllustration({
   bottleneck: UpgradeId | null;
   onSelect: (id: UpgradeId) => void;
 }) {
+  const sceneId = useId();
   const layer = LAYERS[layerId];
   const resource = config.resource;
   const production = getProductionSummary(game, config);
@@ -72,34 +74,46 @@ export function OutpostIllustration({
       aria-label={`${layer.name} underwater outpost`}
     >
       <defs>
-        <linearGradient id="shell" x2=".7" y2="1">
+        <linearGradient id={`${sceneId}-shell`} x2=".7" y2="1">
           <stop stopColor="#fffeed" />
           <stop offset=".5" stopColor="#e9f0dc" />
           <stop offset="1" stopColor="#abc6bd" />
         </linearGradient>
-        <linearGradient id="glass-dome" x1="0" y1="0" x2=".8" y2="1">
+        <linearGradient
+          id={`${sceneId}-glass-dome`}
+          x1="0"
+          y1="0"
+          x2=".8"
+          y2="1"
+        >
           <stop stopColor="#a8fff1" />
           <stop offset=".35" stopColor="#42c5c4" />
           <stop offset="1" stopColor="#147b91" />
         </linearGradient>
-        <linearGradient id="sub-shell" x2=".2" y2="1">
+        <linearGradient id={`${sceneId}-sub-shell`} x2=".2" y2="1">
           <stop stopColor="#ffe89a" />
           <stop offset=".55" stopColor="#fbc457" />
           <stop offset="1" stopColor="#dda23f" />
         </linearGradient>
-        <linearGradient id="rock-front" x2=".3" y2="1">
+        <linearGradient id={`${sceneId}-rock-front`} x2=".3" y2="1">
           <stop stopColor="#285c67" />
           <stop offset="1" stopColor="#103b4d" />
         </linearGradient>
-        <linearGradient id="rock-top" x2="1" y2="1">
+        <linearGradient id={`${sceneId}-rock-top`} x2="1" y2="1">
           <stop stopColor="#568c85" />
           <stop offset="1" stopColor="#2b666d" />
         </linearGradient>
-        <radialGradient id="mineral-glow">
+        <radialGradient id={`${sceneId}-mineral-glow`}>
           <stop stopColor={resource.color} stopOpacity=".4" />
           <stop offset="1" stopColor={resource.color} stopOpacity="0" />
         </radialGradient>
-        <filter id="object-shadow" x="-50%" y="-50%" width="200%" height="220%">
+        <filter
+          id={`${sceneId}-object-shadow`}
+          x="-50%"
+          y="-50%"
+          width="200%"
+          height="220%"
+        >
           <feDropShadow
             dx="0"
             dy="8"
@@ -185,11 +199,11 @@ export function OutpostIllustration({
       />
       <path
         d="m138 574 113-42 111 23 88-50 140 42 94-68 160 32 147 80-40 91-131 13-91 64-147-27-92 29-122-59-99 4Z"
-        fill="url(#rock-front)"
+        fill={`url(#${sceneId}-rock-front)`}
       />
       <path
         d="m138 574 113-42 111 23 88-50 140 42 94-68 160 32 147 80-150 48-148-30-132 32-113-41-104 24Z"
-        fill="url(#rock-top)"
+        fill={`url(#${sceneId}-rock-top)`}
       />
       <path
         d="M138 574 344 624 448 600 561 641 693 609 841 639 991 591"
@@ -234,8 +248,14 @@ export function OutpostIllustration({
         />
         <path d="M193 563q-10-22-34-34m769 24q18-26 35-27" strokeWidth="8" />
       </g>
-      <ellipse cx="290" cy="536" rx="118" ry="90" fill="url(#mineral-glow)" />
-      <g filter="url(#object-shadow)">
+      <ellipse
+        cx="290"
+        cy="536"
+        rx="118"
+        ry="90"
+        fill={`url(#${sceneId}-mineral-glow)`}
+      />
+      <g filter={`url(#${sceneId}-object-shadow)`}>
         {resource.shape === 'pearl' ? (
           <g fill={resource.color} stroke="#d2a6df" strokeWidth="2">
             <path d="M237 543q-2-45 46-29 47-18 44 29l-43 22Z" fill="#9867aa" />

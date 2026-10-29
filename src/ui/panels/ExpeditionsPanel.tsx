@@ -69,7 +69,7 @@ export function ExpeditionsPanel({
         </button>
       ) : (
         <span className="expedition-status" role="status">
-          Supplying cargo
+          {offer.pilotsReady ? 'Supplying cargo' : 'Waiting for pilots'}
         </span>
       )}
       {offer.state.completed > 0 && (

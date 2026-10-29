@@ -1,0 +1,1825 @@
+/* Ocean environments, depth navigation, and scene transitions.
+ * Width queries adapt the map; height queries compact locked-depth content.
+ * The expanded depth island retains three visible rows and scrolls all depths.
+ */
+.depth-orb .game-icon {
+  width: 26px;
+  height: 26px;
+  color: #b1fff0;
+}
+.depth-1 .depth-orb .game-icon {
+  color: #f6d591;
+}
+.depth-2 .depth-orb .game-icon {
+  color: #e9c6f0;
+}
+.depth-price .game-icon {
+  width: 11px;
+  height: 11px;
+}
+@media (max-width: 520px) {
+  .depth-orb .game-icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+@media (max-height: 650px) and (min-width: 521px) {
+  .depth-orb .game-icon {
+    width: 21px;
+    height: 21px;
+  }
+}
+.depth-node.selected > b {
+  color: #fff0b8;
+}
+.game-shell .depth-orb .game-icon {
+  width: 24px;
+  height: 24px;
+}
+@media (max-height: 650px) {
+  .game-shell .depth-orb .game-icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+.game-shell .depth-node.selected {
+  color: #f3e2b4;
+  border-color: transparent;
+  background: transparent;
+}
+.game-shell .depth-node.can-unlock {
+  border-color: #e6cc8c40;
+}
+.game-shell .depth-island .depth-node .depth-orb > .game-icon {
+  width: 24px;
+  height: 24px;
+}
+.game-shell .depth-island .depth-node.selected {
+  border-color: #a8e8d940;
+  background: #b9e7df10;
+  box-shadow: none;
+}
+.game-shell .depth-island .depth-node.can-unlock {
+  background: #e6cc8c08;
+}
+.game-shell .depth-island .depth-node.unlocked {
+  grid-template-rows: 26px 16px;
+}
+.depth-scene-frame.arriving {
+  animation: depth-scene-enter 550ms cubic-bezier(0.45, 0, 0.2, 1) both;
+}
+.depth-scene-frame.departing {
+  animation: depth-scene-exit 550ms cubic-bezier(0.45, 0, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .depth-scene-frame.arriving {
+    animation-duration: 1ms;
+  }
+  .depth-scene-frame.departing {
+    display: none;
+  }
+}
+.ocean-heading-icon .game-icon {
+  width: 23px;
+  height: 23px;
+}
+.ocean-depth-progress > .is-discovered {
+  background: var(--color-aqua);
+}
+.ocean-region-lock .game-icon {
+  width: 16px;
+  height: 16px;
+}
+.locked-depth-unlock .game-icon,
+.locked-depth-prerequisite .game-icon {
+  width: 17px;
+  height: 17px;
+}
+.locked-depth-prerequisite .game-icon:last-child {
+  rotate: -90deg;
+}
+.locked-depth-back .game-icon {
+  width: 14px;
+  height: 14px;
+  rotate: -90deg;
+}
+@keyframes depth-scene-enter {
+  from {
+    transform: translateY(calc(var(--depth-direction) * max(100%, 100dvh)));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes depth-scene-exit {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(
+      calc(var(--depth-direction) * max(100%, 100dvh) * -1)
+    );
+  }
+}
+
+.ocean-stage {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 52% -15%, #61c2b9 0, transparent 55%),
+    linear-gradient(#216c7c, #196c7c 50%, #164a61);
+}
+.biome-golden-trench .ocean-stage {
+  background:
+    radial-gradient(ellipse at 50% -25%, #4b9eab 0, transparent 60%),
+    linear-gradient(#205d7a, #1d5b75 50%, #163d56);
+}
+.biome-pearl-caverns .ocean-stage {
+  background:
+    radial-gradient(ellipse at 48% -30%, #6777ac 0, transparent 60%),
+    linear-gradient(#213b64, #294d70 50%, #1a344f);
+}
+.ocean-caustics {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  background: repeating-radial-gradient(
+    ellipse at 40% -15%,
+    transparent 0 37px,
+    #c7fff4 40px 41px,
+    transparent 43px 90px
+  );
+  transform: scale(1.4, 0.6);
+  transform-origin: top;
+  pointer-events: none;
+}
+.location-hud {
+  position: absolute;
+  z-index: 2;
+  top: 24px;
+  left: 127px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+}
+.depth-rail {
+  position: absolute;
+  z-index: 3;
+  top: 100px;
+  left: 23px;
+  width: 68px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.depth-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 68px;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  color: #c5e4df;
+}
+.depth-node:hover:not(:disabled) {
+  background: none;
+}
+.depth-node:disabled {
+  background: none;
+  box-shadow: none;
+  color: #7aa0b4;
+}
+.depth-orb {
+  width: 49px;
+  height: 49px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 20%, #69bcae, #1b6477);
+  border: 3px solid #699c9f;
+  box-shadow:
+    0 3px 0 #164458,
+    0 5px 14px #083b4b66,
+    inset 0 1px #ddfff070;
+}
+.depth-1 .depth-orb {
+  background: radial-gradient(circle at 30% 20%, #927f52, #3a5b69);
+}
+.depth-2 .depth-orb {
+  background: radial-gradient(circle at 30% 20%, #806d9a, #405478);
+}
+.depth-node.locked .depth-orb {
+  filter: saturate(0.45);
+  opacity: 0.7;
+}
+.depth-node.locked:not(:disabled) .depth-orb {
+  opacity: 1;
+  border-color: #e6bd65;
+}
+.depth-node b {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.depth-node small {
+  margin-left: 2px;
+  font-size: 9px;
+  font-weight: 500;
+}
+.depth-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  margin-top: -3px;
+}
+.world-object {
+  cursor: pointer;
+  outline: none;
+}
+.world-object:hover {
+  filter: brightness(1.07);
+}
+.selection-ring {
+  fill: #abf4d915;
+  stroke: #c1f4d8;
+  stroke-width: 3;
+  stroke-dasharray: 6 8;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.world-object:hover .selection-ring,
+.world-object.selected .selection-ring,
+.world-object:focus-visible .selection-ring {
+  opacity: 0.9;
+}
+.model-level rect {
+  fill: #103b4bcc;
+  stroke: #a9d8c44d;
+  stroke-width: 1;
+}
+.model-level text {
+  fill: #d7eee0;
+  font:
+    800 12px 'Avenir Next',
+    sans-serif;
+  letter-spacing: 1px;
+}
+.sub-route {
+  fill: none;
+  stroke: #c0f3d6;
+  stroke-width: 2;
+  stroke-dasharray: 3 14;
+  opacity: 0.15;
+}
+.sun-rays {
+  animation: light-sway 16s ease-in-out infinite alternate;
+  transform-origin: top center;
+}
+.ambient-bubbles {
+  animation: bubbles-rise 9s ease-in-out infinite alternate;
+}
+.fish-school {
+  animation: fish-drift 18s ease-in-out infinite alternate;
+}
+.jellyfish {
+  animation: jelly-drift 7s ease-in-out infinite alternate;
+}
+.sub-idle {
+  animation: sub-bob 3s ease-in-out infinite alternate;
+}
+.rig-drilling {
+  animation: drill 0.16s ease-in-out infinite alternate;
+}
+.beacon-light {
+  animation: beacon 2.5s ease-in-out infinite alternate;
+}
+.refinery-light {
+  animation: beacon 0.7s ease-in-out infinite alternate;
+}
+.mining-sparks {
+  animation: spark 0.3s ease-in-out infinite alternate;
+}
+@media (min-width: 1400px) {
+  .location-hud {
+    left: max(140px, calc((100vw - 1040px) / 2));
+  }
+  .depth-rail {
+    left: 40px;
+  }
+}
+@media (max-width: 700px) {
+  .location-hud {
+    left: 109px;
+  }
+  .depth-rail {
+    left: 18px;
+  }
+}
+@media (max-width: 520px) {
+  .location-hud {
+    left: 86px;
+    top: 20px;
+  }
+  .depth-rail {
+    top: 91px;
+    left: 8px;
+    gap: 19px;
+    width: 57px;
+  }
+  .depth-node {
+    width: 57px;
+  }
+  .depth-orb {
+    width: 41px;
+    height: 41px;
+  }
+  .depth-node b {
+    font-size: 10px;
+  }
+}
+@media (max-height: 650px) and (min-width: 521px) {
+  .location-hud {
+    top: 14px;
+  }
+  .depth-rail {
+    top: 65px;
+    gap: 12px;
+  }
+  .depth-orb {
+    width: 37px;
+    height: 37px;
+  }
+  .depth-node b {
+    font-size: 10px;
+  }
+}
+.upgrade-new {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: machine-settle 440ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.upgrade-wave {
+  fill: none;
+  stroke: #d5eec5;
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: purchase-ring 600ms ease-out both;
+}
+.upgrade-bubble {
+  fill: #c2f3eb33;
+  stroke: #dcfff1;
+  stroke-width: 1.5;
+  animation: purchase-bubble 540ms ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .upgrade-effects {
+    display: none;
+  }
+}
+.location-hud > div > span {
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}
+.depth-orb {
+  position: relative;
+}
+.depth-ready {
+  position: absolute;
+  right: -7px;
+  top: -5px;
+  border-radius: 50%;
+  background: #ffda80;
+  color: #183744;
+  width: 18px;
+  height: 18px;
+  font:
+    400 12px 'Russo One',
+    sans-serif;
+}
+.can-unlock .depth-orb {
+  border-color: #ffdb88;
+  box-shadow: 0 0 16px #eec66f55;
+}
+.world-object.production-limit .selection-ring {
+  opacity: 0.65;
+  fill: #edc9790a;
+  stroke: #edc979;
+  stroke-dasharray: none;
+  stroke-width: 2;
+}
+.world-object.production-limit .model-level rect {
+  stroke: #edc979;
+}
+.depth-resource {
+  width: 27px;
+  height: 27px;
+}
+.depth-node.selected .depth-orb {
+  border-color: #fff0b8;
+  box-shadow: 0 0 0 3px #fff0b829;
+}
+.ocean-stage {
+  container: ocean / inline-size;
+}
+.game-shell > .ocean-stage {
+  grid-column: 1;
+  grid-row: 2;
+  background: transparent;
+}
+.ocean-atmosphere {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+.game-shell > .ocean-caustics {
+  z-index: 0;
+}
+.game-shell .depth-rail {
+  top: 50%;
+  transform: translateY(-60%);
+  left: 16px;
+  width: 68px;
+  gap: 5px;
+  padding: 6px;
+  border: 1px solid #c7ebe820;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 84%, transparent);
+  box-shadow: 0 6px 18px #03172320;
+}
+.game-shell .depth-node {
+  width: 54px;
+  min-height: 68px;
+  padding: 8px 4px;
+  gap: 4px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  box-shadow: none;
+  color: #a9c4c7;
+}
+.game-shell .depth-orb {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+}
+.game-shell .depth-resource {
+  width: 24px;
+  height: 24px;
+}
+.game-shell .depth-node.selected .depth-orb {
+  box-shadow: none;
+  border: 0;
+}
+.game-shell .depth-node b {
+  font: 650 11px / 1.2 var(--font-body);
+}
+.game-shell .depth-price {
+  font-size: 9px;
+}
+.game-shell .depth-node.can-unlock .depth-orb {
+  box-shadow: none;
+}
+@media (max-width: 760px) {
+  .game-shell .depth-rail {
+    left: 10px;
+    width: 56px;
+    border-radius: 16px;
+    padding: 4px;
+  }
+  .game-shell .depth-node {
+    width: 46px;
+    min-height: 60px;
+    padding: 6px 2px;
+    border-radius: 11px;
+  }
+}
+@media (max-height: 650px) {
+  .game-shell .depth-rail {
+    top: 12px;
+    transform: none;
+    gap: 3px;
+    padding: 4px;
+  }
+  .game-shell .depth-node {
+    padding-block: 5px;
+    gap: 2px;
+  }
+  .game-shell .depth-orb {
+    width: 24px;
+    height: 24px;
+  }
+  .game-shell .depth-resource {
+    width: 22px;
+    height: 22px;
+  }
+  .game-shell .depth-node b {
+    font-size: 10px;
+  }
+  .game-shell .depth-price {
+    font-size: 8px;
+  }
+}
+@media (max-width: 760px), (max-width: 1000px) and (max-height: 500px) {
+  .game-shell > .ocean-atmosphere {
+    position: fixed;
+  }
+  .game-shell > .ocean-caustics {
+    position: fixed;
+    transform: scaleY(0.6);
+  }
+  .game-shell > .ocean-stage {
+    min-height: 360px;
+  }
+  .game-shell .depth-rail {
+    top: 64px;
+    transform: none;
+  }
+}
+.game-shell .depth-node {
+  transition: color 180ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell .depth-node {
+    transition: none;
+  }
+}
+.game-shell .depth-node {
+  height: 76px;
+  flex: 0 0 76px;
+}
+.game-shell .depth-price {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  right: 0;
+  justify-content: center;
+}
+@media (max-width: 760px) {
+  .game-shell .depth-node {
+    height: 68px;
+    flex-basis: 68px;
+  }
+}
+@media (max-height: 650px) {
+  .game-shell .depth-node {
+    height: 60px;
+    min-height: 60px;
+    flex-basis: 60px;
+  }
+}
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .game-shell .depth-rail {
+    background:
+      linear-gradient(145deg, #e5fff70c, transparent 48%),
+      color-mix(in srgb, var(--ocean-panel-bottom) 76%, transparent);
+    border: 1px solid #dbfff329;
+    -webkit-backdrop-filter: blur(16px) saturate(115%);
+    backdrop-filter: blur(16px) saturate(115%);
+    box-shadow:
+      inset 0 1px 0 #effffb1f,
+      inset 0 -1px 0 #071b241a,
+      0 8px 24px #03172326;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .game-shell .depth-rail {
+    background: var(--ocean-panel-bottom);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+.biome-thermal-vents .ocean-stage,
+.biome-midnight-rift .ocean-stage {
+  background: transparent;
+}
+.game-shell .depth-rail.depth-island {
+  display: block;
+  width: 68px;
+  height: 96px;
+  padding: 8px;
+  overflow: hidden;
+  border-radius: 30px;
+  transform: none;
+  top: 60px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 94%, #020e18);
+  border: 0;
+  box-shadow:
+    0 12px 28px #00111b40,
+    inset 0 1px #edfff51f;
+  transition:
+    height 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 420ms,
+    box-shadow 300ms,
+    opacity 300ms;
+  z-index: 6;
+}
+.game-shell .depth-island.is-expanded {
+  width: 84px;
+  border-radius: 28px;
+  box-shadow:
+    0 16px 36px #00111b60,
+    inset 0 1px #edfff529;
+}
+.depth-island-toggle {
+  width: 100%;
+  height: 80px;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 2px;
+  border: 0;
+  background: transparent;
+  color: var(--color-aqua);
+  border-radius: 24px;
+}
+.depth-island-toggle b {
+  font-size: 12px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.depth-island-toggle small {
+  font-size: 9px;
+  margin-left: 2px;
+  color: var(--color-muted);
+}
+.island-grip {
+  width: 16px;
+  height: 3px;
+  border-radius: 3px;
+  background: #acd6d65c;
+  transition: width 300ms;
+}
+.is-expanded .island-grip {
+  width: 25px;
+}
+.depth-island-list {
+  position: relative;
+  height: 198px;
+  margin-top: 8px;
+  padding-block: 6px;
+  scroll-padding-block: 6px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  scrollbar-width: none;
+  opacity: 0;
+  transform: translateY(9px) scale(0.94);
+  transition:
+    opacity 160ms,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.depth-island-list::-webkit-scrollbar {
+  display: none;
+}
+.is-expanded .depth-island-list {
+  opacity: 1;
+  transform: none;
+  transition-delay: 70ms;
+}
+.depth-island button {
+  touch-action: manipulation;
+}
+.depth-island button:focus-visible {
+  outline: 2px solid var(--color-aqua);
+  outline-offset: -3px;
+}
+@media (max-height: 650px) {
+  .depth-island-list {
+    height: 158px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell .depth-rail.depth-island,
+  .depth-island-list,
+  .island-grip {
+    transition: none;
+  }
+}
+.game-shell .depth-island .depth-node {
+  width: 100%;
+  border-radius: 20px;
+  display: grid;
+  grid-template-rows: 26px 16px 14px;
+  align-content: center;
+  justify-items: center;
+  gap: 5px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+.game-shell .depth-island .depth-node .depth-orb {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: none;
+  transform: none;
+}
+.game-shell .depth-island .depth-node .depth-resource {
+  width: 24px;
+  height: 24px;
+}
+.game-shell .depth-island .depth-node > b {
+  line-height: 16px;
+  font-size: 11px;
+  font-weight: 400;
+}
+.game-shell .depth-island .depth-node .depth-price {
+  position: static;
+  margin: 0;
+  padding: 0;
+  line-height: 14px;
+  font-size: 9px;
+  color: #cfbd8c;
+}
+.game-shell .depth-island .depth-node .depth-ready {
+  width: 5px;
+  height: 5px;
+  top: 0;
+  right: -5px;
+  font-size: 0;
+  border: 0;
+  box-shadow: none;
+  background: var(--color-accent);
+}
+.game-shell .depth-island .depth-island-toggle {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  transform: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .game-shell .depth-island .depth-node:hover:not(:disabled) {
+    background: #b9e7df19;
+  }
+}
+.game-shell .depth-island .depth-island-toggle {
+  position: relative;
+  align-items: center;
+}
+.island-available {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #f3d79d;
+  font-size: 10px;
+  line-height: 16px;
+}
+.game-shell.surface-mode > .ocean-stage {
+  pointer-events: none;
+}
+.game-shell > .game-panel.ocean-surface {
+  position: fixed;
+  grid-area: auto;
+  inset: 0;
+  width: auto;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  overflow: hidden;
+  transform-origin: 50% 25%;
+  opacity: 0;
+}
+.game-shell.surface-closing > .game-panel.ocean-surface {
+  transition-delay: 0ms;
+}
+.ocean-surface button {
+  border: 0;
+  box-shadow: none;
+  touch-action: manipulation;
+}
+.ocean-surface button:focus-visible {
+  outline: 2px solid #c0ebd8;
+  outline-offset: -3px;
+}
+.surface-region {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  color: #e1f5e8;
+}
+.surface-region small {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: #aacbc8;
+}
+.surface-region > span:not(.surface-beacon) {
+  font-size: 11px;
+  color: #b4d9cd;
+}
+@media (max-width: 600px) {
+  .game-shell > .game-panel.ocean-surface {
+    inset: 0;
+    border-radius: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell.panel-open > .game-panel.ocean-surface {
+    animation: none;
+  }
+  .game-shell.surface-mode > .ocean-stage {
+    transition: none;
+  }
+}
+@media (max-width: 760px) {
+  .game-shell > .game-panel.ocean-surface {
+    position: fixed;
+    inset: 0;
+  }
+}
+.game-shell .depth-island,
+.game-shell .location-hud {
+  transition: opacity 300ms ease;
+}
+.surface-region {
+  text-shadow: 0 3px 18px #052739;
+}
+@media (max-width: 760px) {
+  .surface-region {
+    gap: 6px;
+  }
+  .surface-region small {
+    font-size: 8px;
+  }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .surface-region {
+    gap: 4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell .depth-island,
+  .game-shell .location-hud {
+    transition: none;
+  }
+}
+.ocean-surface .surface-region {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 45%;
+  text-align: left;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 0 8px 8px;
+  margin: 0;
+  min-height: 44px;
+  transition: scale 180ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ocean-surface .surface-region {
+    transition: none;
+  }
+}
+.game-shell > .game-panel.ocean-surface {
+  z-index: 30;
+  transform: translateY(-28px);
+  transition:
+    opacity var(--surface-travel) cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform var(--surface-travel) cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.game-shell.surface-open > .game-panel.ocean-surface {
+  opacity: 1;
+  transform: translateY(0);
+}
+.game-shell > .ocean-stage {
+  transform-origin: 50% 85%;
+  transform: translateY(0);
+  transition:
+    opacity var(--surface-travel) cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform var(--surface-travel) cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.game-shell.surface-open > .ocean-stage {
+  opacity: 0;
+  transform: translateY(40px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell > .ocean-stage {
+    transition: none;
+  }
+}
+.ocean-surface .surface-region {
+  min-width: 44px;
+  overflow-wrap: anywhere;
+}
+.ocean-surface .surface-region[aria-disabled='true'] {
+  cursor: default;
+}
+.game-shell .depth-island-list {
+  touch-action: pan-y;
+}
+.ocean-atmosphere path {
+  transition:
+    fill 1800ms cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 1800ms cubic-bezier(0.4, 0, 0.2, 1),
+    stop-color 1800ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ocean-atmosphere path {
+    transition: none;
+  }
+}
+.ocean-atmosphere .depth-scenery {
+  transition: opacity 1800ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ocean-atmosphere .depth-scenery {
+    transition: none;
+  }
+}
+.game-shell > .ocean-stage {
+  overflow: visible;
+}
+.depth-scene {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  clip-path: inset(-100dvh 0 var(--scene-footer-clip, 0px));
+  pointer-events: none;
+}
+.depth-scene-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.depth-scene-frame .world-object {
+  pointer-events: auto;
+}
+.depth-scene-frame.departing .world-object,
+.previewing-depth > .ocean-stage {
+  pointer-events: none;
+}
+.location-hud {
+  transition:
+    opacity var(--surface-travel) cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 550ms cubic-bezier(0.45, 0, 0.2, 1),
+    visibility 550ms;
+}
+.previewing-depth .location-hud {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-36px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .depth-scene,
+  .location-hud {
+    transition: none;
+  }
+}
+.depth-identity {
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: fit-content;
+  max-width: calc(100% - 128px);
+  pointer-events: none;
+  text-shadow: 0 2px 16px #04212c40;
+}
+.depth-identity-number {
+  flex: none;
+  color: color-mix(in srgb, var(--color-aqua) 65%, transparent);
+  font-family: var(--font-display);
+  font-size: 76px;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+}
+.depth-identity-copy {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding-left: 18px;
+  border-left: 1px solid var(--color-border);
+}
+.depth-identity h1 {
+  color: var(--color-text);
+  font-size: clamp(18px, 2.2vw, 26px);
+  font-weight: 400;
+  line-height: 1.2;
+  text-wrap: balance;
+  text-align: right;
+}
+@media (max-width: 760px) {
+  .depth-identity {
+    top: 16px;
+    right: 16px;
+    gap: 12px;
+    max-width: calc(100% - 116px);
+  }
+  .depth-identity-number {
+    font-size: 56px;
+  }
+  .depth-identity-copy {
+    padding-left: 12px;
+    gap: 5px;
+  }
+  .depth-identity h1 {
+    font-size: clamp(16px, 4vw, 22px);
+  }
+}
+@media (max-height: 560px) and (min-width: 761px) {
+  .depth-identity-number {
+    font-size: 56px;
+  }
+  .depth-identity {
+    top: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell > .game-panel.ocean-surface,
+  .game-shell.surface-open > .game-panel.ocean-surface,
+  .game-shell.surface-closing > .game-panel.ocean-surface,
+  .surface-open .ocean-surface .surface-region {
+    transition: none;
+  }
+}
+.ocean-world {
+  position: relative;
+  isolation: isolate;
+  height: 100%;
+  overflow: auto;
+  padding: 88px max(28px, calc((100vw - 1080px) / 2)) 32px;
+  background: transparent;
+  color: var(--color-text);
+}
+.ocean-world-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.ocean-heading-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: #93e8d012;
+  color: var(--color-aqua);
+}
+.ocean-world-heading h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.ocean-regions {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+.ocean-surface .ocean-world .surface-region {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  text-shadow: none;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: #143b4b66;
+  box-shadow:
+    inset 0 1px #ecfff314,
+    0 12px 28px #082c3926;
+  overflow: hidden;
+  color: var(--color-text);
+}
+.ocean-surface .ocean-world .ocean-home {
+  padding: 20px 24px 24px;
+}
+.ocean-region-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--color-muted);
+  font-size: 10px;
+}
+.ocean-region-topline > span:first-child {
+  color: var(--color-text);
+}
+.ocean-region-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-aqua);
+  font-size: 9px;
+}
+.ocean-region-status i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-aqua);
+}
+.ocean-region-art {
+  display: block;
+  pointer-events: none;
+}
+.ocean-region-art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.ocean-home .ocean-region-art {
+  margin: 0 -12px;
+}
+.ocean-home-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.ocean-depth-progress {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.ocean-depth-progress > span {
+  width: 18px;
+  height: 4px;
+  border-radius: 2px;
+  background: #a1c7c526;
+}
+.ocean-depth-progress small {
+  margin-left: 6px;
+  font-size: 9px;
+  color: var(--color-muted);
+}
+.ocean-current-base {
+  font-size: clamp(18px, 2.2vw, 24px);
+  font-weight: 400;
+  line-height: 1.3;
+}
+.ocean-current-depth {
+  margin-top: 5px;
+  color: var(--color-muted);
+  font-size: 10px;
+}
+.ocean-frontier {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px;
+  min-width: 0;
+}
+.ocean-surface .ocean-world .ocean-uncharted {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: end;
+  padding: 12px 20px 18px;
+  cursor: default;
+  background: #12394a66;
+}
+.ocean-uncharted .ocean-region-art {
+  grid-column: 1 / -1;
+  height: clamp(90px, 15vh, 140px);
+  opacity: 0.65;
+}
+.ocean-frontier-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.ocean-frontier-copy small {
+  color: var(--color-muted);
+  text-transform: uppercase;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+.ocean-frontier-copy strong {
+  font-size: 17px;
+  font-weight: 400;
+  color: #bad1ce;
+}
+.ocean-region-lock {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  align-self: end;
+  border: 1px solid var(--color-border);
+  border-radius: 11px;
+  background: #0c2e414d;
+  color: var(--color-muted);
+}
+@media (max-width: 760px) {
+  .ocean-world-heading {
+    margin-bottom: 16px;
+  }
+  .ocean-regions {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .ocean-surface .ocean-world .ocean-home {
+    padding: 16px 20px 20px;
+  }
+  .ocean-frontier {
+    grid-template-rows: auto;
+    gap: 12px;
+  }
+  .ocean-surface .ocean-world .ocean-uncharted {
+    border-radius: 18px;
+  }
+  .ocean-uncharted .ocean-region-art {
+    height: 92px;
+    margin-inline: -8px;
+  }
+  .ocean-frontier-copy strong {
+    font-size: 13px;
+  }
+  .ocean-frontier-copy small {
+    font-size: 7px;
+    letter-spacing: 0.04em;
+  }
+  .ocean-region-lock {
+    width: 26px;
+    height: 28px;
+    border: 0;
+    background: transparent;
+  }
+  .ocean-depth-progress {
+    margin-bottom: 10px;
+  }
+}
+.locked-depth-scene {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  color: var(--color-text);
+  pointer-events: none;
+}
+.locked-depth-motion {
+  position: absolute;
+  inset: 0 16px auto 16px;
+  height: max(0px, calc(100dvh - 2 * var(--scene-top)));
+}
+.locked-depth-frame {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.locked-depth-frame::-webkit-scrollbar {
+  display: none;
+}
+.locked-depth-content {
+  width: min(100%, 540px);
+  margin: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.locked-depth-number {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.95;
+  letter-spacing: -0.065em;
+  color: #b5e6d6;
+  text-shadow: 0 8px 32px #092b3926;
+  white-space: nowrap;
+}
+.locked-depth-number small {
+  font-size: 0.23em;
+  letter-spacing: 0;
+  color: var(--color-muted);
+}
+.locked-depth-content h2 {
+  margin: 14px 0 0;
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 400;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.locked-depth-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: min(100%, 320px);
+  margin-top: 24px;
+}
+.locked-depth-scene button {
+  pointer-events: auto;
+  min-height: 48px;
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 400;
+  touch-action: manipulation;
+  box-shadow: none;
+}
+.locked-depth-unlock {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(#f8d789, #e9b95d);
+  color: #263f45;
+}
+.locked-depth-unlock > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.locked-depth-unlock:disabled {
+  color: #bad1cc;
+  background: #a0d8cc17;
+  box-shadow: none;
+}
+.locked-depth-shortfall {
+  margin-top: 10px;
+  font-size: 10px;
+  color: var(--color-muted);
+}
+.locked-depth-prerequisite {
+  display: flex;
+  gap: 10px;
+  background: #a0d8cc17;
+  color: var(--color-aqua);
+}
+.locked-depth-prerequisite span {
+  flex: 1;
+  text-align: left;
+  font-size: 11px;
+}
+.locked-depth-scene .locked-depth-back {
+  min-height: 40px;
+  gap: 8px;
+  margin-top: 10px;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 10px;
+}
+.previewing-depth .depth-island {
+  pointer-events: auto;
+  z-index: 7;
+}
+@media (max-width: 760px) {
+  .locked-depth-motion {
+    inset: 0 12px auto 12px;
+  }
+  .locked-depth-content {
+    padding-inline: 8px;
+  }
+  .locked-depth-content[data-digits='4'] .locked-depth-number {
+    font-size: clamp(60px, 18vw, 108px);
+  }
+  .locked-depth-content h2 {
+    font-size: clamp(20px, 5.4vw, 26px);
+  }
+  .locked-depth-actions {
+    margin-top: 22px;
+  }
+}
+@media (max-height: 560px) {
+  .locked-depth-content {
+    padding-block: 8px;
+  }
+  .locked-depth-actions {
+    margin-top: 16px;
+  }
+}
+.game-shell .depth-rail.depth-island {
+  max-height: calc(100% - 160px);
+}
+.game-shell .depth-island.is-expanded {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+.depth-island-list {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+.game-shell .depth-identity {
+  min-width: 0;
+}
+.depth-identity h1 {
+  overflow-wrap: anywhere;
+}
+.game-shell .locked-depth-frame {
+  pointer-events: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+.locked-depth-content {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.locked-depth-number {
+  max-width: 100%;
+  font-size: clamp(48px, 15vw, 140px);
+}
+.locked-depth-unlock {
+  flex-wrap: wrap;
+}
+.ocean-heading-icon,
+.ocean-region-lock {
+  flex-shrink: 0;
+}
+.ocean-frontier-copy {
+  min-width: 0;
+}
+.ocean-depth-progress {
+  flex-wrap: wrap;
+}
+.ocean-surface .ocean-world .ocean-uncharted {
+  gap: 8px;
+}
+.ocean-frontier-copy strong {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px), (max-height: 500px) {
+  .game-shell > .ocean-stage {
+    min-height: 360px;
+  }
+  .game-shell .depth-identity {
+    top: 12px;
+    right: 12px;
+    gap: 10px;
+    max-width: calc(100% - 112px);
+  }
+  .game-shell .depth-identity-number {
+    font-size: 48px;
+  }
+  .game-shell .depth-identity-copy {
+    padding-left: 10px;
+  }
+}
+@media (max-width: 420px) {
+  .ocean-frontier {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@keyframes light-sway {
+  to {
+    transform: skewX(5deg);
+    opacity: 0.65;
+  }
+}
+@keyframes bubbles-rise {
+  to {
+    transform: translateY(-25px);
+    opacity: 0.2;
+  }
+}
+@keyframes fish-drift {
+  to {
+    transform: translateX(-45px);
+  }
+}
+@keyframes jelly-drift {
+  to {
+    translate: 0 -18px;
+  }
+}
+@keyframes sub-bob {
+  to {
+    transform: translateY(-4px);
+  }
+}
+@keyframes drill {
+  to {
+    transform: translateY(3px);
+  }
+}
+@keyframes beacon {
+  to {
+    opacity: 0.45;
+  }
+}
+@keyframes spark {
+  to {
+    opacity: 0.35;
+    transform: translateY(-4px);
+  }
+}
+@keyframes machine-settle {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: translateY(-3px) scale(1.035, 0.97);
+  }
+  65% {
+    transform: translateY(1px) scale(0.99, 1.025);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes purchase-ring {
+  from {
+    opacity: 0.8;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+@keyframes purchase-bubble {
+  from {
+    opacity: 0.9;
+    transform: translateY(0) scale(0.7);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--drift), -35px) scale(1.1);
+  }
+}
+
+.locked-depth-emblem {
+  width: clamp(72px, 12vh, 120px);
+  height: clamp(72px, 12vh, 120px);
+  margin-bottom: 18px;
+  color: var(--color-aqua);
+  stroke-width: 1.25;
+}
+.game-shell .depth-island.is-expanded {
+  height: 278px;
+  max-height: none;
+}
+.game-shell .depth-island.is-expanded .depth-island-toggle {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.game-shell .depth-island .depth-island-list {
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  transform: none;
+}
+@media (max-height: 650px) {
+  .game-shell .depth-island.is-expanded {
+    height: 236px;
+    top: 60px;
+  }
+  .game-shell .depth-island .depth-orb {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Three visible rows, with the full depth list available by wheel or touch. */
+.game-shell .depth-island .depth-island-list {
+  display: block;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+}
+.game-shell .depth-island .depth-node {
+  min-height: 0;
+  margin: 0;
+  padding: 4px 2px;
+  height: calc((100% - 8px) / 3);
+  margin-bottom: 4px;
+  scroll-snap-align: start;
+}
+.game-shell .depth-island .depth-node:last-child {
+  margin-bottom: 0;
+}
+.ocean-world {
+  padding-top: max(88px, calc(64px + env(safe-area-inset-top)));
+  padding-bottom: max(32px, env(safe-area-inset-bottom));
+  scroll-padding-block: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: safe center;
+}
+.ocean-world-heading {
+  padding-right: 52px;
+  flex-shrink: 0;
+}
+.ocean-regions {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+.ocean-world {
+  padding-inline: max(28px, calc((100vw - 1200px) / 2));
+}
+.ocean-home .ocean-region-art {
+  height: clamp(230px, 34vh, 370px);
+}
+@media (max-width: 760px) {
+  .ocean-world {
+    padding: 116px 16px 24px;
+  }
+  .ocean-home .ocean-region-art {
+    height: clamp(140px, 23vh, 210px);
+  }
+  .ocean-frontier {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ocean-surface .ocean-world .ocean-uncharted {
+    padding: 8px 10px 12px;
+  }
+}
+@media (max-width: 760px) and (max-height: 650px) {
+  .ocean-world {
+    padding: 112px 12px 12px;
+  }
+  .ocean-world-heading {
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+  .ocean-world-heading h1 {
+    font-size: 20px;
+  }
+  .ocean-heading-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+  }
+  .ocean-regions {
+    gap: 10px;
+  }
+  .ocean-surface .ocean-world .ocean-home {
+    padding: 10px 14px;
+  }
+  .ocean-home .ocean-region-art {
+    height: 78px;
+  }
+  .ocean-depth-progress {
+    margin-bottom: 6px;
+  }
+  .ocean-current-base {
+    font-size: 16px;
+  }
+  .ocean-uncharted .ocean-region-art {
+    height: 62px;
+  }
+}
+
+.ocean-world-heading,
+.ocean-regions {
+  position: relative;
+  top: -32px;
+}
+@media (max-height: 650px) {
+  .ocean-world-heading,
+  .ocean-regions {
+    top: -16px;
+  }
+}
+@media (max-width: 760px) {
+  .game-shell .depth-rail.depth-island,
+  .game-shell.previewing-depth .depth-rail.depth-island {
+    position: absolute;
+    left: 10px;
+    top: 60px;
+    transform: none;
+  }
+  .game-shell .locked-depth-motion {
+    inset: 64px 12px 72px 12px;
+    height: auto;
+  }
+  .game-shell .locked-depth-emblem {
+    width: 58px;
+    height: 58px;
+    margin-bottom: 10px;
+  }
+  .game-shell .locked-depth-number {
+    font-size: clamp(52px, 16vw, 80px);
+  }
+  .game-shell .locked-depth-actions {
+    margin-top: 12px;
+  }
+  .game-shell > .ocean-stage {
+    min-height: 0;
+  }
+}
+
+.ocean-surface .ocean-world .ocean-home {
+  border-color: #b4eadb40;
+  filter: none;
+  transform: none;
+  scale: 1;
+  transition: border-color 180ms ease;
+}
+
+.ocean-surface .ocean-world .ocean-home:hover {
+  filter: none;
+  transform: none;
+  scale: 1;
+  transition: border-color 180ms ease;
+  border-color: #b4eadb60;
+}
+@media (max-height: 650px) {
+  .game-shell .locked-depth-motion {
+    top: 58px;
+    bottom: 16px;
+    height: auto;
+  }
+  .game-shell .locked-depth-content {
+    padding-block: 8px;
+  }
+  .game-shell .locked-depth-emblem {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 6px;
+  }
+  .game-shell .locked-depth-number {
+    font-size: clamp(38px, 10vh, 64px);
+  }
+  .game-shell .locked-depth-actions {
+    margin-top: 8px;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .ocean-surface .ocean-world .ocean-home:hover {
+    filter: none;
+    border-color: #b4eadb60;
+    transform: none;
+    scale: 1;
+  }
+  .ocean-home .ocean-region-art {
+    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: 50% 60%;
+  }
+  .ocean-home:hover .ocean-region-art {
+    transform: translateY(-4px) scale(1.035);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ocean-home .ocean-region-art,
+  .ocean-home:hover .ocean-region-art {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* The active region is fully painted before the surface reveal begins. */
+.ocean-surface .ocean-world .ocean-home {
+  background: linear-gradient(155deg, #305f64, #193e50);
+}
+.game-shell > .game-panel.ocean-surface:focus {
+  outline: none;
+}
+/* Persistent active-region outline, ready before the Ocean entrance. */
+.ocean-surface .ocean-world .ocean-home[aria-current='location'] {
+  outline: 3px solid var(--color-aqua);
+  outline-offset: 4px;
+}

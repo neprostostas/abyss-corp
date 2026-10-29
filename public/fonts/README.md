@@ -1,15 +1,12 @@
 # Typography
 
-Oxanium for instruments and headings; Manrope for controls and text. Both are self-hosted variable fonts under the SIL Open Font License. Keep the corresponding OFL files when redistributing.
+Russo One is the interface and brand font. It has one native weight (400);
+`font-synthesis: none` prevents artificial bold. The font is preloaded in
+`index.html` so the first screen uses the same face as the rest of the game.
 
-Sources: [Oxanium](https://github.com/google/fonts/tree/main/ofl/oxanium), [Manrope](https://github.com/google/fonts/tree/main/ofl/manrope).
+Manrope is the self-hosted variable fallback and loads only when needed.
+Both fonts use the SIL Open Font License; keep their corresponding OFL files
+when redistributing.
 
-Russo One is the experimental brand/heading face, inspired by the block lettering
-in the game's artwork. It is a close stylistic choice, not an identification of
-the raster logo's original font. Small UI text remains Manrope with stronger
-weights. Source: [Google Fonts](https://github.com/google/fonts/tree/main/ofl/russoone).
-Keep `russo-one-OFL.txt` with the font.
-
-The full-interface trial uses Russo One for body text and controls as well as
-headings. Manrope remains a fallback. Russo One has one native 400 weight; heavier
-CSS weights resolve to that face without synthetic bold.
+Sources: [Russo One](https://github.com/google/fonts/tree/main/ofl/russoone),
+[Manrope](https://github.com/google/fonts/tree/main/ofl/manrope).

@@ -1,7 +1,8 @@
+/* Analytics, charts, cookie preferences, and privacy. */
+
 .cookie-consent {
   position: fixed;
   z-index: 100;
-  bottom: 16px;
   left: 16px;
   right: 16px;
   max-width: 760px;
@@ -107,7 +108,6 @@
     align-items: stretch;
     gap: 14px;
     padding: 16px;
-    bottom: 10px;
     left: 10px;
     right: 10px;
   }
@@ -124,7 +124,6 @@
     font-size: 10px;
   }
 }
-
 .analytics-totals > button {
   min-width: 0;
   display: grid;
@@ -194,9 +193,6 @@
   stroke: #123440;
   stroke-width: 2;
 }
-.database-overview {
-  margin: 24px 0 32px;
-}
 .overview-totals {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -245,29 +241,6 @@
   border-radius: inherit;
   background: #93d9c5;
 }
-.database-toolbar {
-  flex-wrap: wrap;
-}
-.technical-toggle {
-  margin-left: auto;
-  font-size: 11px;
-  box-shadow: none;
-  background: #21454e;
-  color: #bbd3c7;
-}
-.technical-toggle[aria-pressed='true'] {
-  background: #d5c391;
-  color: #183b47;
-}
-.database-table tbody tr:nth-child(even) {
-  background: #21455033;
-}
-.database-table tbody tr:hover {
-  background: #47685b33;
-}
-.database-table td {
-  padding-block: 16px;
-}
 @media (max-width: 760px) {
   .overview-charts {
     grid-template-columns: 1fr;
@@ -281,10 +254,20 @@
   .report-chart {
     padding: 16px;
   }
-  .database-toolbar {
-    gap: 10px;
-  }
-  .database-toolbar input {
-    width: 100%;
+}
+.analytics-ranges {
+  flex-wrap: wrap;
+}
+.cookie-consent {
+  max-height: calc(
+    100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+  );
+  overflow-y: auto;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  overflow-wrap: anywhere;
+}
+@media (max-width: 420px) {
+  .analytics-totals {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

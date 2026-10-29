@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { ReactNode } from 'react';
 export type IconName =
   | 'coin'
@@ -280,7 +281,7 @@ const shapes: Record<IconName, ReactNode> = {
     </>
   ),
 };
-export function GameIcon({
+export const GameIcon = memo(function GameIcon({
   name,
   className = '',
 }: {
@@ -301,4 +302,4 @@ export function GameIcon({
       {shapes[name]}
     </svg>
   );
-}
+});

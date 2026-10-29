@@ -1,4 +1,5 @@
-export function CrystalCluster({
+import { memo } from 'react';
+export const CrystalCluster = memo(function CrystalCluster({
   color,
   x,
   y,
@@ -21,8 +22,8 @@ export function CrystalCluster({
       <path d="m40-49 0 62 20-43Z" fill="#fff" opacity=".4" />
     </g>
   );
-}
-export function Reef({
+});
+export const Reef = memo(function Reef({
   x,
   y,
   color,
@@ -51,8 +52,8 @@ export function Reef({
       <path d="M0-5q-6-45 0-72" stroke="#fff" opacity=".2" strokeWidth="4" />
     </g>
   );
-}
-export function MiningRig({
+});
+export const MiningRig = memo(function MiningRig({
   active,
   level,
 }: {
@@ -192,8 +193,8 @@ export function MiningRig({
       />
     </g>
   );
-}
-export function RefineryModel({
+});
+export const RefineryModel = memo(function RefineryModel({
   active,
   blocked,
   level,
@@ -404,8 +405,8 @@ export function RefineryModel({
       />
     </g>
   );
-}
-export function WarehouseModel({
+});
+export const WarehouseModel = memo(function WarehouseModel({
   level,
   fraction,
   color,
@@ -519,8 +520,8 @@ export function WarehouseModel({
       <circle cx="-38" cy="-11" r="4" fill="#d9ffff" stroke="none" />
     </g>
   );
-}
-export function SubmarineModel({
+});
+export const SubmarineModel = memo(function SubmarineModel({
   level,
   loaded,
   color,
@@ -635,4 +636,4 @@ export function SubmarineModel({
       )}
     </g>
   );
-}
+});

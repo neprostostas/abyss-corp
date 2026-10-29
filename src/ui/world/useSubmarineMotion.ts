@@ -60,22 +60,23 @@ export function useSubmarineMotion(
         'transform',
         `translate(${String(x)} ${String(y)})`,
       );
+      return !reduced.matches && t < 1 && state.from !== state.to;
     };
     const animate = (now: number) => {
-      draw(now);
-      if (running && !document.hidden) frame = requestAnimationFrame(animate);
+      const moving = draw(now);
+      if (moving && running && !document.hidden)
+        frame = requestAnimationFrame(animate);
     };
     const visibility = () => {
       cancelAnimationFrame(frame);
-      draw(performance.now());
-      if (running && !document.hidden) frame = requestAnimationFrame(animate);
+      animate(performance.now());
     };
-    frame = requestAnimationFrame(animate);
+    animate(performance.now());
     document.addEventListener('visibilitychange', visibility);
     return () => {
       cancelAnimationFrame(frame);
       document.removeEventListener('visibilitychange', visibility);
     };
-  }, [running, layerId]);
+  }, [phase, progress, running, layerId]);
   return ref;
 }

@@ -2,11 +2,13 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { supabase } from '../infrastructure/supabase/client';
+
 import '../ui/styles/theme.css';
-import '../ui/styles/app.css';
-import '../ui/styles/command.css';
+import '../ui/styles/game.css';
+import '../ui/styles/panels.css';
 import '../ui/styles/account.css';
-import '../ui/styles/players.css';
+import '../ui/styles/analytics.css';
+import '../ui/styles/world.css';
 
 const root = document.getElementById('root');
 if (!root)
@@ -16,11 +18,3 @@ createRoot(root).render(
     <App client={supabase} />
   </StrictMode>,
 );
-
-import '../ui/styles/analytics.css';
-
-import '../ui/styles/polish.css';
-
-import '../ui/styles/glass.css';
-
-import '../ui/styles/ocean.css';

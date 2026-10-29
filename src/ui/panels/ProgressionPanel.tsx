@@ -1,3 +1,4 @@
+import { LAYERS } from '../../data/layers';
 import type { ReactNode } from 'react';
 import {
   MISSION_IDS,
@@ -17,7 +18,7 @@ const goals: Record<MissionId, string> = {
   discover: 'Complete your first research',
   explore: 'Open 3 depths',
   network: 'Automate 3 outposts',
-  research: 'Complete all 6 research levels',
+  research: 'Complete 6 research levels',
 };
 export function ProgressionPanel({
   world,
@@ -113,33 +114,55 @@ export function ProgressionPanel({
           >
             <div className="research-illustration">
               <GameIcon
-                name={id === 'trade' ? 'trade-network' : 'modular-storage'}
+                name={
+                  id === 'trade'
+                    ? 'trade-network'
+                    : id === 'storage'
+                      ? 'modular-storage'
+                      : id === 'engineering'
+                        ? 'mining'
+                        : 'sonar'
+                }
               />
             </div>
-            <h3>{id === 'trade' ? 'Deep-sea trade' : 'Warehousing'}</h3>
+            <h3>{definition.name}</h3>
+            {!offer.unlocked && offer.requiredDepth && (
+              <small className="research-requirement">
+                <GameIcon name="lock" />
+                Reach{' '}
+                {LAYERS[offer.requiredDepth].depthMeters.toLocaleString(
+                  'en-US',
+                )}{' '}
+                m
+              </small>
+            )}
             <div
               className="level-pips"
-              aria-label={`Level ${String(offer.level)} of 3`}
+              aria-label={`Level ${String(offer.level)} of ${String(definition.costs.length)}`}
             >
               {definition.costs.map((_, i) => (
                 <i key={i} className={i < offer.level ? 'filled' : ''} />
               ))}
             </div>
             <strong className="research-bonus">
-              +{offer.bonus}
-              {id === 'trade' ? '%' : ' slots'}
+              {id === 'engineering' || id === 'surveying' ? '−' : '+'}
+              {offer.bonus}
+              {id === 'storage' ? ' slots' : '%'}
               {offer.nextBonus !== null && (
                 <span>
                   {' '}
-                  → +{offer.nextBonus}
-                  {id === 'trade' ? '%' : ''}
+                  → {id === 'engineering' || id === 'surveying' ? '−' : '+'}
+                  {offer.nextBonus}
+                  {id === 'storage' ? '' : '%'}
                 </span>
               )}
             </strong>
             <p>
               {id === 'trade'
                 ? 'Sale value · all depths'
-                : 'Storage · all depths'}
+                : id === 'storage'
+                  ? 'Storage · all depths'
+                  : definition.description}
             </p>
             <button
               disabled={!offer.affordable}
@@ -147,9 +170,11 @@ export function ProgressionPanel({
                 onResearch(id);
               }}
               title={
-                offer.cost !== null && !offer.affordable
-                  ? `${String(offer.cost - world.credits)} more credits`
-                  : undefined
+                !offer.unlocked && offer.requiredDepth
+                  ? `Reach ${String(LAYERS[offer.requiredDepth].depthMeters)} m to unlock`
+                  : offer.cost !== null && !offer.affordable
+                    ? `${String(offer.cost - world.credits)} more credits`
+                    : undefined
               }
             >
               {offer.cost === null ? (
@@ -169,5 +194,28 @@ export function ProgressionPanel({
         );
       })}
     </div>
+  );
+}
+
+export function ClaimAllMissions({
+  world,
+  onClaim,
+}: {
+  world: WorldState;
+  onClaim: (id: MissionId) => void;
+}) {
+  const ready = MISSION_IDS.filter(
+    (id) => getMissionProgress(world, id).canClaim,
+  );
+  return (
+    <button
+      className="claim-all"
+      disabled={ready.length === 0}
+      onClick={() => {
+        for (const id of ready) onClaim(id);
+      }}
+    >
+      Claim all
+    </button>
   );
 }

@@ -14,7 +14,6 @@ import { ProfileGate } from '../ui/account/ProfileGate';
 import { AdminAnalyticsClient } from '../infrastructure/analytics/AdminAnalyticsClient';
 import { CookieConsent } from '../ui/analytics/CookieConsent';
 import { PrivacyScreen } from '../ui/analytics/PrivacyScreen';
-import { AnalyticsScreen } from '../ui/analytics/AnalyticsScreen';
 import {
   lazy,
   Suspense,
@@ -40,6 +39,10 @@ const GameScreen = lazy(async () => {
 const DatabaseScreen = lazy(async () => {
   const module = await import('../ui/account/DatabaseScreen');
   return { default: module.DatabaseScreen };
+});
+const AnalyticsScreen = lazy(async () => {
+  const module = await import('../ui/analytics/AnalyticsScreen');
+  return { default: module.AnalyticsScreen };
 });
 const loadingScreen = (
   <main className="account-screen">
@@ -361,7 +364,11 @@ function AppContent({ client }: { client: SupabaseClient<Database> | null }) {
       </>
     );
   if (window.location.pathname === '/analytics' && analyticsClient)
-    return <AnalyticsScreen gateway={analyticsClient} />;
+    return (
+      <Suspense fallback={loadingScreen}>
+        <AnalyticsScreen gateway={analyticsClient} />
+      </Suspense>
+    );
   if (window.location.pathname === '/database' && adminClient)
     return (
       <Suspense fallback={loadingScreen}>

@@ -1,0 +1,2334 @@
+/* Game viewport, HUD, production, upgrades, and navigation.
+ * 760px selects the fixed four-row mobile viewport. Narrower queries only
+ * compact individual controls; short landscape queries retain the wide layout.
+ * Keep conditional rules after their base styles: container queries participate
+ * in the same cascade as viewport queries.
+ */
+
+.game-shell {
+  height: 100dvh;
+  display: grid;
+  overflow: hidden;
+  isolation: isolate;
+}
+.game-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+  flex-shrink: 0;
+}
+.game-hud {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+}
+.game-brand {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+  font-weight: 900;
+  color: #f1efda;
+  line-height: 1;
+}
+.hud-wallet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 18px 0 6px;
+  background: #092a3a;
+}
+.coin-medallion {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  color: #795527;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fff2b1, #dfaa42);
+  box-shadow: 0 2px 0 #9a722e;
+}
+.hud-wallet strong {
+  color: #fff2ba;
+  font-variant-numeric: tabular-nums;
+}
+.settings-trigger.has-error {
+  color: #ff9b86;
+}
+.outpost-illustration {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  overflow: visible;
+}
+.sub-route.active {
+  opacity: 0.3;
+  animation: route-flow 2s linear infinite;
+}
+.stage-bottom {
+  position: absolute;
+  z-index: 3;
+  bottom: 16px;
+  left: 120px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.production-readout {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 10px 17px;
+  height: 58px;
+  background: #0c3548dc;
+  border: 1px solid #b9ddd526;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px #03263933;
+  backdrop-filter: blur(8px);
+}
+.production-readout > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.production-readout > div > .game-icon {
+  color: var(--resource-color);
+  width: 24px;
+  height: 24px;
+}
+.production-readout small {
+  display: block;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #9ebbbd;
+  margin-bottom: 1px;
+}
+.production-readout b {
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+.production-readout em {
+  font-style: normal;
+  font-size: 10px;
+  margin-left: 3px;
+  color: #84a8ae;
+}
+.flow-arrow {
+  width: 12px;
+  height: 12px;
+  color: #618996;
+}
+.production-readout .refinery-readout {
+  flex-direction: column;
+  gap: 4px;
+}
+.refinery-readout > .game-icon {
+  width: 19px !important;
+  height: 19px !important;
+  color: #99b8bb !important;
+}
+.sell-button {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 145px;
+  height: 58px;
+  border-radius: 14px;
+  background: linear-gradient(#ffdf87, #efb650);
+  box-shadow:
+    inset 0 1px #fff4c9,
+    0 4px 0 #a57432,
+    0 6px 18px #062b4038;
+}
+.sell-button > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.sell-button > span .game-icon {
+  width: 13px;
+  height: 13px;
+}
+.sell-button strong {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 20px;
+  line-height: 1;
+}
+.sell-button strong .game-icon {
+  width: 18px;
+  height: 18px;
+}
+.sell-button:disabled {
+  color: #83a5a7;
+  background: linear-gradient(#2e5c66, #214a59);
+  box-shadow:
+    inset 0 1px #97c2b833,
+    0 3px 0 #123849;
+}
+.upgrade-deck {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-content: center;
+  gap: 11px;
+  width: min(880px, 100%);
+  margin: auto;
+  padding: 13px 20px;
+}
+.upgrade-tile {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px 9px;
+  padding: 9px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #e7edda, #bfcec3);
+  color: #264950;
+  border: 2px solid #f3f4df;
+  box-shadow:
+    0 4px 0 #718e8d,
+    0 6px 12px #001c2c33;
+  transition: border 0.2s;
+}
+.upgrade-tile.selected {
+  border-color: #ffd67c;
+  box-shadow:
+    0 0 0 3px #eac46428,
+    0 4px 0 #a48a50;
+}
+.upgrade-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: #ffdb89;
+}
+.upgrade-art .game-icon {
+  width: 25px;
+  height: 25px;
+}
+.upgrade-art-processing {
+  color: #b8f6d3;
+}
+.upgrade-art-storage {
+  color: #f6d28c;
+}
+.upgrade-art span {
+  position: absolute;
+  right: -4px;
+  bottom: -3px;
+  width: 15px;
+  height: 15px;
+  border-radius: 5px;
+  display: grid;
+  place-items: center;
+  color: #35555c;
+  font-size: 9px;
+  background: #f4df9e;
+  border: 1px solid #9c995d;
+  font-weight: 900;
+}
+.upgrade-info {
+  min-width: 0;
+}
+.upgrade-info h3 {
+  font-size: 12px;
+  font-weight: 850;
+}
+.upgrade-info > span {
+  display: block;
+  font-size: 9px;
+  color: #58767a;
+  margin-top: 3px;
+}
+.upgrade-info b {
+  color: #398277;
+  font-weight: 750;
+}
+.upgrade-tile button {
+  grid-column: 1/-1;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 7px;
+  box-shadow:
+    inset 0 1px #fff6d2,
+    0 2px 0 #a78c4a;
+}
+.upgrade-tile button .game-icon {
+  width: 14px;
+  height: 14px;
+}
+.upgrade-tile button:disabled {
+  background: #9ab2aa;
+  color: #e0e9da;
+  box-shadow:
+    inset 0 1px #c2d3c5,
+    0 2px 0 #7e9996;
+}
+.game-dock {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #99bcb51a;
+}
+.dock-button {
+  position: relative;
+  flex-direction: column;
+  gap: 4px;
+  width: 64px;
+  padding: 0;
+  color: #9dbbb9;
+  background: none;
+  box-shadow: none;
+  font-weight: 650;
+}
+.dock-button:disabled {
+  background: none;
+  box-shadow: none;
+  opacity: 0.4;
+}
+.dock-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 35px;
+  color: #d0ded0;
+}
+.dock-icon .game-icon {
+  width: 26px;
+  height: 26px;
+}
+.dock-button:hover .dock-icon,
+.dock-button.crew-active .dock-icon {
+  color: #f2ce82;
+}
+.notification-badge {
+  position: absolute;
+  right: -4px;
+  top: -3px;
+  display: grid;
+  place-items: center;
+  min-width: 15px;
+  height: 15px;
+  border-radius: 6px;
+  padding-inline: 3px;
+  font-size: 9px;
+}
+.offline-toast {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 16px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 12px;
+  padding: 9px 10px 9px 14px;
+  background: #f2e9cd;
+  color: #315460;
+  box-shadow: 0 5px 18px #062a3f40;
+}
+.offline-toast > .game-icon {
+  color: #be913e;
+}
+.offline-toast strong {
+  display: block;
+  font-size: 15px;
+}
+.offline-toast span {
+  display: block;
+  font-size: 8px;
+  margin-top: 2px;
+}
+.sell-control {
+  position: relative;
+  flex-shrink: 0;
+}
+.sale-float {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 5;
+  color: #ffe7a0;
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 3px #123847;
+  pointer-events: none;
+  animation: money-rise 1s ease-out both;
+}
+.sale-coin {
+  position: fixed;
+  z-index: 20;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #b58336;
+  border-radius: 50%;
+  background: #f5cf71;
+  box-shadow:
+    inset 0 0 0 2px #ffedaa,
+    0 2px 2px #082d3a44;
+  pointer-events: none;
+}
+.sale-coin::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-left: 2px solid #ac7930;
+  border-bottom: 2px solid #ac7930;
+  border-radius: 50%;
+}
+.game-error {
+  position: absolute;
+  z-index: 8;
+  bottom: 88px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(460px, calc(100% - 32px));
+  padding: 16px;
+  background: #4b3545;
+  border: 1px solid #d89b87;
+  border-radius: 14px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.game-error button {
+  margin-top: 8px;
+}
+.loading-state {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  color: #c3e5da;
+  font-size: 13px;
+}
+.loading-state .game-icon {
+  width: 65px;
+  height: 65px;
+  animation: sub-bob 1s infinite alternate;
+}
+.level-pips i.filled {
+  background: #d69c3d;
+  box-shadow: 0 0 6px #e3ca6d;
+}
+.wide-button .game-icon {
+  width: 18px;
+  height: 18px;
+}
+.text-button .game-icon {
+  width: 15px;
+  height: 15px;
+}
+@media (min-width: 1400px) {
+  .game-hud {
+    padding-inline: 48px;
+  }
+  .stage-bottom {
+    left: 0;
+    right: 0;
+  }
+  .outpost-illustration {
+    scale: 1.05;
+  }
+}
+@media (max-width: 700px) {
+  .game-hud {
+    padding-inline: 18px;
+  }
+  .stage-bottom {
+    left: 103px;
+    right: 18px;
+    gap: 10px;
+  }
+  .production-readout {
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .sell-button {
+    min-width: 125px;
+  }
+  .offline-toast {
+    top: 79px;
+  }
+  .upgrade-deck {
+    padding-inline: 15px;
+    gap: 8px;
+  }
+  .upgrade-tile {
+    padding: 8px;
+    gap: 5px 7px;
+  }
+  .upgrade-info h3 {
+    font-size: 11px;
+  }
+}
+@media (max-width: 520px) {
+  .hud-wallet {
+    height: 39px;
+  }
+  .coin-medallion {
+    width: 29px;
+    height: 29px;
+  }
+  .outpost-illustration {
+    width: 125%;
+    max-width: none;
+    left: -10%;
+  }
+  .stage-bottom {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+  .production-readout {
+    flex: 1;
+    justify-content: space-between;
+    height: 51px;
+    gap: 5px;
+    padding: 9px;
+  }
+  .production-readout > div {
+    gap: 5px;
+  }
+  .production-readout > div > .game-icon {
+    width: 19px;
+    height: 19px;
+  }
+  .production-readout b {
+    font-size: 15px;
+  }
+  .production-readout .refinery-readout,
+  .production-readout .flow-arrow:first-of-type {
+    display: none;
+  }
+  .sell-button {
+    min-width: 109px;
+    height: 51px;
+    padding: 7px 10px;
+  }
+  .sell-button strong {
+    font-size: 18px;
+  }
+  .sell-button > span {
+    font-size: 8px;
+  }
+  .upgrade-deck {
+    padding: 9px 9px 12px;
+    gap: 6px;
+  }
+  .upgrade-tile {
+    grid-template-columns: 1fr;
+    gap: 3px;
+    text-align: center;
+    position: relative;
+    padding: 6px;
+  }
+  .upgrade-art {
+    margin: 0 auto 2px;
+  }
+  .upgrade-art .game-icon {
+    width: 21px;
+    height: 21px;
+  }
+  .upgrade-art span {
+    width: 12px;
+    height: 12px;
+    font-size: 8px;
+  }
+  .upgrade-info h3 {
+    font-size: 9px;
+  }
+  .upgrade-info > span {
+    display: none;
+  }
+  .upgrade-tile button {
+    font-size: 10px;
+    gap: 4px;
+    margin-top: 3px;
+  }
+  .upgrade-tile button .game-icon {
+    width: 12px;
+    height: 12px;
+  }
+  .game-dock {
+    padding-inline: 18px;
+  }
+  .dock-icon {
+    height: 29px;
+  }
+  .dock-icon .game-icon {
+    width: 24px;
+    height: 24px;
+  }
+  .offline-toast {
+    top: 70px;
+    padding: 7px 8px;
+    gap: 7px;
+  }
+  .offline-toast strong {
+    font-size: 13px;
+  }
+}
+@media (max-height: 650px) and (min-width: 521px) {
+  .stage-bottom {
+    bottom: 10px;
+  }
+  .production-readout,
+  .sell-button {
+    height: 46px;
+  }
+  .upgrade-deck {
+    padding-block: 8px;
+  }
+  .upgrade-tile {
+    padding: 6px 8px;
+  }
+  .dock-icon {
+    height: 26px;
+  }
+  .dock-icon .game-icon {
+    width: 23px;
+    height: 23px;
+  }
+}
+.game-brand {
+  font-size: 27px;
+  letter-spacing: 2px;
+  gap: 10px;
+}
+.hud-wallet {
+  border: 1px solid #dcc27c50;
+}
+.dock-button {
+  font-size: 11px;
+  letter-spacing: 0.3px;
+}
+.dock-icon {
+  transition:
+    transform 0.2s,
+    filter 0.2s;
+}
+.dock-button:hover .dock-icon {
+  transform: translateY(-3px);
+  filter: drop-shadow(0 0 8px #a0e6cc70);
+}
+@media (max-width: 600px) {
+  .game-brand {
+    font-size: 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dock-icon {
+    transition: none;
+  }
+}
+.game-shell {
+  --panel-width: 370px;
+  --drawer-easing: cubic-bezier(0.22, 0.7, 0.25, 1);
+  position: relative;
+}
+.game-shell > .game-hud {
+  grid-column: 1 / -1;
+}
+.game-shell > .upgrade-deck {
+  grid-column: 1;
+  grid-row: 3;
+}
+.panel-heading > .game-icon {
+  width: 32px;
+  height: 32px;
+  color: #f6d68a;
+}
+.dock-button.active-room {
+  color: #edf5eb;
+  font-weight: 800;
+}
+.dock-button.active-room .game-icon {
+  stroke-width: 2.25;
+}
+.dock-button.active-room:hover .dock-icon,
+.dock-button.active-room:hover:not(:disabled) {
+  transform: none;
+  filter: none;
+}
+.dock-button.has-opportunity .dock-icon {
+  color: #ffe5a0;
+}
+.dock-button.active-room .dock-icon {
+  color: #edf5eb;
+}
+@media (max-width: 1050px) {
+  .game-shell {
+    --panel-width: 325px;
+  }
+}
+.game-hud {
+  padding-block: 8px;
+  border-bottom: 1px solid #a9d5cb25;
+}
+.hud-wallet {
+  margin-right: 0;
+  min-width: 140px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+.hud-wallet strong {
+  letter-spacing: 0.5px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 25px;
+}
+.dock-button {
+  min-height: 48px;
+}
+.notification-badge {
+  background: #e8c375;
+  color: #173e4b;
+  box-shadow: none;
+}
+.upgrade-tile.can-upgrade {
+  border-color: #ffdc86;
+  box-shadow: 0 3px #9f8246;
+}
+@media (max-width: 520px) {
+  .hud-wallet {
+    min-width: 100px;
+    padding-right: 10px;
+    gap: 6px;
+  }
+  .hud-wallet strong {
+    font-size: 21px;
+  }
+}
+.upgrade-art {
+  width: 54px;
+  height: 50px;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+.machine-portrait {
+  display: block;
+  width: 54px;
+  height: 50px;
+  overflow: visible;
+}
+.upgrade-art .machine-level {
+  right: -1px;
+  bottom: -1px;
+  border-radius: 4px;
+  font-size: 9px;
+  animation: level-stamp 320ms ease-out;
+}
+@media (max-width: 520px) {
+  .upgrade-art,
+  .machine-portrait {
+    width: 46px;
+    height: 38px;
+  }
+}
+.upgrade-tile.production-limit {
+  border-color: #edc979;
+  box-shadow:
+    inset 3px 0 #b68738,
+    0 3px #718e8d;
+}
+.bottleneck-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9b671d;
+  flex-shrink: 0;
+}
+.upgrade-info h3 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sell-button.cargo-full,
+.sell-button.first-step-target {
+  outline: 2px solid #fff0b8;
+  outline-offset: 3px;
+}
+.upgrade-tile.first-step-target {
+  outline: 2px solid #fff0b8;
+  outline-offset: 3px;
+  border-color: #bc8839;
+}
+.upgrade-deck {
+  container-type: inline-size;
+  container-name: upgrades;
+  min-width: 0;
+  align-items: stretch;
+}
+.upgrade-tile {
+  min-width: 0;
+}
+.upgrade-info h3,
+.upgrade-info > span {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.upgrade-tile button {
+  height: auto;
+  min-height: 32px;
+  min-width: 0;
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+@container upgrades (max-width: 720px) {
+  .upgrade-tile {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    gap: 5px;
+    padding: 7px 5px;
+    text-align: center;
+  }
+  .upgrade-art,
+  .machine-portrait {
+    width: 40px;
+    height: 36px;
+  }
+  .upgrade-art {
+    margin: 0 auto;
+  }
+  .upgrade-info h3 {
+    justify-content: center;
+    font-size: 12px;
+    line-height: 1.3;
+    gap: 3px;
+  }
+  .upgrade-info > span {
+    display: block;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .upgrade-info b {
+    display: inline-block;
+  }
+  .upgrade-tile button {
+    font-size: 11px;
+    padding: 5px 3px;
+    gap: 3px;
+    margin: 0;
+  }
+}
+.panel-heading > .game-icon {
+  flex-shrink: 0;
+}
+@container ocean (max-width: 620px) {
+  .stage-bottom {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .production-readout {
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    min-height: 46px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+  }
+  .production-readout > div {
+    min-width: 0;
+    gap: 4px;
+  }
+  .production-readout b {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+  .sell-button {
+    min-width: 0;
+    max-width: 100%;
+    min-height: 46px;
+    height: auto;
+  }
+}
+.game-shell {
+  grid-template-rows: 54px minmax(0, 1fr) auto 64px;
+  background:
+    radial-gradient(ellipse at 52% -15%, #61c2b9 0, transparent 55%),
+    linear-gradient(#216c7c, #196c7c 50%, #164a61);
+}
+.game-shell.biome-golden-trench {
+  background:
+    radial-gradient(ellipse at 50% -25%, #4b9eab 0, transparent 60%),
+    linear-gradient(#205d7a, #1d5b75 50%, #163d56);
+}
+.game-shell.biome-pearl-caverns {
+  background:
+    radial-gradient(ellipse at 48% -30%, #6777ac 0, transparent 60%),
+    linear-gradient(#213b64, #294d70 50%, #1a344f);
+}
+.game-hud {
+  gap: 12px;
+  padding: 5px 20px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.game-hud .hud-wallet {
+  min-width: 0;
+  height: 38px;
+  gap: 7px;
+  padding: 0 4px;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.hud-wallet .coin-medallion {
+  width: 26px;
+  height: 26px;
+  color: #ffe0a0;
+  background: none;
+  box-shadow: none;
+}
+.coin-medallion .game-icon {
+  width: 25px;
+  height: 25px;
+}
+.game-hud .hud-wallet strong {
+  font-size: 23px;
+  letter-spacing: -0.6px;
+  text-shadow: 0 2px 10px #082b3c99;
+}
+.game-dock {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 4px 16px max(4px, env(safe-area-inset-bottom));
+}
+.game-panel-profile .panel-heading > .game-icon {
+  width: 24px;
+  height: 24px;
+}
+@media (max-width: 520px) {
+  .game-hud {
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  .game-hud .hud-wallet strong {
+    font-size: 21px;
+  }
+  .game-dock {
+    justify-content: space-evenly;
+  }
+}
+@media (max-height: 650px) {
+  .game-shell {
+    grid-template-rows: 48px minmax(0, 1fr) auto 56px;
+  }
+  .game-hud {
+    padding-block: 2px;
+  }
+}
+.game-shell.biome-golden-trench {
+  --ocean-panel-top: #21455c;
+  --ocean-panel-bottom: #112f45;
+  --ocean-panel-accent: #9dd9e3;
+}
+.game-shell.biome-pearl-caverns {
+  --ocean-panel-top: #303e62;
+  --ocean-panel-bottom: #1b2948;
+  --ocean-panel-accent: #b9c4ee;
+}
+.game-panel .settings-control:not(.danger-link) > .game-icon:first-child,
+.game-panel .settings-actions .game-icon,
+.game-panel .settings-signout .game-icon {
+  color: var(--ocean-panel-accent);
+}
+.game-shell > .game-hud,
+.game-shell > .game-dock,
+.game-shell > .upgrade-deck {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.account-sync.sync-failed {
+  color: #edbb80;
+}
+.settings-actions .game-icon {
+  width: 20px;
+  height: 20px;
+  color: #a5cbbd;
+}
+.settings-actions .game-icon:last-child {
+  width: 15px;
+  height: 15px;
+  margin-left: auto;
+  color: #73968f;
+}
+.admin-actions {
+  padding-top: 12px;
+  border-top: 1px solid #9cb7a42b;
+}
+.settings-signout .game-icon {
+  width: 20px;
+  height: 20px;
+  color: #cfa993;
+}
+.admin-access {
+  display: inline-block;
+  border: 1px solid #77c7ac55;
+  border-radius: 30px;
+  padding: 4px 9px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #91d8bd;
+  background: #80c8ac11;
+}
+.record-open .game-icon {
+  width: 18px;
+  height: 18px;
+}
+.quick-play .game-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.provider-options summary .game-icon {
+  width: 16px;
+  height: 16px;
+}
+.provider-options[open] summary .game-icon {
+  transform: rotate(90deg);
+}
+.guest-profile {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+.guest-profile h2 {
+  font-size: 20px;
+}
+.guest-profile p {
+  color: #acc8bf;
+  line-height: 1.6;
+}
+.guest-profile small {
+  color: #acc8bf;
+  line-height: 1.6;
+  font-size: 12px;
+}
+.connection-check .game-icon {
+  width: 17px;
+  height: 17px;
+}
+.connection-options summary .game-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 160ms ease;
+}
+.connection-options[open] summary .game-icon {
+  transform: rotate(90deg);
+}
+.settings-control > .game-icon:first-child {
+  width: 20px;
+  height: 20px;
+  color: #79d3c1;
+}
+.settings-control > .game-icon:last-child {
+  width: 14px;
+  height: 14px;
+  opacity: 0.45;
+}
+.settings-control.danger-link > .game-icon:first-child {
+  color: #e7a59c;
+}
+.game-dock {
+  gap: clamp(14px, 4vw, 48px);
+}
+.upgrade-info h3 {
+  font-family: var(--font-body);
+  letter-spacing: 0;
+}
+@media (max-width: 520px) {
+  .game-dock,
+  .panel-open .game-dock {
+    gap: 20px;
+  }
+  .dock-button {
+    font-size: 10px;
+  }
+}
+.game-panel .panel-heading > .game-icon {
+  width: 26px;
+  height: 26px;
+}
+.game-shell .offline-toast {
+  top: 12px;
+  left: auto;
+  right: 16px;
+  transform: none;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 0 0 12px;
+  border: 1px solid
+    color-mix(in srgb, var(--ocean-panel-accent) 20%, transparent);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 92%, transparent);
+  color: #f4dda3;
+  box-shadow: 0 4px 18px #051c2820;
+}
+.game-shell .offline-toast > .game-icon {
+  width: 18px;
+  height: 18px;
+  color: #edcd82;
+}
+.game-shell .offline-toast strong {
+  font: 650 15px var(--font-body);
+  font-variant-numeric: tabular-nums;
+}
+.game-shell .production-hint {
+  top: 16px;
+  color: #d4e5df;
+  line-height: 1.5;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 75%, transparent);
+}
+.game-shell > .game-dock {
+  grid-column: 1;
+  grid-row: 4;
+  container: dock / inline-size;
+  gap: 6px;
+  padding-inline: 12px;
+}
+.game-dock .dock-button {
+  flex-direction: row;
+  gap: 8px;
+  width: auto;
+  min-width: 100px;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  color: #a9c4c7;
+  font: 600 12px var(--font-body);
+  letter-spacing: 0;
+  text-shadow: none;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+.game-dock .dock-icon {
+  width: 22px;
+  height: 22px;
+  color: inherit;
+  transform: none;
+  filter: none;
+}
+.game-dock .dock-icon .game-icon {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.8;
+}
+.game-dock .dock-button.active-room {
+  color: #f3e2b4;
+  background: transparent;
+  font-weight: 600;
+}
+.game-dock .dock-button.active-room .dock-icon {
+  color: inherit;
+}
+.game-dock .dock-button.active-room::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: calc(50% - 2px);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.game-dock .dock-button.has-opportunity .dock-icon {
+  color: #d4e5df;
+}
+.game-dock .notification-badge {
+  top: -7px;
+  right: -6px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 5px;
+  font-size: 8px;
+  box-shadow: none;
+}
+.game-dock .dock-button:hover .dock-icon {
+  transform: none;
+  filter: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .game-dock .dock-button:hover:not(:disabled) {
+    transform: none;
+    filter: none;
+    color: #edf1e6;
+    background: #c7ebe80c;
+  }
+}
+@media (hover: none) {
+  .game-dock .dock-button:hover:not(:disabled) {
+    transform: none;
+    filter: none;
+  }
+}
+@media (max-width: 520px) {
+  .game-shell > .game-dock {
+    gap: 0;
+    padding-inline: 8px;
+    justify-content: space-evenly;
+  }
+  .game-dock .dock-button {
+    min-width: 0;
+    min-height: 46px;
+    padding: 10px 4px;
+    gap: 5px;
+    font-size: 10px;
+  }
+  .game-dock .dock-icon,
+  .game-dock .dock-icon .game-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .game-shell .offline-toast {
+    right: 12px;
+    top: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-dock .dock-button {
+    transition: none;
+  }
+}
+@container dock (max-width: 540px) {
+  .game-dock .dock-button {
+    min-width: 0;
+    padding-inline: 6px;
+    gap: 6px;
+    font-size: 11px;
+  }
+}
+@container dock (max-width: 360px) {
+  .game-dock .dock-button {
+    min-width: 0;
+    padding-inline: 4px;
+    gap: 5px;
+    font-size: 10px;
+  }
+  .game-dock .dock-icon,
+  .game-dock .dock-icon .game-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+.game-shell,
+.game-shell.panel-open {
+  grid-template-columns: minmax(0, 1fr);
+}
+.game-shell.panel-open:has(.game-panel-profile) > .game-hud {
+  grid-column: 1 / -1;
+}
+.game-shell .stage-bottom {
+  left: 100px;
+  right: 24px;
+  bottom: 12px;
+  max-width: calc(100% - 124px);
+  margin-inline: auto;
+  padding: 6px;
+  border: 1px solid #c7ebe820;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 94%, transparent);
+  box-shadow: 0 8px 24px #03172330;
+}
+.game-shell .production-readout {
+  min-width: 0;
+  min-height: 52px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.game-shell .production-readout > div {
+  gap: 7px;
+}
+.game-shell .production-readout small {
+  font: 500 10px / 1.2 var(--font-body);
+  text-transform: none;
+  letter-spacing: 0;
+  color: #adc5c3;
+}
+.game-shell .production-readout b {
+  font: 650 17px / 1.2 var(--font-body);
+  color: #eef4ed;
+}
+.game-shell .production-readout em {
+  font-size: 11px;
+  color: #9cb7b8;
+}
+.game-shell .production-readout > div > .game-icon {
+  width: 21px;
+  height: 21px;
+}
+.game-shell .sell-button {
+  min-height: 52px;
+  padding: 9px 16px;
+  flex-direction: row;
+  border: 1px solid #ffe5a04d;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #efd48f, #dcb86d);
+  box-shadow: inset 0 1px #fff3ce55;
+  color: #253b3e;
+}
+.game-shell .sell-button > span {
+  font: 700 12px var(--font-body);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.game-shell .sell-button > span > .game-icon {
+  display: none;
+}
+.game-shell .sell-button strong {
+  font: 750 18px / 1 var(--font-body);
+  font-variant-numeric: tabular-nums;
+}
+.game-shell .sell-button:disabled {
+  border-color: #c7ebe812;
+  background: #c7ebe80b;
+  box-shadow: none;
+  color: #8ca8aa;
+}
+.game-shell > .upgrade-deck {
+  width: min(920px, 100%);
+  gap: 10px;
+  padding: 10px 20px 12px;
+}
+.game-shell .upgrade-tile {
+  grid-template-columns: 46px minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+  gap: 8px 10px;
+  padding: 12px;
+  border: 1px solid #c7ebe820;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--ocean-panel-bottom) 92%, transparent);
+  color: #e4eee6;
+  box-shadow: 0 5px 16px #03172320;
+  text-align: left;
+}
+.game-shell .upgrade-art,
+.game-shell .machine-portrait {
+  width: 42px;
+  height: 40px;
+}
+.game-shell .upgrade-info h3 {
+  justify-content: flex-start;
+  font: 650 13px / 1.35 var(--font-body);
+  color: #e4eee6;
+}
+.game-shell .upgrade-info > span {
+  display: block;
+  font: 500 11px / 1.5 var(--font-body);
+  color: #a5c1bf;
+}
+.game-shell .upgrade-info b {
+  color: #d9dbb1;
+  font-weight: 500;
+}
+.game-shell .upgrade-tile button {
+  grid-column: 1 / -1;
+  min-height: 44px;
+  height: auto;
+  padding: 8px;
+  margin: 0;
+  gap: 6px;
+  border: 1px solid #e6cc8c36;
+  border-radius: 10px;
+  background: #e6cc8c18;
+  color: #efdaa6;
+  box-shadow: none;
+  font: 650 12px var(--font-body);
+}
+.game-shell .upgrade-tile button:disabled {
+  border-color: transparent;
+  background: #c7ebe809;
+  color: #8daaaa;
+  opacity: 1;
+  box-shadow: none;
+}
+.game-shell .upgrade-tile.can-upgrade {
+  border-color: #e6cc8c6b;
+  box-shadow: none;
+}
+.game-shell .upgrade-tile.selected {
+  border-color: var(--ocean-panel-accent);
+  box-shadow: none;
+}
+@media (max-width: 760px) {
+  .game-shell .upgrade-tile {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    text-align: center;
+    border-radius: 13px;
+  }
+  .game-shell .upgrade-art {
+    margin: 0 auto;
+  }
+  .game-shell .upgrade-info h3 {
+    justify-content: center;
+  }
+}
+@media (max-width: 420px) {
+  .game-shell .production-readout {
+    padding-inline: 8px;
+  }
+  .game-shell .production-readout .refinery-readout,
+  .game-shell .production-readout .flow-arrow {
+    display: none;
+  }
+  .game-shell .production-readout b {
+    font-size: 15px;
+  }
+  .game-shell .production-readout > div > .game-icon {
+    width: 17px;
+    height: 17px;
+  }
+  .game-shell .sell-button strong {
+    font-size: 16px;
+  }
+}
+@media (max-width: 760px), (max-width: 1000px) and (max-height: 500px) {
+  .game-shell {
+    height: calc(100dvh - 64px - env(safe-area-inset-bottom));
+    grid-template-rows:
+      calc(54px + env(safe-area-inset-top)) minmax(360px, 1fr)
+      auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-padding-block: 12px 90px;
+  }
+  .game-shell.panel-open {
+    height: calc(100dvh - 64px - env(safe-area-inset-bottom));
+    grid-template-rows:
+      calc(54px + env(safe-area-inset-top)) minmax(360px, 1fr)
+      auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    scroll-padding-block: 12px 90px;
+    overflow-y: hidden;
+  }
+  .game-shell > .game-hud {
+    padding-top: env(safe-area-inset-top);
+    gap: 8px;
+  }
+  .game-shell .hud-wallet {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+  .game-shell .hud-wallet strong {
+    white-space: nowrap;
+  }
+  .game-shell .outpost-illustration {
+    width: 100%;
+    left: 0;
+    scale: 1;
+  }
+  .game-shell .production-hint {
+    top: 10px;
+    left: 12px;
+    right: 12px;
+    width: fit-content;
+    margin-inline: auto;
+  }
+  .game-shell .offline-toast {
+    top: 8px;
+    right: 12px;
+  }
+  .game-shell .stage-bottom {
+    left: 12px;
+    right: 12px;
+    max-width: calc(100% - 24px);
+  }
+  .game-shell > .game-dock {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9;
+    height: calc(64px + env(safe-area-inset-bottom));
+    padding: 4px max(8px, env(safe-area-inset-right))
+      max(4px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+    gap: 0;
+    justify-content: space-evenly;
+    background: linear-gradient(
+      transparent,
+      color-mix(in srgb, var(--ocean-panel-bottom) 96%, transparent) 40%
+    );
+  }
+  .game-shell .game-dock .dock-button {
+    min-height: 48px;
+  }
+}
+@media (max-width: 360px) {
+  .game-shell .game-dock .dock-button {
+    padding-inline: 4px;
+  }
+}
+@media (pointer: coarse) {
+  .game-dock button:active:not(:disabled) {
+    filter: brightness(1.12);
+    transform: none;
+  }
+}
+.game-shell .stage-bottom {
+  display: flex;
+  width: fit-content;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.game-shell .production-readout {
+  display: flex;
+  width: auto;
+  flex: 0 1 auto;
+  gap: 10px;
+  justify-content: center;
+}
+.game-shell .production-readout > div {
+  min-width: 0;
+}
+.game-shell .production-readout b {
+  display: inline-flex;
+  justify-content: center;
+  align-items: baseline;
+  font-variant-numeric: tabular-nums;
+}
+.game-shell .stock-count {
+  width: auto;
+}
+.game-shell .sell-control {
+  width: auto;
+  flex: 0 0 auto;
+}
+.game-shell .sell-button {
+  display: flex;
+  width: auto;
+  min-width: 0;
+  gap: 10px;
+  padding-inline: 12px;
+}
+.game-shell .sell-button strong {
+  gap: 4px;
+  white-space: nowrap;
+}
+.game-shell .sale-value {
+  width: auto;
+  text-align: left;
+}
+@media (max-width: 600px) {
+  .game-shell .production-readout {
+    padding-inline: 6px;
+    gap: 8px;
+  }
+  .game-shell .production-readout .refinery-readout,
+  .game-shell .production-readout .flow-arrow {
+    display: none;
+  }
+  .game-shell .production-readout > div {
+    gap: 4px;
+  }
+  .game-shell .production-readout > div > .game-icon {
+    width: 16px;
+    height: 16px;
+  }
+  .game-shell .production-readout b {
+    font-size: 14px;
+  }
+  .game-shell .production-readout em {
+    font-size: 10px;
+  }
+  .game-shell .sell-button {
+    padding-inline: 10px;
+    gap: 8px;
+  }
+  .game-shell .sell-button strong {
+    font-size: 15px;
+  }
+}
+.game-shell .upgrade-tile button,
+.game-shell .sell-button {
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell .upgrade-tile button,
+  .game-shell .sell-button {
+    transition: none;
+  }
+}
+.game-shell .upgrade-info h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.game-shell .production-readout small,
+.game-shell .production-readout em,
+.game-shell .upgrade-info > span,
+.game-shell .game-dock .dock-button {
+  font-weight: 600;
+}
+@media (max-width: 360px) {
+  .game-shell > .game-dock {
+    display: grid;
+    gap: 2px;
+    align-items: center;
+  }
+  .game-shell .game-dock .dock-button {
+    flex-direction: column;
+    gap: 4px;
+    padding: 5px 2px;
+    font-size: 9px;
+    line-height: 1.3;
+    min-height: 52px;
+  }
+}
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .game-shell .stage-bottom,
+  .game-shell .upgrade-tile {
+    background:
+      linear-gradient(145deg, #e5fff70c, transparent 48%),
+      color-mix(in srgb, var(--ocean-panel-bottom) 76%, transparent);
+    border: 1px solid #dbfff329;
+    -webkit-backdrop-filter: blur(16px) saturate(115%);
+    backdrop-filter: blur(16px) saturate(115%);
+    box-shadow:
+      inset 0 1px 0 #effffb1f,
+      inset 0 -1px 0 #071b241a,
+      0 8px 24px #03172326;
+  }
+  .game-shell .upgrade-tile.can-upgrade {
+    border-color: #ead7a557;
+  }
+  .game-shell .upgrade-tile.selected {
+    border-color: color-mix(
+      in srgb,
+      var(--ocean-panel-accent) 68%,
+      transparent
+    );
+  }
+  .game-shell .upgrade-tile button:not(:disabled) {
+    background: linear-gradient(145deg, #e8fff314, #c7ebe808);
+    box-shadow: inset 0 1px 0 #effffb12;
+  }
+  .game-shell .sell-button:not(:disabled) {
+    background: linear-gradient(145deg, #f5e1a7eb, #dcb86de6);
+    border-color: #fff0bf70;
+    box-shadow:
+      inset 0 1px 0 #fff9db80,
+      inset 0 -1px 0 #735c2d18,
+      0 2px 8px #051c281a;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .game-shell .stage-bottom,
+  .game-shell .upgrade-tile {
+    background: var(--ocean-panel-bottom);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+.game-shell.biome-thermal-vents {
+  --ocean-panel-top: #28515a;
+  --ocean-panel-bottom: #142f3c;
+  --ocean-panel-accent: #ffc195;
+  background: linear-gradient(#204654, #142c39);
+}
+.game-shell.biome-midnight-rift {
+  --ocean-panel-top: #2a4166;
+  --ocean-panel-bottom: #142239;
+  --ocean-panel-accent: #a8c5ff;
+  background: linear-gradient(#233c65, #0b192d);
+}
+.game-shell .game-dock {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 120px));
+  justify-content: center;
+}
+@media (max-width: 760px), (max-width: 1000px) and (max-height: 500px) {
+  .game-shell .game-dock .dock-button {
+    padding-inline: 3px;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .game-shell .game-dock .dock-label {
+    font-size: 9px;
+    line-height: 1.25;
+  }
+  .game-shell .game-dock .dock-icon {
+    width: 28px;
+    height: 26px;
+  }
+  .game-shell .game-dock .dock-icon .game-icon {
+    width: 21px;
+    height: 21px;
+  }
+}
+.island-grip.has-depths {
+  background: #f3d79d;
+  box-shadow: 0 0 9px #f3d79d45;
+}
+.game-shell.surface-mode > .upgrade-deck {
+  pointer-events: none;
+}
+.surface-region > .game-icon {
+  width: 16px;
+  height: 16px;
+}
+.game-shell > .game-hud {
+  transition: opacity 350ms ease;
+}
+.game-shell.surface-open > .game-dock {
+  opacity: 0;
+  pointer-events: none;
+}
+.game-shell .stage-bottom {
+  transition: opacity 300ms ease;
+}
+.game-shell.surface-open > .upgrade-deck {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell > .game-hud,
+  .game-shell .stage-bottom {
+    transition: none;
+  }
+}
+.game-shell.surface-mode > .game-hud {
+  opacity: 1;
+  position: relative;
+  z-index: 40;
+  pointer-events: auto;
+  transition: none;
+}
+.game-shell > .game-dock {
+  transition: opacity var(--surface-travel) cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell .outpost-illustration {
+    animation: none;
+  }
+}
+.game-shell {
+  --ocean-panel-top: #214b56;
+  --ocean-panel-bottom: #12333f;
+  --ocean-panel-accent: #93e8d0;
+  --depth-water-top: #216c7c;
+  --depth-water-bottom: #164a61;
+  --depth-water-light: #61c2b9;
+  transition:
+    --depth-water-top 1800ms cubic-bezier(0.4, 0, 0.2, 1),
+    --depth-water-bottom 1800ms cubic-bezier(0.4, 0, 0.2, 1),
+    --depth-water-light 1800ms cubic-bezier(0.4, 0, 0.2, 1),
+    --ocean-panel-top 1800ms cubic-bezier(0.4, 0, 0.2, 1),
+    --ocean-panel-bottom 1800ms cubic-bezier(0.4, 0, 0.2, 1),
+    --ocean-panel-accent 1800ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.game-shell.biome-golden-trench {
+  --depth-water-top: #205d7a;
+  --depth-water-bottom: #163d56;
+  --depth-water-light: #4b9eab;
+}
+.game-shell.biome-pearl-caverns {
+  --depth-water-top: #213b64;
+  --depth-water-bottom: #1a344f;
+  --depth-water-light: #6777ac;
+}
+.game-shell.biome-thermal-vents {
+  --depth-water-top: #204654;
+  --depth-water-bottom: #142c39;
+  --depth-water-light: #547c77;
+}
+.game-shell.biome-midnight-rift {
+  --depth-water-top: #233c65;
+  --depth-water-bottom: #0b192d;
+  --depth-water-light: #566fa0;
+}
+.game-shell[class*='biome-'] {
+  background:
+    radial-gradient(
+      ellipse at 52% -15%,
+      var(--depth-water-light),
+      transparent 58%
+    ),
+    linear-gradient(var(--depth-water-top), var(--depth-water-bottom));
+}
+.outpost-illustration path,
+.outpost-illustration circle,
+.outpost-illustration ellipse,
+.outpost-illustration stop {
+  transition:
+    fill 1800ms cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 1800ms cubic-bezier(0.4, 0, 0.2, 1),
+    stop-color 1800ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell,
+  .outpost-illustration path,
+  .outpost-illustration circle,
+  .outpost-illustration ellipse,
+  .outpost-illustration stop {
+    transition: none;
+  }
+}
+.outpost-illustration g,
+.outpost-illustration polygon,
+.outpost-illustration rect {
+  transition:
+    fill 1800ms cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 1800ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .outpost-illustration g,
+  .outpost-illustration polygon,
+  .outpost-illustration rect {
+    transition: none;
+  }
+}
+.previewing-depth > .game-hud,
+.previewing-depth > .upgrade-deck,
+.previewing-depth > .game-dock {
+  position: relative;
+  z-index: 6;
+}
+.stage-bottom,
+.game-shell > .upgrade-deck {
+  transition:
+    opacity var(--surface-travel) cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 550ms cubic-bezier(0.45, 0, 0.2, 1),
+    visibility 550ms;
+}
+.previewing-depth .stage-bottom,
+.previewing-depth > .upgrade-deck {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(24px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage-bottom,
+  .game-shell > .upgrade-deck {
+    transition: none;
+  }
+}
+@media (max-width: 760px) {
+  .game-shell .production-hint {
+    margin-inline: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell.surface-open > .game-hud {
+    transition: none;
+  }
+}
+.game-shell {
+  padding-top: 8px;
+}
+.game-shell > .game-hud {
+  min-width: 0;
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
+}
+.game-hud .game-brand {
+  min-width: 0;
+}
+.game-hud .hud-wallet,
+.game-hud .coin-medallion {
+  flex-shrink: 0;
+}
+.game-shell .game-dock .dock-button {
+  width: 100%;
+  min-width: 0;
+}
+.game-shell .dock-label {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.game-shell .production-readout {
+  max-width: 100%;
+  height: auto;
+  flex-wrap: wrap;
+}
+.game-shell .production-readout b {
+  flex-wrap: wrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.game-shell .production-readout > div > span {
+  text-align: center;
+  min-width: 0;
+}
+.game-shell .stage-bottom .sell-control {
+  min-width: 0;
+  max-width: 100%;
+}
+.game-shell .sell-button {
+  max-width: 100%;
+  height: auto;
+  flex-wrap: wrap;
+}
+.game-shell .offline-toast {
+  max-width: calc(100% - 24px);
+}
+@media (max-width: 760px), (max-height: 500px) {
+  .game-shell {
+    height: calc(100dvh - 64px - env(safe-area-inset-bottom));
+    padding-top: 0;
+    grid-template-rows:
+      calc(62px + env(safe-area-inset-top)) minmax(360px, 1fr)
+      auto;
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-padding-block: 12px;
+  }
+  .game-shell.panel-open {
+    height: calc(100dvh - 64px - env(safe-area-inset-bottom));
+    padding-top: 0;
+    grid-template-rows:
+      calc(62px + env(safe-area-inset-top)) minmax(360px, 1fr)
+      auto;
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: hidden;
+    scroll-padding-block: 12px;
+    overflow-y: hidden;
+  }
+  .game-shell > .game-hud {
+    padding-top: env(safe-area-inset-top);
+  }
+  .game-shell > .game-dock {
+    position: fixed;
+    inset: auto 0 0;
+    height: calc(64px + env(safe-area-inset-bottom));
+    gap: 0;
+    padding: 4px max(8px, env(safe-area-inset-right))
+      max(4px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+    z-index: 9;
+  }
+  .game-shell .production-hint {
+    top: 104px;
+    left: 104px;
+    right: 12px;
+    margin: 0;
+  }
+  .game-shell .stage-bottom {
+    left: 12px;
+    right: 12px;
+    max-width: calc(100% - 24px);
+  }
+}
+@media (max-width: 420px) {
+  .game-shell .hud-wallet strong {
+    font-size: 18px;
+  }
+  .game-shell > .upgrade-deck {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 10px 12px 16px;
+  }
+}
+@keyframes route-flow {
+  to {
+    stroke-dashoffset: -34;
+  }
+}
+@keyframes money-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  18%,
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+}
+@keyframes level-stamp {
+  0% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@property --ocean-panel-top {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #214b56;
+}
+@property --ocean-panel-bottom {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #12333f;
+}
+@property --ocean-panel-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #93e8d0;
+}
+@property --depth-water-top {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #216c7c;
+}
+@property --depth-water-bottom {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #164a61;
+}
+@property --depth-water-light {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #61c2b9;
+}
+
+/* Keep locked-depth content centered in the viewport below the HUD. */
+.game-shell {
+  --scene-top: 62px;
+}
+@media (max-height: 650px) and (min-width: 761px) {
+  .game-shell {
+    --scene-top: 56px;
+  }
+}
+@media (max-width: 760px), (max-height: 500px) {
+  .game-shell {
+    --scene-top: calc(62px + env(safe-area-inset-top));
+  }
+}
+/* Offline earnings temporarily occupy the wallet's reserved header slot. */
+.game-shell .hud-wallet .offline-toast {
+  position: static;
+  inset: auto;
+  transform: none;
+  margin: 0;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 0 0 0 6px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  gap: 6px;
+}
+.game-shell .hud-wallet:has(.offline-toast) {
+  padding: 0;
+}
+.game-shell:has(.offline-toast) .production-hint {
+  visibility: visible;
+}
+
+.game-shell .production-hint {
+  white-space: nowrap;
+  font-size: 11px;
+  max-width: none;
+}
+@media (max-width: 360px) {
+  .game-shell .production-hint {
+    font-size: 10px;
+    padding: 6px;
+  }
+}
+
+/* Surface waters have their own palette, using the shared color transitions. */
+.game-shell.biome-ocean {
+  --depth-water-top: #247f98;
+  --depth-water-bottom: #174e70;
+  --depth-water-light: #95dfda;
+  --ocean-panel-top: #286879;
+  --ocean-panel-bottom: #164659;
+  --ocean-panel-accent: #b3f3e4;
+}
+
+/* Available upgrades share Sell's palette at every viewport size. */
+.game-shell .upgrade-tile.can-upgrade button:not(:disabled) {
+  background: linear-gradient(135deg, #efd48f, #dcb86d);
+  border-color: #ffe5a04d;
+  color: #253b3e;
+  box-shadow: inset 0 1px #fff3ce55;
+}
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .game-shell .upgrade-tile.can-upgrade button:not(:disabled) {
+    background: linear-gradient(145deg, #f5e1a7eb, #dcb86de6);
+    border-color: #fff0bf70;
+    box-shadow:
+      inset 0 1px 0 #fff9db80,
+      inset 0 -1px 0 #735c2d18,
+      0 2px 8px #051c281a;
+  }
+}
+.game-shell > .game-dock {
+  grid-template-columns: repeat(4, minmax(0, 120px));
+}
+.ocean-entry {
+  position: absolute;
+  left: 18px;
+  top: 74px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 1px solid #b3f3e42b;
+  border-radius: 12px;
+  color: var(--color-aqua);
+  background: var(--ocean-panel-bottom);
+  box-shadow: 0 4px 12px #03172326;
+  font: 600 11px/1.3 var(--font-body);
+}
+.ocean-entry .game-icon {
+  width: 18px;
+  height: 18px;
+}
+@media (max-width: 760px), (max-height: 500px) {
+  .game-shell > .game-dock {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .ocean-entry {
+    left: 12px;
+    top: calc(70px + env(safe-area-inset-top));
+  }
+}
+/* Side drawers cover the map shortcut; the Ocean surface keeps its Dive exit. */
+.ocean-entry {
+  z-index: 6;
+}
+.surface-mode > .ocean-entry {
+  z-index: 45;
+}
+/* Ocean and Dive share a stationary footprint aligned with the depth island. */
+.game-shell > .ocean-entry {
+  left: 16px;
+  width: 68px;
+  gap: 4px;
+  justify-content: center;
+  transform: none;
+}
+.game-shell > .ocean-entry:hover,
+.game-shell > .ocean-entry:active {
+  transform: none;
+}
+@media (max-width: 760px) {
+  .game-shell > .ocean-entry {
+    left: 10px;
+  }
+}
+
+/* Keep underlying layout stable for the entire Ocean transition. */
+.game-shell.surface-mode > .upgrade-deck,
+.game-shell.surface-mode > .game-dock {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: none;
+  transition: none;
+}
+.game-shell .game-hud .settings-trigger,
+.game-shell .game-hud .settings-trigger:hover,
+.game-shell .game-hud .settings-trigger:active {
+  box-shadow: none;
+  filter: none;
+}
+
+.game-shell.surface-mode > .ocean-entry {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.game-shell > .ocean-entry {
+  border-radius: 12px;
+  padding: 8px;
+}
+.game-shell > .ocean-entry .game-icon {
+  width: 22px;
+  height: 22px;
+}
+/* Fixed mobile viewport: HUD, scene, four upgrades, and four dock tabs.
+ * Sell keeps equal columns, 12px outer margins, and 10px inner padding. */
+@media (max-width: 760px) {
+  .game-shell,
+  .game-shell.panel-open {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    grid-template-rows:
+      calc(62px + env(safe-area-inset-top)) minmax(0, 1fr)
+      148px calc(64px + env(safe-area-inset-bottom));
+  }
+  .game-shell > .ocean-stage {
+    grid-row: 2;
+    min-height: 0;
+  }
+  .game-shell > .game-hud {
+    grid-row: 1;
+    position: relative;
+    z-index: 10;
+  }
+  .game-shell > .upgrade-deck {
+    grid-row: 3;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+    padding: 6px 8px;
+    min-height: 0;
+    overflow: hidden;
+    align-items: stretch;
+  }
+  .game-shell .upgrade-tile {
+    padding: 5px;
+    gap: 3px;
+    min-height: 0;
+  }
+  .game-shell .upgrade-art {
+    height: 44px;
+    min-height: 0;
+  }
+  .game-shell .upgrade-art svg {
+    max-height: 44px;
+  }
+  .game-shell .upgrade-info h3,
+  .game-shell .upgrade-info > span {
+    font-size: 9px;
+  }
+  .game-shell .upgrade-tile button {
+    min-height: 34px;
+    padding: 5px 2px;
+    font-size: 10px;
+  }
+  .game-shell > .game-dock {
+    position: relative;
+    inset: auto;
+    grid-row: 4;
+    z-index: 9;
+  }
+  .game-shell.previewing-depth > .game-hud,
+  .game-shell.previewing-depth > .game-dock {
+    position: relative;
+  }
+  .game-shell .production-hint {
+    left: 90px;
+    right: 8px;
+    max-width: calc(100% - 98px);
+    white-space: normal;
+    font-size: 10px;
+    padding: 4px 6px;
+    top: 74px;
+    bottom: auto;
+  }
+  .game-shell.surface-mode > .game-dock {
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .game-shell .ocean-world-heading {
+    padding-left: 76px;
+  }
+  .game-shell .outpost-illustration {
+    top: 0;
+    height: 100%;
+    max-height: none;
+  }
+  .game-shell .stage-bottom {
+    top: auto;
+    bottom: 8px;
+    transform: none;
+    margin: 0;
+    max-width: none;
+    flex-wrap: nowrap;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 6px;
+    width: auto;
+    left: 12px;
+    right: 12px;
+    margin-inline: 0;
+    padding: 10px;
+    column-gap: 10px;
+  }
+  .game-shell .production-readout {
+    padding: 8px;
+    flex: 1;
+    min-width: 0;
+    justify-content: space-around;
+  }
+  .game-shell .sell-button {
+    min-height: 40px;
+    padding: 6px 10px;
+    width: 100%;
+    justify-content: center;
+  }
+  .game-shell .sell-control {
+    flex: 1;
+    min-width: 0;
+  }
+  .game-shell .stage-bottom .sell-control,
+  .game-shell .stage-bottom .production-readout {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+  }
+  .game-shell .stage-bottom .sell-button {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    gap: 5px;
+    padding-inline: 6px;
+    flex-wrap: wrap;
+  }
+  .game-shell .stage-bottom .production-readout {
+    padding-inline: 0;
+  }
+  .game-shell .stage-bottom .sell-button.cargo-full,
+  .game-shell .stage-bottom .sell-button.first-step-target {
+    outline: none;
+    box-shadow: inset 0 0 0 2px #fff0b8;
+  }
+  .game-shell .stage-bottom .sell-button:focus-visible {
+    outline: 2px solid var(--color-aqua);
+    outline-offset: -4px;
+  }
+}

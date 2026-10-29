@@ -85,7 +85,36 @@ export function GuestGame({ onSignIn }: { onSignIn: () => void }) {
       <GameScreen
         session={session}
         accountPanel={invitation}
-        leaderboardPanel={invitation}
+        leaderboardPanel={
+          <section className="guest-leaders">
+            <div className="guest-leaders-emblem">
+              <GameIcon name="trophy" />
+            </div>
+            <h3>Your place in the depths</h3>
+            <p>Join the captain rankings with an account.</p>
+            <div className="guest-leaders-details">
+              <strong>Keep your progress</strong>
+              <p>
+                A new account can take this guest run into the rankings. An
+                existing account resumes its own cloud save.
+              </p>
+            </div>
+            <button
+              disabled={busy}
+              onClick={() => {
+                void signIn();
+              }}
+            >
+              {busy ? 'Saving progress…' : 'Join the leaderboard'}
+            </button>
+            <small>Playing as a guest? Your run stays on this device.</small>
+            {error && (
+              <p className="form-error" role="alert">
+                {error}
+              </p>
+            )}
+          </section>
+        }
         cloud={{ status: 'saved', error: null, syncedAt: null }}
       />
     </Suspense>

@@ -88,10 +88,10 @@ export function useSaleFeedback(layerId: string) {
           { transform: 'scale(1)' },
           {
             transform: 'scale(1.055)',
-            backgroundColor: '#426056',
+            filter: 'drop-shadow(0 0 8px #f5d78b99)',
             offset: 0.45,
           },
-          { transform: 'scale(1)' },
+          { transform: 'scale(1)', filter: 'drop-shadow(0 0 0px transparent)' },
         ],
         { duration: 300, delay: 540 },
       ),
