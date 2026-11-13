@@ -928,3 +928,9 @@
     overflow: auto;
   }
 }
+
+.dive-top .version-switch {
+  margin-left: auto;
+  margin-right: 10px;
+  pointer-events: auto;
+}

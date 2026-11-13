@@ -39,7 +39,7 @@ export function LockedDepthScene({
             className="locked-depth-content"
             data-digits={String(definition.depthMeters).length}
           >
-            <GameIcon name="lock" className="locked-depth-emblem" />
+            <GameIcon name="lock" className="locked-depth-emblem" size={128} />
             <span
               className="locked-depth-number"
               aria-label={`${String(definition.depthMeters)} meters`}

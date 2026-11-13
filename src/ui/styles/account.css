@@ -709,7 +709,7 @@
   color: #fff;
   background: #365a65;
 }
-.provider-badge svg {
+.provider-badge :is(svg, img) {
   width: 17px;
   height: 17px;
 }
@@ -754,7 +754,7 @@
   border: 2px solid #173e4b;
   border-radius: 50%;
 }
-.profile-trigger-avatar > .provider-badge svg {
+.profile-trigger-avatar > .provider-badge :is(svg, img) {
   width: 10px;
   height: 10px;
 }
@@ -1071,7 +1071,7 @@
   border-radius: 8px;
   overflow: hidden;
 }
-.social-signin .provider-badge svg {
+.social-signin .provider-badge :is(svg, img) {
   width: 16px;
   height: 16px;
 }
@@ -1081,7 +1081,7 @@
     height: 23px;
     border-radius: 7px;
   }
-  .auth-entry-register .provider-grid .provider-badge svg {
+  .auth-entry-register .provider-grid .provider-badge :is(svg, img) {
     width: 14px;
     height: 14px;
   }

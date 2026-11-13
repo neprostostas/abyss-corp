@@ -253,6 +253,13 @@ function PrototypeGame() {
         >
           <Brand />
         </button>
+        <a
+          className="version-switch"
+          href="/"
+          aria-label="Return to 2D version"
+        >
+          2D ↗
+        </a>
         <div className="dive-wallet">
           <GameIcon name="coin" />
           <strong>{format(world.credits)}</strong>

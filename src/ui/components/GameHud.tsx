@@ -34,6 +34,13 @@ export const GameHud = memo(function GameHud({
     <header className="game-hud" inert={ocean && !surfaceReady}>
       <div className="game-brand">
         <Brand />
+        <a
+          className="version-switch"
+          href="/prototype-3d/index.html"
+          aria-label="Open 3D version"
+        >
+          3D ↗
+        </a>
       </div>
       {!ocean && (
         <div

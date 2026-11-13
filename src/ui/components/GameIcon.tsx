@@ -286,14 +286,16 @@ const shapes: Record<IconName, ReactNode> = {
 export const GameIcon = memo(function GameIcon({
   name,
   className = '',
+  size = 32,
 }: {
   name: IconName;
   className?: string;
+  size?: number;
 }) {
   const base = useIconAssets();
   if (base)
     return (
-      <RasterIcon base={base} name={name} className={className} size={32} />
+      <RasterIcon base={base} name={name} className={className} size={size} />
     );
   return (
     <svg
