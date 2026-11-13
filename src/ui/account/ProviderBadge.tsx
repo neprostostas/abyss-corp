@@ -1,14 +1,19 @@
 import type { LoginProvider } from '../../infrastructure/supabase/sessionProvider';
 import { providerLabel } from '../../infrastructure/supabase/socialProviders';
 import { ProviderIcon } from '../auth/ProviderIcon';
+import { useIconAssets } from '../components/iconAssets';
+import { RasterIcon } from '../components/RasterIcon';
 export function ProviderBadge({ provider }: { provider: LoginProvider }) {
+  const base = useIconAssets();
   return (
     <span
       className={`provider-badge provider-${provider.replace('custom:', '')}`}
       title={providerLabel(provider)}
       aria-hidden="true"
     >
-      {provider === 'email' ? (
+      {provider === 'email' && base ? (
+        <RasterIcon base={base} name="email" size={20} />
+      ) : provider === 'email' ? (
         <svg
           viewBox="0 0 24 24"
           fill="none"

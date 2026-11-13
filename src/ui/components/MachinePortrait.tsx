@@ -1,4 +1,6 @@
 import type { UpgradeId } from '../../domain/game';
+import { useIconAssets } from './iconAssets';
+import { RasterIcon } from './RasterIcon';
 import {
   MiningRig,
   SubmarineModel,
@@ -15,6 +17,16 @@ export function MachinePortrait({
   level: number;
   color: string;
 }) {
+  const base = useIconAssets();
+  if (base)
+    return (
+      <RasterIcon
+        base={base}
+        name={id}
+        className="machine-portrait"
+        size={96}
+      />
+    );
   const viewBox = {
     mining: '-100 -170 200 210',
     transport: '-100 -65 215 125',

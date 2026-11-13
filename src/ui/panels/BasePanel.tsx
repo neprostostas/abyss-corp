@@ -264,14 +264,17 @@ function Prestige({
         </div>
       )}
       {!maxed && (
-        <div
-          className="prestige-checklist"
-          aria-label="Full completion required"
-        >
+        <div className="prestige-checklist" aria-label="Prestige requirements">
           <h3>Complete this run</h3>
           <p>
-            Max every base and collect every reward. Each new rank raises the
-            credit goal by 60%.
+            Max every base, Trade and Storage; collect every reward. Engineering
+            and Surveying are optional. Each new rank raises the credit goal by{' '}
+            {Math.round(
+              (PRESTIGE.costGrowth.numerator / PRESTIGE.costGrowth.denominator -
+                1) *
+                100,
+            )}
+            %.
           </p>
           {offer.requirements.map((item) => (
             <div

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#102d38" />
+    <title>Abyss Corp — Живі 3D-іконки</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script type="importmap">
+      { "imports": { "three": "./vendor/three.module.js" } }
+    </script>
+  </head>
+  <body>
+    <canvas id="gallery-canvas" aria-hidden="true"></canvas>
+    <header class="topbar">
+      <a class="brand" href="../v1/index.html"
+        ><img src="../v1/brand-abyss.png" alt="" /><span
+          >ABYSS <b>CORP</b><small>ЛАБОРАТОРІЯ ФОРМ</small></span
+        ></a
+      ><a class="back-link" href="../v1/index.html">↗ Картинки-референси</a>
+    </header>
+    <main>
+      <section class="intro">
+        <div>
+          <p class="eyebrow"><span></span> КОЛЕКЦІЯ 01 / 3D + РУХ</p>
+          <h1>Малі форми.<br /><em>Живий характер.</em></h1>
+          <p class="lede">
+            Знайомі іконки Abyss Corp — в об’ємі.<br />У кожної своя деталь,
+            своя дія і свій характер.
+          </p>
+        </div>
+        <div class="hero-item">
+          <div
+            id="hero-stage"
+            class="stage"
+            aria-label="Анімована модель підводного човна"
+          ></div>
+          <div class="hero-caption">
+            <span>01 — ПІДВОДНИЙ РУХ</span><span class="live-dot">LIVE 3D</span>
+          </div>
+        </div>
+      </section>
+      <section class="collection" aria-label="Колекція 3D-моделей">
+        <div class="toolbar">
+          <div class="toolbar-heading">
+            <h2>Уся колекція <span id="count">48</span></h2>
+            <p>Обери модель, щоб роздивитися ближче</p>
+          </div>
+          <div class="playback">
+            <button id="pause-all" aria-pressed="false">Ⅱ Зупинити рух</button
+            ><button id="reference-toggle" aria-pressed="true">
+              ◉ Референси</button
+            ><a id="archive" href="./abyss-icons-3d-v1.zip" download
+              >↓ Усі GLB</a
+            >
+          </div>
+        </div>
+        <div class="filterbar">
+          <div id="filters" role="group" aria-label="Категорії"></div>
+          <label class="search"
+            ><span>⌕</span
+            ><input
+              id="search"
+              type="search"
+              placeholder="Знайти іконку…"
+              aria-label="Знайти іконку"
+          /></label>
+        </div>
+        <p id="loading" role="status">Занурюємось у колекцію…</p>
+        <div id="grid" class="grid"></div>
+        <p id="empty" hidden>Таких іконок немає. Спробуй іншу назву.</p>
+      </section>
+      <footer>
+        <span>ABYSS CORP · MODEL STUDIES / V1</span
+        ><span>48 моделей · 48 анімацій · окрема локальна колекція</span>
+      </footer>
+    </main>
+    <dialog id="viewer" aria-labelledby="detail-title">
+      <div class="viewer-top">
+        <span class="eyebrow">ABYSS / MODEL INSPECTOR</span
+        ><button id="close-viewer" aria-label="Закрити перегляд">✕</button>
+      </div>
+      <div class="viewer-body">
+        <div class="viewer-visual">
+          <div id="detail-stage"></div>
+          <span class="orbit-hint"
+            >Тягни, щоб обертати · скрол або щипок, щоб наблизити</span
+          ><button id="reset-camera">↺ Ракурс</button>
+        </div>
+        <aside>
+          <p id="detail-index" class="eyebrow"></p>
+          <h2 id="detail-title"></h2>
+          <p id="detail-id" class="asset-id"></p>
+          <p id="detail-motion" class="motion-copy"></p>
+          <div class="reference-panel">
+            <img id="detail-reference" alt="Картинка-референс" />
+            <div>
+              <span>ОРИГІНАЛЬНА КАРТИНКА</span>
+              <p>Форма, кольори й матеріали, від яких починали.</p>
+            </div>
+          </div>
+          <div class="detail-actions">
+            <button id="detail-play" aria-pressed="false">Ⅱ Пауза</button
+            ><button id="restart">↺ З початку</button>
+          </div>
+          <label class="speed"
+            >Швидкість <output id="speed-value">1×</output
+            ><input
+              id="speed"
+              type="range"
+              min="0.25"
+              max="2"
+              step="0.25"
+              value="1"
+          /></label>
+          <label class="timeline"
+            >Анімація <output id="time-value">0.0 / 0.0 с</output
+            ><input
+              id="timeline"
+              type="range"
+              min="0"
+              max="1"
+              step="0.001"
+              value="0"
+          /></label>
+          <a id="download-model" class="download" download
+            >↓ Завантажити GLB з анімацією</a
+          >
+          <p id="model-stats" class="model-stats"></p>
+          <nav class="pager">
+            <button id="prev">← Попередня</button
+            ><button id="next">Наступна →</button>
+          </nav>
+        </aside>
+      </div>
+    </dialog>
+    <p id="fatal" hidden role="alert"></p>
+    <script type="module" src="./gallery.js"></script>
+  </body>
+</html>

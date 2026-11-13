@@ -1,5 +1,5 @@
 import { EXPEDITIONS } from '../data/expeditions';
-import { CORE_LAYER_IDS } from '../data/layers';
+import { LAYER_IDS, CORE_LAYER_IDS } from '../data/layers';
 import type { LayerId, ProductionConfig } from '../data/layers';
 import { UPGRADE_IDS, UPGRADES } from '../data/balance';
 import type { WorldState } from './world';
@@ -11,7 +11,11 @@ export function getExpeditionOffer(world: WorldState) {
   const progression = getProgression(world);
   const state = progression.expedition ?? createExpedition();
   const definition = EXPEDITIONS[state.completed];
+  const sourceIds = LAYER_IDS.filter(
+    (id) => (definition?.targets[id] ?? 0) > 0,
+  );
   const unlocked =
+    sourceIds.every((id) => !!world.layers[id]?.automation) &&
     CORE_LAYER_IDS.every((id) => {
       const layer = world.layers[id];
       return (
@@ -25,20 +29,23 @@ export function getExpeditionOffer(world: WorldState) {
     (['trade', 'storage'] as const).every(
       (id) => progression.research[id] >= 3,
     );
-  const pilotsReady = CORE_LAYER_IDS.every(
+  const pilotsReady = sourceIds.every(
     (id) =>
       (state.active &&
         definition !== undefined &&
-        state.delivered[id] >= definition.targets[id]) ||
+        (state.delivered[id] ?? 0) >= (definition.targets[id] ?? 0)) ||
       (world.layers[id]?.running && world.layers[id].automation?.enabled),
   );
   const ready =
     !!definition &&
     state.active &&
-    CORE_LAYER_IDS.every((id) => state.delivered[id] >= definition.targets[id]);
+    sourceIds.every(
+      (id) => (state.delivered[id] ?? 0) >= (definition.targets[id] ?? 0),
+    );
   return {
     state,
     definition,
+    sourceIds,
     unlocked,
     pilotsReady,
     ready,
@@ -83,12 +90,11 @@ export function supplyExpedition(
   const progression = getProgression(world);
   const state = progression.expedition;
   const definition = state?.active ? EXPEDITIONS[state.completed] : undefined;
-  if (!state || !definition || !CORE_LAYER_IDS.some((core) => core === id))
+  if (!state || !definition || (definition.targets[id] ?? 0) === 0)
     return { world, game };
-  const coreId = id as (typeof CORE_LAYER_IDS)[number];
   const amount = Math.min(
     game.refined,
-    definition.targets[coreId] - state.delivered[coreId],
+    (definition.targets[id] ?? 0) - (state.delivered[id] ?? 0),
   );
   if (amount <= 0) return { world, game };
   return {
@@ -100,7 +106,7 @@ export function supplyExpedition(
           ...state,
           delivered: {
             ...state.delivered,
-            [coreId]: state.delivered[coreId] + amount,
+            [id]: (state.delivered[id] ?? 0) + amount,
           },
         },
       },

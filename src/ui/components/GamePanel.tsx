@@ -81,7 +81,11 @@ export function GamePanel({
       )
         return;
       // Navigation buttons already switch or close drawers themselves.
-      if (target.closest('.dock-button, .settings-trigger, .ocean-entry'))
+      if (
+        target.closest(
+          '.dock-button, .settings-trigger, .ocean-entry, [data-panel-toggle]',
+        )
+      )
         return;
       event.preventDefault();
       event.stopPropagation();

@@ -1,0 +1,405 @@
+{
+  "runs": [
+    {
+      "policy": "roi",
+      "rank": 0,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 226,
+        "pearl-caverns": 434,
+        "expeditions": 741,
+        "thermal-vents": 875,
+        "midnight-rift": 1123
+      },
+      "completionSeconds": 1286,
+      "prestigeSeconds": 1315,
+      "tailEstimateSeconds": 29,
+      "maxActionGap": 84,
+      "creditsPerSecond": 866.32,
+      "requiredCredits": 25000
+    },
+    {
+      "policy": "expansion",
+      "rank": 0,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 238,
+        "pearl-caverns": 442,
+        "expeditions": 804,
+        "thermal-vents": 930,
+        "midnight-rift": 1183
+      },
+      "completionSeconds": 1349,
+      "prestigeSeconds": 1378,
+      "tailEstimateSeconds": 29,
+      "maxActionGap": 84,
+      "creditsPerSecond": 866.32,
+      "requiredCredits": 25000
+    },
+    {
+      "policy": "relaxed",
+      "rank": 0,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 318,
+        "pearl-caverns": 525,
+        "expeditions": 842,
+        "thermal-vents": 968,
+        "midnight-rift": 1218
+      },
+      "completionSeconds": 1384,
+      "prestigeSeconds": 1413,
+      "tailEstimateSeconds": 29,
+      "maxActionGap": 84,
+      "creditsPerSecond": 866.32,
+      "requiredCredits": 25000
+    },
+    {
+      "policy": "roi",
+      "rank": 1,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 144,
+        "pearl-caverns": 336,
+        "expeditions": 634,
+        "thermal-vents": 750,
+        "midnight-rift": 978
+      },
+      "completionSeconds": 1130,
+      "prestigeSeconds": 1165,
+      "tailEstimateSeconds": 35,
+      "maxActionGap": 84,
+      "creditsPerSecond": 909.47,
+      "requiredCredits": 32000
+    },
+    {
+      "policy": "expansion",
+      "rank": 1,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 173,
+        "pearl-caverns": 375,
+        "expeditions": 715,
+        "thermal-vents": 832,
+        "midnight-rift": 1066
+      },
+      "completionSeconds": 1224,
+      "prestigeSeconds": 1257,
+      "tailEstimateSeconds": 33,
+      "maxActionGap": 84,
+      "creditsPerSecond": 915.86,
+      "requiredCredits": 32000
+    },
+    {
+      "policy": "relaxed",
+      "rank": 1,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 270,
+        "pearl-caverns": 456,
+        "expeditions": 760,
+        "thermal-vents": 873,
+        "midnight-rift": 1107
+      },
+      "completionSeconds": 1265,
+      "prestigeSeconds": 1299,
+      "tailEstimateSeconds": 34,
+      "maxActionGap": 84,
+      "creditsPerSecond": 915.86,
+      "requiredCredits": 32000
+    },
+    {
+      "policy": "roi",
+      "rank": 5,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 78,
+        "pearl-caverns": 138,
+        "expeditions": 454,
+        "thermal-vents": 540,
+        "midnight-rift": 724
+      },
+      "completionSeconds": 828,
+      "prestigeSeconds": 896,
+      "tailEstimateSeconds": 68,
+      "maxActionGap": 84,
+      "creditsPerSecond": 1113.9,
+      "requiredCredits": 77000
+    },
+    {
+      "policy": "expansion",
+      "rank": 5,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 102,
+        "pearl-caverns": 222,
+        "expeditions": 523,
+        "thermal-vents": 612,
+        "midnight-rift": 797
+      },
+      "completionSeconds": 922,
+      "prestigeSeconds": 990,
+      "tailEstimateSeconds": 68,
+      "maxActionGap": 84,
+      "creditsPerSecond": 1117.55,
+      "requiredCredits": 77000
+    },
+    {
+      "policy": "relaxed",
+      "rank": 5,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 174,
+        "pearl-caverns": 298,
+        "expeditions": 567,
+        "thermal-vents": 653,
+        "midnight-rift": 838
+      },
+      "completionSeconds": 963,
+      "prestigeSeconds": 1030,
+      "tailEstimateSeconds": 67,
+      "maxActionGap": 84,
+      "creditsPerSecond": 1117.55,
+      "requiredCredits": 77000
+    },
+    {
+      "policy": "roi",
+      "rank": 10,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 39,
+        "pearl-caverns": 87,
+        "expeditions": 378,
+        "thermal-vents": 432,
+        "midnight-rift": 580
+      },
+      "completionSeconds": 668,
+      "prestigeSeconds": 837,
+      "tailEstimateSeconds": 169,
+      "maxActionGap": 84,
+      "creditsPerSecond": 1375.07,
+      "requiredCredits": 233000
+    },
+    {
+      "policy": "expansion",
+      "rank": 10,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 39,
+        "pearl-caverns": 99,
+        "expeditions": 405,
+        "thermal-vents": 463,
+        "midnight-rift": 612
+      },
+      "completionSeconds": 714,
+      "prestigeSeconds": 884,
+      "tailEstimateSeconds": 170,
+      "maxActionGap": 84,
+      "creditsPerSecond": 1374.81,
+      "requiredCredits": 233000
+    },
+    {
+      "policy": "relaxed",
+      "rank": 10,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 122,
+        "pearl-caverns": 215,
+        "expeditions": 461,
+        "thermal-vents": 529,
+        "midnight-rift": 675
+      },
+      "completionSeconds": 774,
+      "prestigeSeconds": 943,
+      "tailEstimateSeconds": 169,
+      "maxActionGap": 83,
+      "creditsPerSecond": 1371.06,
+      "requiredCredits": 233000
+    },
+    {
+      "policy": "roi",
+      "rank": 20,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 39,
+        "pearl-caverns": 64,
+        "expeditions": 335,
+        "thermal-vents": 369,
+        "midnight-rift": 470
+      },
+      "completionSeconds": 532,
+      "prestigeSeconds": 1682,
+      "tailEstimateSeconds": 1150,
+      "maxActionGap": 84,
+      "creditsPerSecond": 1886.17,
+      "requiredCredits": 2169000
+    },
+    {
+      "policy": "expansion",
+      "rank": 20,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 39,
+        "pearl-caverns": 64,
+        "expeditions": 336,
+        "thermal-vents": 382,
+        "midnight-rift": 486
+      },
+      "completionSeconds": 557,
+      "prestigeSeconds": 1709,
+      "tailEstimateSeconds": 1152,
+      "maxActionGap": 84,
+      "creditsPerSecond": 1883.82,
+      "requiredCredits": 2169000
+    },
+    {
+      "policy": "relaxed",
+      "rank": 20,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 86,
+        "pearl-caverns": 147,
+        "expeditions": 372,
+        "thermal-vents": 417,
+        "midnight-rift": 519
+      },
+      "completionSeconds": 590,
+      "prestigeSeconds": 1740,
+      "tailEstimateSeconds": 1150,
+      "maxActionGap": 84,
+      "creditsPerSecond": 1886.17,
+      "requiredCredits": 2169000
+    },
+    {
+      "policy": "roi",
+      "rank": 24,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 27,
+        "pearl-caverns": 51,
+        "expeditions": 325,
+        "thermal-vents": 345,
+        "midnight-rift": 435
+      },
+      "completionSeconds": 494,
+      "prestigeSeconds": 3023,
+      "tailEstimateSeconds": 2529,
+      "maxActionGap": 84,
+      "creditsPerSecond": 2089.34,
+      "requiredCredits": 5294000
+    },
+    {
+      "policy": "expansion",
+      "rank": 24,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 27,
+        "pearl-caverns": 51,
+        "expeditions": 323,
+        "thermal-vents": 361,
+        "midnight-rift": 453
+      },
+      "completionSeconds": 520,
+      "prestigeSeconds": 3036,
+      "tailEstimateSeconds": 2516,
+      "maxActionGap": 84,
+      "creditsPerSecond": 2104.02,
+      "requiredCredits": 5294000
+    },
+    {
+      "policy": "relaxed",
+      "rank": 24,
+      "marks": {
+        "shallows": 1,
+        "golden-trench": 80,
+        "pearl-caverns": 134,
+        "expeditions": 355,
+        "thermal-vents": 392,
+        "midnight-rift": 486
+      },
+      "completionSeconds": 550,
+      "prestigeSeconds": 3083,
+      "tailEstimateSeconds": 2533,
+      "maxActionGap": 84,
+      "creditsPerSecond": 2089.75,
+      "requiredCredits": 5294000
+    }
+  ],
+  "pilots": [
+    {
+      "depth": "shallows",
+      "level": 1,
+      "creditsInTenMinutes": 6420
+    },
+    {
+      "depth": "shallows",
+      "level": 2,
+      "creditsInTenMinutes": 7062
+    },
+    {
+      "depth": "shallows",
+      "level": 3,
+      "creditsInTenMinutes": 7704
+    },
+    {
+      "depth": "golden-trench",
+      "level": 1,
+      "creditsInTenMinutes": 11928
+    },
+    {
+      "depth": "golden-trench",
+      "level": 2,
+      "creditsInTenMinutes": 12780
+    },
+    {
+      "depth": "golden-trench",
+      "level": 3,
+      "creditsInTenMinutes": 14058
+    },
+    {
+      "depth": "pearl-caverns",
+      "level": 1,
+      "creditsInTenMinutes": 20352
+    },
+    {
+      "depth": "pearl-caverns",
+      "level": 2,
+      "creditsInTenMinutes": 22260
+    },
+    {
+      "depth": "pearl-caverns",
+      "level": 3,
+      "creditsInTenMinutes": 24168
+    },
+    {
+      "depth": "thermal-vents",
+      "level": 1,
+      "creditsInTenMinutes": 38250
+    },
+    {
+      "depth": "thermal-vents",
+      "level": 2,
+      "creditsInTenMinutes": 42075
+    },
+    {
+      "depth": "thermal-vents",
+      "level": 3,
+      "creditsInTenMinutes": 45900
+    },
+    {
+      "depth": "midnight-rift",
+      "level": 1,
+      "creditsInTenMinutes": 76680
+    },
+    {
+      "depth": "midnight-rift",
+      "level": 2,
+      "creditsInTenMinutes": 84348
+    },
+    {
+      "depth": "midnight-rift",
+      "level": 3,
+      "creditsInTenMinutes": 92016
+    }
+  ]
+}

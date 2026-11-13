@@ -23,9 +23,11 @@ export const INFRASTRUCTURE = {
     effect: 'Lower depth unlock cost',
   },
 } as const;
+// Discount research is optional: it may have no remaining purchases to benefit.
+export const PRESTIGE_RESEARCH_IDS = ['trade', 'storage'] as const;
 export const PRESTIGE = {
   requiredCredits: 25000,
-  costGrowth: { numerator: 8, denominator: 5 },
+  costGrowth: { numerator: 5, denominator: 4 },
   requiredLayer: 'midnight-rift',
   bonusPerRank: 20,
   maxRank: 25,

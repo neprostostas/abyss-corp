@@ -1819,6 +1819,8 @@
 }
 .prestige-checklist b {
   margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .prestige-checklist .game-icon {
   width: 16px;

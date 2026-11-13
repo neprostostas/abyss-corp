@@ -1,0 +1,15 @@
+{
+  "browserLoaded": 48,
+  "browserFailures": 0,
+  "techFilterCount": 5,
+  "coreSearchCount": 1,
+  "mobileViewport": [
+    390,
+    844
+  ],
+  "mobileOverflow": false,
+  "inspectorScrubbing": "verified with pointer input",
+  "modelDownload": "browser completed abyss-storage.glb download",
+  "archiveDownload": "browser completed archive download; archive integrity checked separately",
+  "render": "overview.png"
+}

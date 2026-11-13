@@ -1,7 +1,7 @@
 export const AUTOMATION_LEVELS = [
-  { cost: 80, intervalMs: 12000 },
-  { cost: 180, intervalMs: 6000 },
-  { cost: 360, intervalMs: 2000 },
+  { cost: 80, intervalMs: 12000, saleBonus: 0 },
+  { cost: 180, intervalMs: 6000, saleBonus: 10 },
+  { cost: 360, intervalMs: 2000, saleBonus: 20 },
 ] as const;
 export const OFFLINE_LIMIT_MS = 4 * 60 * 60 * 1000;
 export const OFFLINE_REPORT_MIN_MS = 1000;

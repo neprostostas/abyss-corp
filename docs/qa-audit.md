@@ -243,3 +243,88 @@ Fresh full check passes with 177 tests, strict typecheck, lint and formatting;
 production build passes. User-reported iPhone acceptance is recorded above.
 The three research/prestige migrations were applied before publishing v0.3.0.
 Release includes the existing mobile/Ocean cleanup and React render isolation.
+
+### Local progression balance — 2026-10-29
+
+Compared 18 fresh-run strategy/rank scenarios against v0.3.0; see
+[balance audit](balance-audit.md) and its raw JSON. Pilot training now adds an
+on-duty additive base-price bonus; prestige credit growth is 25% instead of 60%.
+One new regression checks actual trained-pilot income, off-duty pricing and
+continuous/chunked offline equivalence. Existing SQL integration tests run the new
+migration in isolated PGlite and check the revised rank-one rejection boundary.
+The migration is local and has not been applied to production. No push/deployment
+was performed for these balance changes.
+
+Chrome and WebKit checks at 320×568, 390×844 and 844×390 pass: training shows the
+new bonus, switching the pilot off removes it, no page overflow or runtime errors.
+Screenshots were captured after the drawer transition and visually inspected.
+
+### First-run clarity review — 2026-10-29
+
+See [first-run review](first-run-review.md) for the ranked findings and method.
+Exercised the fresh zero-credit sell/upgrade/pilot flow through UI buttons in
+Chrome and WebKit using accelerated browser time. Inspected five reachable ROI
+checkpoints in both engines, across the scene and four panel views (50 captures).
+Confirmed the stale 60% Prestige explanation and replaced it with the percentage
+derived from the current cost-growth configuration; both browser views now show
+25%. Full check passes with 178 tests; production build passes. The optional
+`--walkthrough` flag in the balance script records reproducible purchases,
+checkpoint saves and hint text. No push, deployment or remote migration occurred.
+
+### Local end-of-run goals and checklist — 2026-10-29
+
+Replaced the fully-upgraded-base dead end with remaining run-category/depth goals,
+then remaining prestige credits, sell-to-qualify, readiness or maximum-rank status.
+Urgent production, pickup and reward hints keep their precedence. Checklist labels
+explicitly count maxed upgrades, roles, research paths and facilities. The existing
+numeric fractions now resist wrapping at 320px; no completion rules were changed.
+
+Three new hint regression cases cover other-depth production/crew, unaffordable
+research/network goals, credit deficits at different ranks, sellable cargo,
+readiness, maximum rank and paused-production priority. Chrome/WebKit each check
+both 20:00 and 21:46 reachable states at 320×568, 390×844 and 844×390, including
+screenshots and fit checks. No push, deployment or remote migration was performed.
+
+Full check passes with 181 tests, typecheck, lint and formatting; production build
+passes. Final mobile screenshots confirm unbroken numeric fractions at 320px.
+
+### Local optional discount research — 2026-10-29
+
+Prestige now requires only maxed Trade and Storage research. The four research
+paths remain available; Engineering and Surveying are optional. UI labels and
+hints reflect this distinction and avoid expired discount purchases. Added a new
+local SQL migration without editing published migration history or touching the
+remote database. Existing save version and other prestige gates are unchanged.
+
+184 tests pass with typecheck, lint and formatting. Isolated PGlite tests accept
+prestige with optional research at zero, reject either required path below max,
+and retain checks for ownership, revisions and idempotent replay. Chrome/WebKit
+at 320×568, 390×844 and 844×390 verify 2/2 research eligibility, optional-card labels,
+ready hints, no checklist overflow and no runtime errors. In each engine an
+isolated 390×844 guest test confirms prestige, rank increment and reset to one
+base with optional research at zero. Mobile screenshots were visually inspected.
+The 18-scenario simulation and results are documented in prestige-research-review.md.
+No push, deployment or remote migration was performed.
+
+### Local late-depth objectives — 2026-10-29
+
+Added once-per-run missions for opening 900 m (+300 credits) and 1,900 m (+1,000),
+plus appended contracts for 45 Titanium and then 24 Titanium/36 Lumens. Original
+mission definitions and first-three contract indices, targets and cargo remain
+unchanged. The maximum expedition run bonus is now +25%. Prestige requires nine
+mission claims and five expeditions; its matching SQL migration is local only.
+
+Old saves with completed count 3 retain that count and bonus, then wait for the
+900 m source. New optional delivered keys validate target bounds and source
+availability. Regression tests cover old active third-contract reload/completion,
+new source routing and pilot readiness, offline partition/reload equivalence,
+locked-source/cargo bounds, one-time rewards and late-mission visibility outside
+collapsed claim history. PGlite checks the updated authenticated prestige gate,
+including a missing new mission and unfinished fifth expedition.
+
+191 tests, typecheck, lint, formatting and production build pass. Chrome/WebKit
+checks cover five contract states at three mobile sizes (30 combinations), with
+screenshots inspected at 320px. The same 18 strategy/rank scenarios finish; the
+rank-zero ROI run ends around 23:40, and its final expedition ends at 21:37 after
+opening 1,900 m at 19:28. See late-objectives.md for measurement limits. No push,
+deployment or remote migration was performed.

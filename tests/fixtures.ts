@@ -1,3 +1,4 @@
+import { EXPEDITIONS } from '../src/data/expeditions';
 import { MISSION_IDS } from '../src/data/progression';
 import { validateSave } from '../src/infrastructure/persistence/saveSchema';
 import { getCampaign, getPrestigeOffer } from '../src/domain/campaign';
@@ -257,7 +258,7 @@ export function completedWorld() {
       research: { trade: 5, storage: 5, engineering: 5, surveying: 5 },
       claimedMissions: [...MISSION_IDS],
       expedition: {
-        completed: 3,
+        completed: EXPEDITIONS.length,
         active: false,
         delivered: { shallows: 0, 'golden-trench': 0, 'pearl-caverns': 0 },
       },

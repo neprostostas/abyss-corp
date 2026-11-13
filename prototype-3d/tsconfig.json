@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+  "include": [
+    "./app.tsx",
+    "./WorldScene.tsx",
+    "./storage.ts",
+    "./*.test.ts",
+    "./*.test.tsx",
+    "./vite.config.ts"
+  ]
+}

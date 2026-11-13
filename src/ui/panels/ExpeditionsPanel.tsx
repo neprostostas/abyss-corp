@@ -1,5 +1,5 @@
 import { EXPEDITIONS, EXPEDITION_TRADE_BONUS } from '../../data/expeditions';
-import { LAYERS, CORE_LAYER_IDS } from '../../data/layers';
+import { LAYERS } from '../../data/layers';
 import { getExpeditionOffer } from '../../domain/expeditions';
 import type { WorldState } from '../../domain/world';
 import { ProgressBar } from '../components/ProgressBar';
@@ -20,7 +20,7 @@ export function ExpeditionsPanel({
     return (
       <section className="expedition-card expedition-complete">
         <GameIcon name="trophy" />
-        <h3>Abyss beacon reached</h3>
+        <h3>Midnight rift charted</h3>
         <p>
           {EXPEDITIONS.length} expeditions completed · Cargo +
           {EXPEDITIONS.length * EXPEDITION_TRADE_BONUS}%
@@ -36,24 +36,38 @@ export function ExpeditionsPanel({
       <p>
         {offer.state.active
           ? 'Pilots supply the expedition before selling cargo.'
-          : 'Send cargo from all three bases.'}
+          : 'Send cargo from the listed bases.'}
       </p>
-      {CORE_LAYER_IDS.map((id) => (
+      {offer.sourceIds.map((id) => (
         <div className="expedition-cargo" key={id}>
           <span>{LAYERS[id].production.resource.name}</span>
           <b>
-            {offer.state.delivered[id]} / {offer.definition?.targets[id]}
+            {offer.state.delivered[id] ?? 0} / {offer.definition?.targets[id]}
           </b>
           <ProgressBar
             label={`${LAYERS[id].production.resource.name} delivered`}
             value={
-              offer.state.delivered[id] / (offer.definition?.targets[id] ?? 1)
+              (offer.state.delivered[id] ?? 0) /
+              (offer.definition?.targets[id] ?? 1)
             }
           />
         </div>
       ))}
-      {!offer.pilotsReady && !offer.ready && (
-        <p className="form-notice">Put all pilots on duty to supply cargo.</p>
+      {!offer.unlocked && offer.state.completed >= 3 && (
+        <p className="form-notice">
+          {offer.sourceIds
+            .filter((id) => !world.layers[id])
+            .map(
+              (id) =>
+                `Reach ${LAYERS[id].depthMeters.toLocaleString('en-US')} m`,
+            )
+            .join(' · ') || 'Hire cargo pilots at the listed bases.'}
+        </p>
+      )}
+      {!offer.pilotsReady && !offer.ready && offer.unlocked && (
+        <p className="form-notice">
+          Put the listed pilots on duty to supply cargo.
+        </p>
       )}
       {offer.ready ? (
         <button className="wide-button" onClick={onClaim}>

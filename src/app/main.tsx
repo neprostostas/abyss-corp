@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
+import { IconAssetsContext } from '../ui/components/iconAssets';
 import { supabase } from '../infrastructure/supabase/client';
 
 import '../ui/styles/theme.css';
@@ -15,6 +16,8 @@ if (!root)
   throw new Error('Abyss Corp cannot start: the root element is missing.');
 createRoot(root).render(
   <StrictMode>
-    <App client={supabase} />
+    <IconAssetsContext.Provider value="/icons/generated-v1">
+      <App client={supabase} />
+    </IconAssetsContext.Provider>
   </StrictMode>,
 );

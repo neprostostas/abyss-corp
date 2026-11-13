@@ -338,7 +338,7 @@ void test('prestige requires every completion category, not just depth and credi
       ...complete,
       progression: {
         ...complete.progression,
-        research: { ...complete.progression.research, surveying: 4 },
+        research: { ...complete.progression.research, trade: 4 },
       },
     },
     {
@@ -363,7 +363,7 @@ void test('prestige requires every completion category, not just depth and credi
 void test('prestige cost grows faster than the additive income reward at every rank', () => {
   assert.deepEqual(
     [0, 1, 2, 3].map(getPrestigeCost),
-    [25000, 40000, 64000, 103000],
+    [25000, 32000, 40000, 49000],
   );
   for (let rank = 1; rank < PRESTIGE.maxRank; rank++) {
     assert(
@@ -427,8 +427,42 @@ void test('failed prestige reports the current rank cost instead of the first-ru
   );
   session.setActive(true);
   await session.initialize();
-  await assert.rejects(session.prestige(1), /40,000 credits/);
+  await assert.rejects(session.prestige(1), /32,000 credits/);
   assert.equal(session.getSnapshot().world.campaign?.rank, 1);
   session.select('golden-trench');
   assert.equal(session.getSnapshot().world.selectedLayerId, 'golden-trench');
+});
+
+void test('discount research is optional for prestige while both required paths must be maxed', () => {
+  const complete = completedWorld();
+  for (const discounts of [
+    { engineering: 0, surveying: 0 },
+    { engineering: 4, surveying: 3 },
+    {},
+  ]) {
+    const world = {
+      ...complete,
+      progression: {
+        ...complete.progression,
+        research: { trade: 5, storage: 5, ...discounts },
+      },
+    };
+    const offer = getPrestigeOffer(world);
+    const research = offer.requirements.find(({ id }) => id === 'research');
+    assert.equal(research?.current, 2);
+    assert.equal(research.total, 2);
+    assert(offer.canPrestige);
+    assert.equal(getCampaign(prestigeWorld(world)).rank, 1);
+    for (const id of ['trade', 'storage'] as const) {
+      const missing = {
+        ...world,
+        progression: {
+          ...world.progression,
+          research: { ...world.progression.research, [id]: 4 },
+        },
+      };
+      assert.equal(getPrestigeOffer(missing).canPrestige, false);
+      assert.equal(prestigeWorld(missing), missing);
+    }
+  }
 });

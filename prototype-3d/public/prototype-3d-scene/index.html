@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Abyss · 3D-майстерня v10</title>
+    <link
+      rel="preload"
+      href="/prototype-3d-scene/scene.glb"
+      as="fetch"
+      crossorigin
+    />
+    <style>
+      body {
+        margin: 0;
+        background: #033b51;
+        color: #eff7ed;
+        font: 14px system-ui;
+      }
+      canvas {
+        display: block;
+      }
+      header {
+        position: absolute;
+        top: 20px;
+        left: 24px;
+        z-index: 2;
+      }
+      h1 {
+        font-size: 18px;
+        margin: 0 0 8px;
+      }
+      p {
+        opacity: 0.7;
+      }
+      button,
+      a {
+        background: #063d50dd;
+        color: inherit;
+        border: 1px solid #87d5cc55;
+        border-radius: 8px;
+        padding: 9px 14px;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      button:focus-visible,
+      a:focus-visible {
+        outline: 2px solid #ffe4a0;
+      }
+      #status {
+        position: absolute;
+        bottom: 14px;
+        left: 24px;
+        opacity: 0.7;
+        pointer-events: none;
+      }
+      aside {
+        display: none;
+        position: absolute;
+        z-index: 3;
+        right: 18px;
+        top: 18px;
+        width: min(40vw, 600px);
+        background: #032e41;
+        border: 1px solid #72bec16b;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px #001a2b88;
+      }
+      aside img {
+        display: block;
+        width: 100%;
+      }
+      aside p {
+        margin: 8px 12px;
+        font-size: 12px;
+      }
+      .comparing aside {
+        display: block;
+      }
+      @media (max-width: 700px) {
+        header {
+          left: 14px;
+          top: 14px;
+        }
+        h1 {
+          font-size: 16px;
+        }
+        header p {
+          font-size: 12px;
+        }
+        button,
+        a {
+          padding: 8px;
+        }
+        .comparing aside {
+          top: auto;
+          bottom: 42px;
+          width: 60vw;
+        }
+      }
+      header,
+      #status,
+      aside {
+        display: none !important;
+      }
+    </style>
+    <script type="importmap">
+      { "imports": { "three": "./vendor/three.module.js" } }
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>Abyss Corp · 3D-майстерня v10</h1>
+      <p>Перетягуй для обертання · колесо для масштабу</p>
+      <button id="reset">Початковий ракурс</button>
+      <button id="rotate" aria-pressed="false">Автообертання</button>
+      <button id="compare" aria-pressed="false">Порівняти з оригіналом</button>
+      <button id="capture">Зберегти кадр</button>
+    </header>
+    <div id="status">Завантаження…</div>
+    <script type="module" src="./scene.js"></script>
+  </body>
+</html>

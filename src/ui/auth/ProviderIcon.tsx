@@ -1,4 +1,6 @@
 import type { SocialProvider } from '../../infrastructure/supabase/socialProviders';
+import { useIconAssets } from '../components/iconAssets';
+import { RasterIcon } from '../components/RasterIcon';
 
 // Discord, GitHub, Telegram, Steam, Twitch and X paths: Simple Icons (CC0).
 const paths: Record<Exclude<SocialProvider, 'azure'>, string> = {
@@ -22,6 +24,15 @@ const paths: Record<Exclude<SocialProvider, 'azure'>, string> = {
 };
 
 export function ProviderIcon({ provider }: { provider: SocialProvider }) {
+  const base = useIconAssets();
+  const name =
+    provider === 'azure'
+      ? 'microsoft'
+      : provider === 'linkedin_oidc'
+        ? 'linkedin'
+        : provider.replace('custom:', '');
+  if (base)
+    return <RasterIcon base={base} name={`provider-${name}`} size={20} />;
   return (
     <svg
       viewBox="0 0 24 24"

@@ -1,0 +1,290 @@
+[
+  {
+    "id": "coin",
+    "subject": "a single thick round golden credit coin with a simple recessed C-shaped currency mark",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "crystal",
+    "subject": "one short chunky faceted turquoise crystal shard",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "mining",
+    "subject": "a compact golden mining drill housing on dark teal feet, one pointed silver cone drill aimed front-left",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "transport",
+    "subject": "the small cream and golden cargo submarine from the scene, one cyan round bow window, dorsal fin and rear propeller ring",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "processing",
+    "subject": "a cream cylindrical refinery tank, one curved turquoise front window and one short connected elbow pipe",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "storage",
+    "subject": "a small cream cargo depot with rounded golden roof and open doorway containing one strapped golden crate",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "map",
+    "subject": "a folded cream nautical chart with a single turquoise location pin and a simple route",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "sonar",
+    "subject": "a round dark teal and cream sonar instrument, turquoise screen with three rings and one small golden blip",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "prestige",
+    "subject": "a thick golden five-point merit star with a small inset turquoise check mark",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "research",
+    "subject": "one compact cream and teal research specimen cube with a golden beveled frame and cyan translucent face",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "trade-network",
+    "subject": "two thick curved arrows pointing in opposite horizontal directions, golden upper arrow and turquoise lower arrow",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "modular-storage",
+    "subject": "three rounded cream cargo cubes with gold edging, two below one above, clean simple stack",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "missions",
+    "subject": "a cream clipboard with dark teal frame, gold top clip and one prominent turquoise check mark",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "trophy",
+    "subject": "a simple golden trophy cup with two rounded handles and a dark teal foot",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "refresh",
+    "subject": "one thick curved turquoise circular refresh arrow with a golden arrowhead",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "settings",
+    "subject": "one simple chunky cream cog wheel with golden outer edge and a teal central hole",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "lock",
+    "subject": "one cream padlock body with a thick golden shackle and a dark teal keyhole",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "play",
+    "subject": "a single thick golden right-pointing triangular play symbol, softly rounded corners",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "pause",
+    "subject": "two identical thick upright golden pause bars with softly rounded edges",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "close",
+    "subject": "one thick cream X close symbol, rounded ends with thin golden edge",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "arrow",
+    "subject": "one thick golden arrow pointing right, straight horizontal shaft and a clean broad arrowhead",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "robot",
+    "subject": "a compact cream underwater helper robot head with one small golden antenna and a dark teal visor with two simple cyan eyes, no mouth",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "cloud",
+    "subject": "a simple rounded cream cloud silhouette with one thick turquoise upward upload arrow",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "check",
+    "subject": "one simple chunky turquoise check mark with rounded ends and a fine golden rim",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "depth",
+    "subject": "one vertical golden downward depth arrow beside three short turquoise depth tick marks",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "profile",
+    "subject": "a single vintage cream diving helmet with a round turquoise face window, gold fittings and dark teal neck base",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "camera",
+    "subject": "one compact cream underwater camera with a large round turquoise lens and a small golden top button",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "trash",
+    "subject": "a simple cream waste bin with golden lid and two vertical recessed teal grooves",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "cookie",
+    "subject": "one simple golden cookie disc with a bite missing and four dark teal chips, smooth matte surface",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "database",
+    "subject": "a compact stack of three cream cylindrical database discs with dark teal separating bands and a small turquoise status light",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "analytics",
+    "subject": "three chunky ascending bars in turquoise, cream and gold on a simple dark teal baseline",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "logout",
+    "subject": "a dark teal doorframe with a golden horizontal arrow pointing out to the right",
+    "family": "game-ui",
+    "source": "src/ui/components/GameIcon.tsx"
+  },
+  {
+    "id": "resource-gold",
+    "subject": "a single broad golden ingot with softly beveled trapezoid shape",
+    "family": "resources-and-brand",
+    "source": "src/ui/world/ResourceGlyph.tsx / ProviderBadge.tsx / public/brand/abyss-mark.svg"
+  },
+  {
+    "id": "resource-pearl",
+    "subject": "one smooth pearlescent pale lavender pearl with a gentle cream highlight, restrained sheen",
+    "family": "resources-and-brand",
+    "source": "src/ui/world/ResourceGlyph.tsx / ProviderBadge.tsx / public/brand/abyss-mark.svg"
+  },
+  {
+    "id": "resource-alloy",
+    "subject": "one compact hexagonal titanium alloy block, muted coral metal faces and dark teal edges",
+    "family": "resources-and-brand",
+    "source": "src/ui/world/ResourceGlyph.tsx / ProviderBadge.tsx / public/brand/abyss-mark.svg"
+  },
+  {
+    "id": "resource-core",
+    "subject": "one small hexagonal dark teal energy core housing with a luminous pale blue circular center, restrained glow",
+    "family": "resources-and-brand",
+    "source": "src/ui/world/ResourceGlyph.tsx / ProviderBadge.tsx / public/brand/abyss-mark.svg"
+  },
+  {
+    "id": "email",
+    "subject": "one cream sealed envelope with a golden flap and dark teal edges",
+    "family": "resources-and-brand",
+    "source": "src/ui/world/ResourceGlyph.tsx / ProviderBadge.tsx / public/brand/abyss-mark.svg"
+  },
+  {
+    "id": "brand-abyss",
+    "subject": "a compact side-view cream and gold submarine emblem, a round turquoise porthole, small rear propeller and golden dorsal fin, no wordmark",
+    "family": "resources-and-brand",
+    "source": "src/ui/world/ResourceGlyph.tsx / ProviderBadge.tsx / public/brand/abyss-mark.svg"
+  },
+  {
+    "id": "provider-google",
+    "subject": "the recognizable multicolored Google G emblem, exact G silhouette and original red blue green yellow regions",
+    "family": "login-provider",
+    "source": "src/ui/auth/ProviderIcon.tsx"
+  },
+  {
+    "id": "provider-facebook",
+    "subject": "the recognizable white lowercase Facebook f silhouette on a muted blue rounded square",
+    "family": "login-provider",
+    "source": "src/ui/auth/ProviderIcon.tsx"
+  },
+  {
+    "id": "provider-discord",
+    "subject": "the recognizable Discord controller mascot silhouette with two dot eyes and no extra face, original muted periwinkle color",
+    "family": "login-provider",
+    "source": "src/ui/auth/ProviderIcon.tsx"
+  },
+  {
+    "id": "provider-github",
+    "subject": "the recognizable GitHub Octocat silhouette, dark teal on a cream round token",
+    "family": "login-provider",
+    "source": "src/ui/auth/ProviderIcon.tsx"
+  },
+  {
+    "id": "provider-twitch",
+    "subject": "the recognizable Twitch chat-bubble emblem with the two vertical eye bars, muted purple and cream",
+    "family": "login-provider",
+    "source": "src/ui/auth/ProviderIcon.tsx"
+  },
+  {
+    "id": "provider-x",
+    "subject": "the recognizable X social network crossed X emblem, dark teal and cream",
+    "family": "login-provider",
+    "source": "src/ui/auth/ProviderIcon.tsx"
+  },
+  {
+    "id": "provider-telegram",
+    "subject": "the recognizable Telegram paper airplane silhouette in cream on a cyan circular token",
+    "family": "login-provider",
+    "source": "src/ui/auth/ProviderIcon.tsx"
+  },
+  {
+    "id": "provider-steam",
+    "subject": "the recognizable Steam connecting rod and two circular joints emblem, cream on dark teal circular token",
+    "family": "login-provider",
+    "source": "src/ui/auth/ProviderIcon.tsx"
+  },
+  {
+    "id": "provider-linkedin",
+    "subject": "the recognizable LinkedIn in emblem, cream on muted blue rounded square",
+    "family": "login-provider",
+    "source": "src/ui/auth/ProviderIcon.tsx"
+  },
+  {
+    "id": "provider-microsoft",
+    "subject": "the Microsoft four equal square window emblem, original red green blue yellow squares separated by an equal cross-shaped gap",
+    "family": "login-provider",
+    "source": "src/ui/auth/ProviderIcon.tsx"
+  }
+]

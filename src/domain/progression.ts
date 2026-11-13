@@ -1,4 +1,4 @@
-import { SPECIALISTS } from '../data/automation';
+import { AUTOMATION_LEVELS, SPECIALISTS } from '../data/automation';
 import { getCampaign } from './campaign';
 import { INFRASTRUCTURE, PRESTIGE } from '../data/campaign';
 import { EXPEDITION_TRADE_BONUS } from '../data/expeditions';
@@ -16,7 +16,9 @@ import type { WorldState } from './world';
 export interface ExpeditionState {
   readonly completed: number;
   readonly active: boolean;
-  readonly delivered: Readonly<Record<CoreLayerId, number>>;
+  readonly delivered: Readonly<
+    Record<CoreLayerId, number> & Partial<Record<LayerId, number | undefined>>
+  >;
 }
 export function createExpedition(): ExpeditionState {
   return {
@@ -96,6 +98,10 @@ export function getLayerProduction(
         (base.resource.refinedValue *
           (100 +
             campaign.rank * PRESTIGE.bonusPerRank +
+            (world.layers[id]?.automation?.enabled
+              ? (AUTOMATION_LEVELS[world.layers[id].automation.level - 1]
+                  ?.saleBonus ?? 0)
+              : 0) +
             campaign.infrastructure.exchange *
               INFRASTRUCTURE.exchange.bonusPerLevel +
             research.trade * RESEARCH.trade.bonusPerLevel +

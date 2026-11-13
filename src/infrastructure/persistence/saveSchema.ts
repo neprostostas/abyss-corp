@@ -114,6 +114,8 @@ const schema = z
                     shallows: integer,
                     'golden-trench': integer,
                     'pearl-caverns': integer,
+                    'thermal-vents': integer.optional(),
+                    'midnight-rift': integer.optional(),
                   })
                   .strict(),
               })
@@ -237,10 +239,10 @@ export function validateSave(data: unknown): GameSave {
     const definition = EXPEDITIONS[expedition.completed];
     if (expedition.active && !definition)
       throw new Error('Completed campaign cannot be active.');
-    for (const id of CORE_LAYER_IDS) {
+    for (const id of LAYER_IDS) {
       if (
-        (!expedition.active && expedition.delivered[id] !== 0) ||
-        expedition.delivered[id] > (definition?.targets[id] ?? 0)
+        (!expedition.active && (expedition.delivered[id] ?? 0) !== 0) ||
+        (expedition.delivered[id] ?? 0) > (definition?.targets[id] ?? 0)
       )
         throw new Error('Invalid expedition cargo.');
     }
@@ -249,6 +251,18 @@ export function validateSave(data: unknown): GameSave {
       CORE_LAYER_IDS.some((id) => !world.layers[id])
     )
       throw new Error('Expeditions require all outposts.');
+    const requiredContracts = EXPEDITIONS.slice(
+      0,
+      expedition.completed + (expedition.active ? 1 : 0),
+    );
+    if (
+      requiredContracts.some((contract) =>
+        LAYER_IDS.some(
+          (id) => (contract.targets[id] ?? 0) > 0 && !world.layers[id],
+        ),
+      )
+    )
+      throw new Error('Expedition source outpost is locked.');
   }
 
   if (

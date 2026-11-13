@@ -1,8 +1,9 @@
-import { UPGRADE_IDS } from '../data/balance';
-import { LAYERS, LAYER_IDS, CORE_LAYER_IDS } from '../data/layers';
+import { SPECIALIST_IDS } from '../data/automation';
+import { UPGRADE_IDS, UPGRADES } from '../data/balance';
+import { LAYERS, LAYER_IDS } from '../data/layers';
 import { RESEARCH, RESEARCH_IDS } from '../data/progression';
 import { getSaleValue } from './game';
-import { INFRASTRUCTURE_IDS } from '../data/campaign';
+import { PRESTIGE, INFRASTRUCTURE_IDS } from '../data/campaign';
 import {
   getLayerGame,
   getAutomationOffer,
@@ -71,10 +72,11 @@ export function getProductionHint(world: WorldState): ProductionHint {
         : `Claim ${String(rewards)} mission rewards`,
     );
   if (expedition.state.active && !expedition.pilotsReady) {
-    const stopped = CORE_LAYER_IDS.find(
+    const stopped = expedition.sourceIds.find(
       (id) =>
         (!expedition.definition ||
-          expedition.state.delivered[id] < expedition.definition.targets[id]) &&
+          (expedition.state.delivered[id] ?? 0) <
+            (expedition.definition.targets[id] ?? 0)) &&
         (!world.layers[id]?.running || !world.layers[id].automation?.enabled),
     );
     return hint(
@@ -83,6 +85,8 @@ export function getProductionHint(world: WorldState): ProductionHint {
         : 'Resume expedition pilots',
     );
   }
+  const prestige = getPrestigeOffer(world);
+  if (prestige.canPrestige) return hint('Prestige ready · Base');
   if (expedition.canStart) return hint('Start an expedition');
   if (!pilot && getAutomationOffer(world).affordable)
     return hint('Hire an offline cargo pilot');
@@ -191,8 +195,15 @@ export function getProductionHint(world: WorldState): ProductionHint {
     engineering: 'engineering',
     surveying: 'surveying',
   };
+  const productionGoal = prestige.requirements.find(
+    ({ id }) => id === 'production',
+  );
+  const productionComplete = productionGoal?.current === productionGoal?.total;
   const research = RESEARCH_IDS.find(
-    (id) => getResearchOffer(world, id).affordable,
+    (id) =>
+      getResearchOffer(world, id).affordable &&
+      (id !== 'engineering' || !productionComplete) &&
+      (id !== 'surveying' || !prestige.depthReady),
   );
   if (research) return hint(`Research ${researchNames[research]}`);
   const facilityNames = {
@@ -204,22 +215,76 @@ export function getProductionHint(world: WorldState): ProductionHint {
     (id) => getInfrastructureOffer(world, id).affordable,
   );
   if (facility) return hint(`Upgrade ${facilityNames[facility]}`);
-  if (getPrestigeOffer(world).canPrestige) return hint('Prestige ready');
   if (upgrades[0])
     return hint(
       `Next: ${names[upgrades[0].id]} · ${upgrades[0].cost.toLocaleString('en-US')} CR`,
     );
   if (expedition.state.active && expedition.definition) {
     const targets = expedition.definition.targets;
-    const source = (Object.keys(targets) as (keyof typeof targets)[]).find(
-      (id) => expedition.state.delivered[id] < targets[id],
+    const source = expedition.sourceIds.find(
+      (id) => (expedition.state.delivered[id] ?? 0) < (targets[id] ?? 0),
     );
     if (source)
       return hint(
         `Contract needs ${String(LAYERS[source].depthMeters)} m cargo`,
       );
   }
-  if (summary.fullyUpgraded) return hint('Base fully upgraded');
+  if (summary.fullyUpgraded) {
+    if (prestige.rank >= PRESTIGE.maxRank)
+      return hint('Maximum prestige rank reached');
+    if (lockedDepth) {
+      const cost = getUnlockOffer(world, lockedDepth).cost;
+      return hint(
+        `Next: ${String(LAYERS[lockedDepth].depthMeters)} m · ${cost.toLocaleString('en-US')} CR`,
+      );
+    }
+    const missing = prestige.requirements.find(
+      ({ current, total }) => current < total,
+    );
+    if (missing?.id === 'production') {
+      const depth = LAYER_IDS.find((id) => {
+        const layer = world.layers[id];
+        return (
+          layer &&
+          UPGRADE_IDS.some(
+            (kind) => layer.levels[kind] < UPGRADES[kind].levels.length,
+          )
+        );
+      });
+      if (depth)
+        return hint(
+          `Finish production · ${LAYERS[depth].depthMeters.toLocaleString('en-US')} m`,
+        );
+    }
+    if (missing?.id === 'crew') {
+      const depth = LAYER_IDS.find((id) => {
+        const selected = { ...world, selectedLayerId: id };
+        return (
+          getAutomationOffer(selected).cost !== null ||
+          SPECIALIST_IDS.some(
+            (kind) => getSpecialistOffer(selected, kind).cost !== null,
+          )
+        );
+      });
+      if (depth)
+        return hint(
+          `Max crew · ${LAYERS[depth].depthMeters.toLocaleString('en-US')} m · Base`,
+        );
+    }
+    if (missing?.id === 'research')
+      return hint('Max trade & storage · Research');
+    if (missing?.id === 'network') return hint('Max network facilities · Base');
+    if (missing?.id === 'missions') return hint('Complete missions · Missions');
+    if (missing?.id === 'expeditions')
+      return hint('Complete expeditions · Missions');
+    if (prestige.completionReady) {
+      if (world.credits + sale >= prestige.requiredCredits)
+        return hint('Sell cargo to reach prestige');
+      return hint(
+        `Prestige · ${(prestige.requiredCredits - world.credits).toLocaleString('en-US')} CR to go`,
+      );
+    }
+  }
   if (pilot?.enabled) return hint('Offline sales active');
   if (game.processingElapsedMs !== null) return hint('Refining cargo');
   return hint('Production running');

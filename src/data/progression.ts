@@ -50,6 +50,8 @@ export const MISSION_IDS = [
   'explore',
   'network',
   'research',
+  'vents',
+  'rift',
 ] as const;
 export type MissionId = (typeof MISSION_IDS)[number];
 interface MissionDefinition {
@@ -60,6 +62,20 @@ interface MissionDefinition {
   readonly reward: number;
 }
 export const MISSIONS = {
+  vents: {
+    name: 'Below the volcanic shelf',
+    description: 'Establish the outpost at 900 m.',
+    metric: 'layers',
+    target: 4,
+    reward: 300,
+  },
+  rift: {
+    name: 'Edge of the known ocean',
+    description: 'Establish the outpost at 1,900 m.',
+    metric: 'layers',
+    target: 5,
+    reward: 1000,
+  },
   improve: {
     name: 'Better foundations',
     description: 'Purchase four production upgrades across your outposts.',

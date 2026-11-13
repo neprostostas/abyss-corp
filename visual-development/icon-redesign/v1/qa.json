@@ -1,0 +1,914 @@
+[
+  {
+    "id": "coin",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      19,
+      1234,
+      1254
+    ]
+  },
+  {
+    "id": "crystal",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      25,
+      23,
+      1208,
+      1254
+    ]
+  },
+  {
+    "id": "mining",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      0,
+      1188,
+      1220
+    ]
+  },
+  {
+    "id": "transport",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      61,
+      1236,
+      1232
+    ]
+  },
+  {
+    "id": "processing",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      33,
+      17,
+      1198,
+      1220
+    ]
+  },
+  {
+    "id": "storage",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      25,
+      1216,
+      1254
+    ]
+  },
+  {
+    "id": "map",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      8,
+      1238,
+      1228
+    ]
+  },
+  {
+    "id": "sonar",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      19,
+      1242,
+      1254
+    ]
+  },
+  {
+    "id": "prestige",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      31,
+      1234,
+      1254
+    ]
+  },
+  {
+    "id": "research",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      8,
+      1160,
+      1254
+    ]
+  },
+  {
+    "id": "trade-network",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      0,
+      1222,
+      1254
+    ]
+  },
+  {
+    "id": "modular-storage",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      0,
+      1240,
+      1254
+    ]
+  },
+  {
+    "id": "missions",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      31,
+      1176,
+      1254
+    ]
+  },
+  {
+    "id": "trophy",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      9,
+      1236,
+      1220
+    ]
+  },
+  {
+    "id": "refresh",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      33,
+      44,
+      1216,
+      1198
+    ]
+  },
+  {
+    "id": "settings",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      49,
+      49,
+      1206,
+      1206
+    ]
+  },
+  {
+    "id": "lock",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      72,
+      1170,
+      1222
+    ]
+  },
+  {
+    "id": "play",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      39,
+      1224,
+      1254
+    ]
+  },
+  {
+    "id": "pause",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      51,
+      1234,
+      1254
+    ]
+  },
+  {
+    "id": "close",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      0,
+      1174,
+      1254
+    ]
+  },
+  {
+    "id": "arrow",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      27,
+      1224,
+      1254
+    ]
+  },
+  {
+    "id": "robot",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      69,
+      52,
+      1202,
+      1230
+    ]
+  },
+  {
+    "id": "cloud",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      0,
+      1230,
+      1214
+    ]
+  },
+  {
+    "id": "check",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      28,
+      1232,
+      1224
+    ]
+  },
+  {
+    "id": "depth",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      39,
+      33,
+      1200,
+      1254
+    ]
+  },
+  {
+    "id": "profile",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      21,
+      1240,
+      1228
+    ]
+  },
+  {
+    "id": "camera",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      52,
+      1240,
+      1238
+    ]
+  },
+  {
+    "id": "trash",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      25,
+      1238,
+      1236
+    ]
+  },
+  {
+    "id": "cookie",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      19,
+      1253,
+      1230
+    ]
+  },
+  {
+    "id": "database",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      9,
+      1216,
+      1254
+    ]
+  },
+  {
+    "id": "analytics",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      0,
+      1224,
+      1244
+    ]
+  },
+  {
+    "id": "logout",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      39,
+      31,
+      1240,
+      1214
+    ]
+  },
+  {
+    "id": "resource-gold",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      19,
+      1200,
+      1254
+    ]
+  },
+  {
+    "id": "resource-pearl",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      17,
+      1254,
+      1254
+    ]
+  },
+  {
+    "id": "resource-alloy",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      23,
+      1214,
+      1229
+    ]
+  },
+  {
+    "id": "resource-core",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      23,
+      1206,
+      1213
+    ]
+  },
+  {
+    "id": "email",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      21,
+      1234,
+      1254
+    ]
+  },
+  {
+    "id": "brand-abyss",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      21,
+      1208,
+      1254
+    ]
+  },
+  {
+    "id": "provider-google",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      71,
+      1218,
+      1254
+    ]
+  },
+  {
+    "id": "provider-facebook",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      16,
+      1234,
+      1254
+    ]
+  },
+  {
+    "id": "provider-discord",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      19,
+      1246,
+      1254
+    ]
+  },
+  {
+    "id": "provider-github",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      21,
+      1218,
+      1244
+    ]
+  },
+  {
+    "id": "provider-twitch",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      19,
+      1248,
+      1236
+    ]
+  },
+  {
+    "id": "provider-x",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      7,
+      1232,
+      1238
+    ]
+  },
+  {
+    "id": "provider-telegram",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      49,
+      1234,
+      1236
+    ]
+  },
+  {
+    "id": "provider-steam",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      30,
+      1200,
+      1254
+    ]
+  },
+  {
+    "id": "provider-linkedin",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      77,
+      1206,
+      1254
+    ]
+  },
+  {
+    "id": "provider-microsoft",
+    "status": "ok",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alpha_range": [
+      0,
+      255
+    ],
+    "alpha_bounds": [
+      0,
+      25,
+      1234,
+      1254
+    ]
+  }
+]

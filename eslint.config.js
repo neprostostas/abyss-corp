@@ -6,9 +6,16 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default defineConfig([
-  globalIgnores(['dist', '.data', 'supabase/functions']),
+  globalIgnores([
+    'dist',
+    '.data',
+    'supabase/functions',
+    'visual-development',
+    'prototype-3d/public',
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['prototype-3d/**'],
     extends: [
       js.configs.recommended,
       tseslint.configs.strictTypeChecked,
@@ -23,6 +30,11 @@ export default defineConfig([
         tsconfigRootDir: import.meta.dirname,
       },
     },
+  },
+  {
+    files: ['prototype-3d/**/*.{ts,tsx}'],
+    extends: [js.configs.recommended, tseslint.configs.recommended],
+    languageOptions: { globals: { ...globals.browser, ...globals.node } },
   },
   {
     files: ['netlify/**/*.ts'],

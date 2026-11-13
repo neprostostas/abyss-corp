@@ -117,3 +117,50 @@ void test('trade officer boosts pilot sales equally across continuous and chunke
     offline.credits > advanceWorld({ ...seed, credits: 0 }, 120000).credits,
   );
 });
+
+void test('trained on-duty pilots improve maxed-base income and retain offline partition equivalence', () => {
+  const seed = {
+    ...createWorld(),
+    credits: 0,
+    layers: {
+      shallows: {
+        ...createLayer(),
+        levels: { mining: 5, transport: 5, processing: 5, storage: 5 },
+        automation: { level: 1, enabled: true, elapsedMs: 0 },
+      },
+    },
+  };
+  let previous = 0;
+  for (const level of [1, 2, 3]) {
+    const world = {
+      ...seed,
+      layers: {
+        shallows: {
+          ...seed.layers.shallows,
+          automation: { level, enabled: true, elapsedMs: 0 },
+        },
+      },
+    };
+    const offline = advanceWorld(world, 600000);
+    assert(offline.credits > previous);
+    previous = offline.credits;
+    let chunked: WorldState = world;
+    for (let step = 0; step < 600; step++)
+      chunked = advanceWorld(chunked, 1000);
+    assert.deepEqual(chunked, offline);
+    const offDuty = {
+      ...world,
+      layers: {
+        shallows: {
+          ...world.layers.shallows,
+          automation: { level, enabled: false, elapsedMs: 0 },
+        },
+      },
+    };
+    assert.equal(getLayerProduction(offDuty).resource.refinedValue, 10);
+    assert.equal(
+      getLayerProduction(world).resource.refinedValue,
+      10 + level - 1,
+    );
+  }
+});

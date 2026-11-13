@@ -1,4 +1,5 @@
 import type { ResourceDefinition } from '../../data/resources';
+import { useIconAssets } from '../components/iconAssets';
 
 export function ResourceGlyph({
   resource,
@@ -11,6 +12,22 @@ export function ResourceGlyph({
   y: number;
   scale?: number;
 }) {
+  const base = useIconAssets();
+  if (base) {
+    const name =
+      resource.shape === 'crystal'
+        ? 'crystal'
+        : `resource-${resource.shape === 'ingot' ? 'gold' : resource.shape}`;
+    return (
+      <image
+        href={`${base}/${name}-128.webp`}
+        x={x - 24 * scale}
+        y={y - 24 * scale}
+        width={48 * scale}
+        height={48 * scale}
+      />
+    );
+  }
   return (
     <g
       transform={`translate(${String(x)} ${String(y)}) scale(${String(scale)})`}

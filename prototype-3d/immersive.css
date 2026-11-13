@@ -1,0 +1,930 @@
+/* The ocean owns the viewport. Interface is equipment, not a page frame. */
+.dive-app .raster-icon {
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.dive-app .raster-icon.machine-portrait {
+  width: 96px;
+  height: 80px;
+}
+.prototype-touch-pad .move-up .raster-icon {
+  transform: rotate(-90deg);
+}
+.prototype-touch-pad .move-down .raster-icon {
+  transform: rotate(90deg);
+}
+.prototype-touch-pad .move-left .raster-icon {
+  transform: rotate(180deg);
+}
+.dive-app {
+  position: fixed;
+  inset: 0;
+  isolation: isolate;
+  overflow: hidden;
+  background: #073b4b;
+}
+.dive-world,
+.prototype-world {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.prototype-world iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.dive-top {
+  position: absolute;
+  inset: max(20px, env(safe-area-inset-top)) 24px auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 4;
+}
+.dive-top > * {
+  pointer-events: auto;
+}
+.dive-brand {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  color: #f3f1dc;
+  filter: drop-shadow(0 2px 7px #082b3d80);
+}
+.dive-brand .brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dive-brand .brand-name {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+.dive-brand .brand-name small {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #b6d5cc;
+}
+.dive-brand img {
+  width: 40px;
+  height: 30px;
+}
+.dive-wallet {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #123a48d9;
+  border: 1px solid #c1ddd32b;
+  border-radius: 30px;
+  padding: 9px 15px;
+  box-shadow:
+    inset 0 1px #d3ebe61a,
+    0 5px 20px #00233133;
+  backdrop-filter: blur(15px);
+}
+.dive-wallet > .game-icon {
+  width: 23px;
+  color: #ffda84;
+}
+.dive-wallet strong {
+  font-size: 20px;
+  color: #fff0bf;
+}
+.dive-wallet > span {
+  font-size: 9px;
+  color: #a5c4be;
+}
+.dive-location {
+  position: absolute;
+  left: 24px;
+  top: 80px;
+  z-index: 3;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #123a48c9;
+  border: 1px solid #b2d3c526;
+  border-radius: 15px;
+  color: #e5ead7;
+  padding: 11px 14px;
+  box-shadow:
+    inset 0 1px #c6e1d319,
+    0 4px 14px #02253530;
+  backdrop-filter: blur(14px);
+  text-align: left;
+}
+.dive-location > span:nth-child(2) {
+  display: grid;
+  gap: 4px;
+}
+.dive-location small {
+  font-size: 8px;
+  letter-spacing: 1.4px;
+  color: #93c6ba;
+}
+.dive-location b {
+  font-size: 12px;
+}
+.dive-location > .game-icon {
+  color: #8fd6c5;
+  width: 23px;
+}
+.dive-nav {
+  position: absolute;
+  right: 24px;
+  top: 90px;
+  display: grid;
+  gap: 10px;
+  z-index: 5;
+}
+.dive-service {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 76px;
+  min-height: 68px;
+  padding: 10px 7px;
+  color: #d9e7d9;
+  background: linear-gradient(160deg, #285466e8, #143a4ce8);
+  border: 1px solid #c3e4d52c;
+  border-radius: 17px;
+  box-shadow:
+    inset 0 1px #e4f5d51c,
+    0 4px 0 #062c3d80,
+    0 7px 18px #03263338;
+  backdrop-filter: blur(12px);
+}
+.dive-service > .game-icon {
+  color: #a5dfc8;
+  width: 25px;
+  height: 25px;
+}
+.dive-service > span {
+  font-size: 8px;
+}
+.dive-service.active {
+  border-color: #f5cf83;
+  background: #476765;
+}
+.dive-service i {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: #f6c665;
+  color: #284549;
+  border-radius: 20px;
+  font-size: 9px;
+  min-width: 16px;
+  padding: 3px;
+  font-style: normal;
+}
+.dive-bottom {
+  position: absolute;
+  bottom: max(22px, env(safe-area-inset-bottom));
+  right: 24px;
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  z-index: 3;
+}
+.dive-stock {
+  display: flex;
+  gap: 12px;
+  padding: 11px 17px;
+  background: #133c4bdd;
+  border: 1px solid #b5d5c52a;
+  color: #e7ebda;
+  border-radius: 18px;
+  box-shadow:
+    inset 0 1px #d7eed51c,
+    0 5px 20px #00253340;
+  backdrop-filter: blur(14px);
+}
+.dive-stock > .game-icon {
+  color: #9ed5c1;
+}
+.dive-stock > span:nth-child(2) {
+  display: grid;
+  gap: 3px;
+  text-align: left;
+}
+.dive-stock small {
+  font-size: 8px;
+  letter-spacing: 1.2px;
+  color: #9cbbb6;
+}
+.dive-stock b {
+  font-size: 18px;
+}
+.dive-stock em {
+  font-size: 12px;
+  font-style: normal;
+  color: #95b6af;
+}
+.dive-raw {
+  font-size: 10px;
+  color: #9ebfb4;
+}
+.dive-sell {
+  padding: 10px 20px;
+  border-radius: 18px;
+  min-width: 145px;
+}
+.dive-sell > span {
+  display: grid;
+  gap: 4px;
+  font-size: 10px;
+  text-align: left;
+}
+.dive-sell strong {
+  font-size: 17px;
+}
+.dive-sell.ready {
+  animation: shipment-ready 4s ease-in-out infinite;
+}
+@keyframes shipment-ready {
+  50% {
+    box-shadow:
+      inset 0 1px #fff6cf,
+      0 3px 0 #a77732,
+      0 0 25px #f1c45d2a;
+  }
+}
+.dive-equipment {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+.dive-equipment button {
+  width: 39px;
+  height: 39px;
+  border-radius: 14px;
+  opacity: 0.85;
+  backdrop-filter: blur(12px);
+}
+.dive-equipment button[aria-pressed='true'] {
+  border-color: #edc67a;
+  color: #ffe2a4;
+  background: #436566;
+  opacity: 1;
+}
+.dive-hint {
+  position: absolute;
+  left: 24px;
+  bottom: 80px;
+  max-width: 310px;
+  padding: 10px 13px;
+  background: #0b304077;
+  border-radius: 12px;
+  font-size: 10px;
+  color: #c9ded0;
+  line-height: 1.6;
+  pointer-events: none;
+}
+.dive-signal {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: #9bdeb1;
+  box-shadow: 0 0 9px #81cfa969;
+}
+.dive-inspector {
+  position: absolute;
+  z-index: 6;
+  left: 40%;
+  top: 30%;
+  width: 300px;
+  padding: 18px;
+  border: 1px solid #c9dfbc58;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #204d5af5, #133744f5);
+  box-shadow:
+    inset 0 1px #d3ecd123,
+    0 12px 40px #00233280;
+  backdrop-filter: blur(22px);
+  animation: equipment-open 0.2s ease-out;
+}
+.dive-inspector-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.dive-inspector-head > div {
+  flex: 1;
+}
+.dive-inspector-head small {
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: #a1c4b6;
+}
+.dive-inspector h2 {
+  font-size: 16px;
+  margin-top: 5px;
+}
+.dive-inspector-head > .icon-button {
+  width: 27px;
+  height: 27px;
+  padding: 6px;
+  border-radius: 9px;
+}
+.dive-equipment-icon {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 42px;
+  border-radius: 13px;
+  background: #315c61;
+  color: #f6d895;
+  box-shadow: inset 0 1px #d9ebc534;
+}
+.dive-inspector > p {
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #b9d2c6;
+  line-height: 1.6;
+  margin: 15px 0 10px;
+}
+.dive-machine-status {
+  display: flex;
+  align-items: center;
+  font-size: 9px;
+  color: #c4dcc7;
+  line-height: 1.5;
+}
+.dive-upgrade-detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0c303e6e;
+  border-radius: 11px;
+  padding: 10px 12px;
+  margin: 14px 0;
+}
+.dive-upgrade-detail small {
+  font-size: 8px;
+  color: #95b8ab;
+  letter-spacing: 1px;
+}
+.dive-upgrade-detail b {
+  font-size: 13px;
+  color: #ebdfb6;
+}
+.dive-upgrade-detail b > span {
+  color: #7eaa9d;
+  padding: 0 6px;
+}
+.dive-upgrade {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 12px;
+}
+.dive-upgrade > span:first-child {
+  font-size: 10px;
+}
+.dive-upgrade > span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.dive-upgrade .game-icon {
+  width: 17px;
+  height: 17px;
+}
+.dive-shortfall {
+  display: block;
+  text-align: center;
+  font-size: 9px;
+  color: #94b7a9;
+  margin-top: 10px;
+}
+.dive-inspector > .wide-button:last-child:not(.dive-upgrade) {
+  margin-top: 10px;
+}
+.dive-toast {
+  position: absolute;
+  z-index: 15;
+  top: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #315f57ed;
+  border: 1px solid #bfe6ad60;
+  border-radius: 16px;
+  padding: 13px 20px;
+  font-size: 12px;
+  box-shadow: 0 8px 30px #002b3c5e;
+}
+.prototype-camera-tools {
+  position: absolute;
+  right: 24px;
+  bottom: 108px;
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+.prototype-camera-tools .icon-button {
+  width: 35px;
+  height: 35px;
+  border-radius: 13px;
+}
+.prototype-controls-help {
+  position: absolute;
+  right: 24px;
+  bottom: 155px;
+  max-width: 280px;
+  padding: 15px;
+  border: 1px solid #c0dfbd3d;
+  background: #143c4bf2;
+  border-radius: 15px;
+  font-size: 10px;
+  line-height: 1.8;
+  z-index: 5;
+}
+.prototype-touch-pad {
+  display: none;
+  position: absolute;
+  right: 24px;
+  bottom: 158px;
+  grid-template-columns: repeat(3, 34px);
+  gap: 4px;
+  touch-action: none;
+}
+.prototype-touch-pad .icon-button {
+  width: 34px;
+  height: 34px;
+  padding: 6px;
+  border-radius: 12px;
+}
+.move-up {
+  grid-column: 2;
+}
+.move-left {
+  grid-row: 2;
+  grid-column: 1;
+}
+.move-down {
+  grid-row: 2;
+  grid-column: 2;
+}
+.move-right {
+  grid-row: 2;
+  grid-column: 3;
+}
+.prototype-loading {
+  position: absolute;
+  inset: 0;
+  background: #0b2939;
+  display: grid;
+  place-items: center;
+  color: #b5d5c5;
+}
+.prototype-biome-note {
+  position: absolute;
+  left: 50%;
+  top: 25px;
+  transform: translateX(-50%);
+  font-size: 9px;
+  color: #a8c7bc;
+  background: #0b293980;
+  padding: 6px 10px;
+  border-radius: 9px;
+}
+.dive-app > .game-panel {
+  z-index: 12;
+  top: 20px;
+  right: 20px;
+  bottom: 20px;
+  max-height: calc(100dvh - 40px);
+  border-radius: 22px;
+}
+.dive-app > .game-panel-backdrop {
+  z-index: 10;
+}
+.dive-sites {
+  display: grid;
+  gap: 12px;
+}
+.dive-sites > p {
+  font:
+    12px/1.6 'Manrope',
+    sans-serif;
+  color: #aac4bb;
+}
+.dive-sites > button {
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  min-height: 70px;
+  background: #1c4857;
+  color: #dce9d7;
+  border: 1px solid #bddcc62d;
+  box-shadow:
+    inset 0 1px #c3e6cf18,
+    0 3px #092b3a;
+}
+.dive-sites > button > span {
+  display: grid;
+  gap: 7px;
+  text-align: left;
+}
+.dive-sites small {
+  font-size: 9px;
+  color: #99bcb1;
+}
+.dive-sites button[aria-pressed='true'] {
+  border-color: #edc67a;
+}
+.dive-save-error {
+  position: absolute;
+  z-index: 20;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.dive-intro {
+  position: absolute;
+  left: 6vw;
+  top: 27%;
+  max-width: 370px;
+  z-index: 8;
+  padding: 26px;
+  border-radius: 26px;
+  background: linear-gradient(140deg, #133b4de8, #123846c9);
+  border: 1px solid #bddbc13b;
+  box-shadow: 0 20px 55px #00213166;
+  backdrop-filter: blur(18px);
+}
+.dive-intro-kicker {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #aed5be;
+}
+.dive-intro h1 {
+  font-size: 35px;
+  line-height: 1.25;
+  color: #f7e8bf;
+  margin: 15px 0;
+}
+.dive-intro p {
+  font:
+    600 13px/1.7 'Manrope',
+    sans-serif;
+  color: #c3d8c9;
+}
+.dive-intro > div {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 19px 0;
+  color: #9bc7b2;
+  font:
+    600 11px/1.7 'Manrope',
+    sans-serif;
+}
+.dive-intro > button {
+  width: 100%;
+  justify-content: space-between;
+  border-radius: 13px;
+}
+@keyframes equipment-open {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (pointer: coarse) {
+  .prototype-touch-pad {
+    display: grid;
+  }
+}
+@media (max-width: 650px) {
+  .dive-top {
+    top: max(14px, env(safe-area-inset-top));
+    left: 14px;
+    right: 14px;
+  }
+  .dive-brand .brand-name {
+    font-size: 16px;
+  }
+  .dive-brand img {
+    width: 30px;
+    height: 25px;
+  }
+  .dive-wallet {
+    padding: 8px 11px;
+  }
+  .dive-wallet strong {
+    font-size: 17px;
+  }
+  .dive-location {
+    left: 14px;
+    top: 66px;
+    padding: 8px 11px;
+  }
+  .dive-location b {
+    font-size: 10px;
+  }
+  .dive-nav {
+    right: 14px;
+    top: 76px;
+    gap: 8px;
+  }
+  .dive-service {
+    width: 51px;
+    min-height: 52px;
+    padding: 8px 4px;
+    border-radius: 16px;
+  }
+  .dive-service > .game-icon {
+    width: 23px;
+    height: 23px;
+  }
+  .dive-service > span {
+    display: none;
+  }
+  .dive-equipment {
+    left: 14px;
+    bottom: 105px;
+    gap: 5px;
+  }
+  .dive-equipment button {
+    width: 33px;
+    height: 33px;
+    padding: 7px;
+  }
+  .dive-bottom {
+    bottom: max(18px, env(safe-area-inset-bottom));
+    left: 14px;
+    right: 14px;
+    gap: 8px;
+    justify-content: center;
+  }
+  .dive-stock {
+    padding: 10px;
+    gap: 8px;
+    flex: 1;
+    justify-content: flex-start;
+    border-radius: 16px;
+  }
+  .dive-raw {
+    font-size: 9px;
+  }
+  .dive-sell {
+    min-width: 130px;
+    padding: 10px 14px;
+  }
+  .dive-hint {
+    left: 14px;
+    bottom: 151px;
+    max-width: 210px;
+    font-size: 9px;
+    padding: 8px 10px;
+  }
+  .prototype-camera-tools {
+    right: 14px;
+    bottom: 105px;
+  }
+  .prototype-touch-pad {
+    right: 14px;
+    bottom: 155px;
+  }
+  .prototype-controls-help {
+    right: 14px;
+    bottom: 155px;
+    max-width: 240px;
+  }
+  .dive-inspector {
+    left: 14px !important;
+    right: 14px;
+    top: auto !important;
+    bottom: 90px;
+    width: auto;
+    max-height: 55dvh;
+    overflow: auto;
+    border-radius: 22px;
+    padding: 16px;
+  }
+  .dive-inspector > p {
+    font-size: 12px;
+    margin: 10px 0;
+  }
+  .dive-inspector-head small {
+    font-size: 7px;
+  }
+  .dive-inspector h2 {
+    font-size: 15px;
+  }
+  .dive-inspector ~ .dive-equipment {
+    display: none;
+  }
+  .dive-app > .game-panel {
+    inset: 75px 10px 10px !important;
+    width: auto;
+    max-height: calc(100dvh - 85px);
+    border-radius: 22px;
+  }
+  .dive-toast {
+    top: 120px;
+    max-width: 90%;
+    width: max-content;
+    font-size: 10px;
+  }
+  .dive-intro {
+    left: 14px;
+    right: 76px;
+    top: auto;
+    bottom: 160px;
+    max-width: none;
+    padding: 21px;
+  }
+  .dive-intro h1 {
+    font-size: 28px;
+  }
+  .dive-intro p {
+    font-size: 12px;
+  }
+  .prototype-biome-note {
+    top: 122px;
+    max-width: 65%;
+    font-size: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dive-sell.ready {
+    animation: none;
+  }
+}
+
+.dive-cycle-meter {
+  height: 4px;
+  background: #092c3b;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.dive-cycle-meter > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #65b6a2, #c0e5aa);
+  transition: width 0.1s linear;
+}
+/* Standalone service drawers do not depend on the old page grid. */
+.dive-app {
+  --ocean-panel-accent: #9bceb8;
+  --drawer-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.dive-app > .game-panel {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  width: min(380px, calc(100vw - 135px));
+  height: auto;
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  overflow: hidden;
+  background: linear-gradient(145deg, #204954f5, #123542f5);
+  box-shadow: 0 18px 60px #01233288;
+  border: 1px solid #bcd5b84d;
+  right: 112px;
+}
+.dive-app .panel-content {
+  min-height: 0;
+  overflow: auto;
+  flex: 1;
+}
+.dive-app > .game-panel-backdrop {
+  position: absolute;
+  inset: 0;
+  background: #05263520;
+  backdrop-filter: none;
+}
+@media (max-width: 650px) {
+  .dive-app > .game-panel {
+    width: auto;
+  }
+}
+@media (max-width: 650px) {
+  .dive-app:has(.dive-inspector) .dive-equipment,
+  .dive-app:has(.dive-inspector) .prototype-camera-tools,
+  .dive-app:has(.dive-inspector) .prototype-touch-pad {
+    visibility: hidden;
+  }
+}
+.dive-location .dive-chevron {
+  width: 18px;
+  height: 18px;
+  transform: rotate(90deg);
+}
+.dive-upgrade-detail b .game-icon,
+.dive-intro button .game-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+.dive-tutorial {
+  position: absolute;
+  z-index: 18;
+  left: 24px;
+  top: 160px;
+  width: 292px;
+  padding: 18px;
+  border: 1px solid #f5d98488;
+  border-radius: 20px;
+  background: #153e4af2;
+  box-shadow: 0 16px 42px #001c3066;
+  color: #f2f3dc;
+}
+.dive-tutorial-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dive-tutorial-top small {
+  flex: 1;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #e9cb87;
+}
+.dive-tutorial-top button {
+  background: none;
+  border: 0;
+  padding: 6px;
+  cursor: pointer;
+}
+.dive-tutorial-top button .game-icon {
+  width: 18px;
+  height: 18px;
+}
+.dive-tutorial h2 {
+  margin: 14px 0 8px;
+  font-size: 20px;
+}
+.dive-tutorial p {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 16px;
+  color: #c5d9d4;
+}
+.dive-tutorial .wide-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.dive-tutorial-progress {
+  display: flex;
+  gap: 5px;
+  margin-top: 14px;
+}
+.dive-tutorial-progress i {
+  flex: 1;
+  height: 3px;
+  border-radius: 3px;
+  background: #55757b;
+}
+.dive-tutorial-progress .reached {
+  background: #e6c77b;
+}
+@media (max-width: 650px) {
+  .dive-tutorial {
+    left: 12px !important;
+    right: 12px;
+    top: 128px !important;
+    width: auto;
+    padding: 14px;
+  }
+  .dive-tutorial h2 {
+    margin: 8px 0 5px;
+    font-size: 17px;
+  }
+  .dive-tutorial p {
+    margin-bottom: 10px;
+    font-size: 12px;
+  }
+  .dive-app:has(.dive-tutorial) .dive-inspector {
+    max-height: 42dvh;
+    overflow: auto;
+  }
+}

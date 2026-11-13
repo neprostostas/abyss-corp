@@ -51,6 +51,11 @@ export function AutomationPanel({
             />
           </div>
         )}
+        {automation?.enabled && offer.saleBonus > 0 && (
+          <small className="crew-next">
+            +{offer.saleBonus}% base sale value while on duty
+          </small>
+        )}
         <div className="crew-actions">
           <button
             className="crew-upgrade"
@@ -86,6 +91,9 @@ export function AutomationPanel({
           <small className="crew-next">
             {offer.level ? 'Next' : 'Sells every'} {offer.nextIntervalMs / 1000}
             s
+            {offer.nextSaleBonus
+              ? ` · +${String(offer.nextSaleBonus)}% base sale value`
+              : ''}
           </small>
         )}
       </div>

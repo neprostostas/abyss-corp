@@ -5,10 +5,15 @@ import {
   SPECIALIST_IDS,
   SPECIALISTS,
 } from '../data/automation';
-import { MISSION_IDS, RESEARCH_IDS, RESEARCH } from '../data/progression';
+import { MISSION_IDS, RESEARCH } from '../data/progression';
 import { EXPEDITIONS } from '../data/expeditions';
 import { INFRASTRUCTURE_IDS } from '../data/campaign';
-import { INFRASTRUCTURE, PRESTIGE, getPrestigeCost } from '../data/campaign';
+import {
+  INFRASTRUCTURE,
+  PRESTIGE,
+  PRESTIGE_RESEARCH_IDS,
+  getPrestigeCost,
+} from '../data/campaign';
 import type { InfrastructureId } from '../data/campaign';
 import type { WorldState } from './world';
 
@@ -45,7 +50,7 @@ export function getPrestigeOffer(world: WorldState) {
   const requirements = [
     {
       id: 'production',
-      label: 'Production',
+      label: 'Production upgrades maxed',
       current: LAYER_IDS.reduce(
         (sum, id) =>
           sum +
@@ -59,7 +64,7 @@ export function getPrestigeOffer(world: WorldState) {
     },
     {
       id: 'crew',
-      label: 'Crew',
+      label: 'Crew roles maxed',
       current: LAYER_IDS.reduce(
         (sum, id) =>
           sum +
@@ -77,15 +82,15 @@ export function getPrestigeOffer(world: WorldState) {
     },
     {
       id: 'research',
-      label: 'Research',
-      current: RESEARCH_IDS.filter(
+      label: 'Trade & storage maxed',
+      current: PRESTIGE_RESEARCH_IDS.filter(
         (id) => world.progression?.research[id] === RESEARCH[id].costs.length,
       ).length,
-      total: RESEARCH_IDS.length,
+      total: PRESTIGE_RESEARCH_IDS.length,
     },
     {
       id: 'network',
-      label: 'Network',
+      label: 'Network facilities maxed',
       current: INFRASTRUCTURE_IDS.filter(
         (id) =>
           getCampaign(world).infrastructure[id] ===
@@ -103,7 +108,7 @@ export function getPrestigeOffer(world: WorldState) {
     },
     {
       id: 'expeditions',
-      label: 'Expeditions',
+      label: 'Expeditions completed',
       current: world.progression?.expedition?.completed ?? 0,
       total: EXPEDITIONS.length,
     },

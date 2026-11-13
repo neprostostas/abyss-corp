@@ -1,0 +1,434 @@
+[
+  {
+    "id": "coin",
+    "originalBytes": 879975,
+    "webpBytes": {
+      "64": 2102,
+      "128": 4456,
+      "256": 9664
+    }
+  },
+  {
+    "id": "crystal",
+    "originalBytes": 623467,
+    "webpBytes": {
+      "64": 1656,
+      "128": 3300,
+      "256": 6902
+    }
+  },
+  {
+    "id": "mining",
+    "originalBytes": 912826,
+    "webpBytes": {
+      "64": 2314,
+      "128": 4930,
+      "256": 10970
+    }
+  },
+  {
+    "id": "transport",
+    "originalBytes": 891936,
+    "webpBytes": {
+      "64": 2596,
+      "128": 5448,
+      "256": 12062
+    }
+  },
+  {
+    "id": "processing",
+    "originalBytes": 821094,
+    "webpBytes": {
+      "64": 1866,
+      "128": 3912,
+      "256": 8632
+    }
+  },
+  {
+    "id": "storage",
+    "originalBytes": 908187,
+    "webpBytes": {
+      "64": 2274,
+      "128": 4798,
+      "256": 10728
+    }
+  },
+  {
+    "id": "map",
+    "originalBytes": 909608,
+    "webpBytes": {
+      "64": 2666,
+      "128": 5694,
+      "256": 12678
+    }
+  },
+  {
+    "id": "sonar",
+    "originalBytes": 1070043,
+    "webpBytes": {
+      "64": 2488,
+      "128": 5386,
+      "256": 12310
+    }
+  },
+  {
+    "id": "prestige",
+    "originalBytes": 789845,
+    "webpBytes": {
+      "64": 2290,
+      "128": 4620,
+      "256": 10252
+    }
+  },
+  {
+    "id": "research",
+    "originalBytes": 939992,
+    "webpBytes": {
+      "64": 2396,
+      "128": 4972,
+      "256": 11620
+    }
+  },
+  {
+    "id": "trade-network",
+    "originalBytes": 862814,
+    "webpBytes": {
+      "64": 2620,
+      "128": 5448,
+      "256": 12170
+    }
+  },
+  {
+    "id": "modular-storage",
+    "originalBytes": 1060029,
+    "webpBytes": {
+      "64": 2840,
+      "128": 5950,
+      "256": 13282
+    }
+  },
+  {
+    "id": "missions",
+    "originalBytes": 904104,
+    "webpBytes": {
+      "64": 2298,
+      "128": 4900,
+      "256": 10770
+    }
+  },
+  {
+    "id": "trophy",
+    "originalBytes": 895087,
+    "webpBytes": {
+      "64": 2582,
+      "128": 5602,
+      "256": 12390
+    }
+  },
+  {
+    "id": "refresh",
+    "originalBytes": 875207,
+    "webpBytes": {
+      "64": 2794,
+      "128": 5978,
+      "256": 13608
+    }
+  },
+  {
+    "id": "settings",
+    "originalBytes": 810409,
+    "webpBytes": {
+      "64": 2890,
+      "128": 5720,
+      "256": 12682
+    }
+  },
+  {
+    "id": "lock",
+    "originalBytes": 843947,
+    "webpBytes": {
+      "64": 2422,
+      "128": 5182,
+      "256": 11288
+    }
+  },
+  {
+    "id": "play",
+    "originalBytes": 688211,
+    "webpBytes": {
+      "64": 1762,
+      "128": 3438,
+      "256": 7174
+    }
+  },
+  {
+    "id": "pause",
+    "originalBytes": 669211,
+    "webpBytes": {
+      "64": 1692,
+      "128": 3300,
+      "256": 7068
+    }
+  },
+  {
+    "id": "close",
+    "originalBytes": 884373,
+    "webpBytes": {
+      "64": 2430,
+      "128": 4580,
+      "256": 10064
+    }
+  },
+  {
+    "id": "arrow",
+    "originalBytes": 621503,
+    "webpBytes": {
+      "64": 1660,
+      "128": 3168,
+      "256": 6348
+    }
+  },
+  {
+    "id": "robot",
+    "originalBytes": 871376,
+    "webpBytes": {
+      "64": 2606,
+      "128": 5476,
+      "256": 11946
+    }
+  },
+  {
+    "id": "cloud",
+    "originalBytes": 813314,
+    "webpBytes": {
+      "64": 2038,
+      "128": 4198,
+      "256": 8716
+    }
+  },
+  {
+    "id": "check",
+    "originalBytes": 757935,
+    "webpBytes": {
+      "64": 2364,
+      "128": 4950,
+      "256": 10668
+    }
+  },
+  {
+    "id": "depth",
+    "originalBytes": 718800,
+    "webpBytes": {
+      "64": 2240,
+      "128": 4860,
+      "256": 11106
+    }
+  },
+  {
+    "id": "profile",
+    "originalBytes": 974176,
+    "webpBytes": {
+      "64": 2486,
+      "128": 5184,
+      "256": 11712
+    }
+  },
+  {
+    "id": "camera",
+    "originalBytes": 854413,
+    "webpBytes": {
+      "64": 2252,
+      "128": 4680,
+      "256": 11000
+    }
+  },
+  {
+    "id": "trash",
+    "originalBytes": 945653,
+    "webpBytes": {
+      "64": 2428,
+      "128": 5012,
+      "256": 11172
+    }
+  },
+  {
+    "id": "cookie",
+    "originalBytes": 954070,
+    "webpBytes": {
+      "64": 2308,
+      "128": 4632,
+      "256": 10276
+    }
+  },
+  {
+    "id": "database",
+    "originalBytes": 829857,
+    "webpBytes": {
+      "64": 2026,
+      "128": 4502,
+      "256": 9914
+    }
+  },
+  {
+    "id": "analytics",
+    "originalBytes": 765989,
+    "webpBytes": {
+      "64": 1846,
+      "128": 3652,
+      "256": 7714
+    }
+  },
+  {
+    "id": "logout",
+    "originalBytes": 769272,
+    "webpBytes": {
+      "64": 2094,
+      "128": 4142,
+      "256": 8706
+    }
+  },
+  {
+    "id": "resource-gold",
+    "originalBytes": 660870,
+    "webpBytes": {
+      "64": 1800,
+      "128": 3598,
+      "256": 7412
+    }
+  },
+  {
+    "id": "resource-pearl",
+    "originalBytes": 683177,
+    "webpBytes": {
+      "64": 1640,
+      "128": 3054,
+      "256": 6386
+    }
+  },
+  {
+    "id": "resource-alloy",
+    "originalBytes": 953589,
+    "webpBytes": {
+      "64": 2052,
+      "128": 4338,
+      "256": 10046
+    }
+  },
+  {
+    "id": "resource-core",
+    "originalBytes": 915099,
+    "webpBytes": {
+      "64": 2154,
+      "128": 4530,
+      "256": 10374
+    }
+  },
+  {
+    "id": "email",
+    "originalBytes": 938668,
+    "webpBytes": {
+      "64": 2250,
+      "128": 4734,
+      "256": 10670
+    }
+  },
+  {
+    "id": "brand-abyss",
+    "originalBytes": 874527,
+    "webpBytes": {
+      "64": 2660,
+      "128": 5790,
+      "256": 12928
+    }
+  },
+  {
+    "id": "provider-google",
+    "originalBytes": 733888,
+    "webpBytes": {
+      "64": 2420,
+      "128": 4998,
+      "256": 10664
+    }
+  },
+  {
+    "id": "provider-facebook",
+    "originalBytes": 956954,
+    "webpBytes": {
+      "64": 2140,
+      "128": 4204,
+      "256": 9204
+    }
+  },
+  {
+    "id": "provider-discord",
+    "originalBytes": 905463,
+    "webpBytes": {
+      "64": 2052,
+      "128": 4258,
+      "256": 9116
+    }
+  },
+  {
+    "id": "provider-github",
+    "originalBytes": 939311,
+    "webpBytes": {
+      "64": 2288,
+      "128": 4718,
+      "256": 10420
+    }
+  },
+  {
+    "id": "provider-twitch",
+    "originalBytes": 745913,
+    "webpBytes": {
+      "64": 2004,
+      "128": 4078,
+      "256": 8548
+    }
+  },
+  {
+    "id": "provider-x",
+    "originalBytes": 985610,
+    "webpBytes": {
+      "64": 2426,
+      "128": 5010,
+      "256": 11042
+    }
+  },
+  {
+    "id": "provider-telegram",
+    "originalBytes": 938451,
+    "webpBytes": {
+      "64": 2228,
+      "128": 4650,
+      "256": 10360
+    }
+  },
+  {
+    "id": "provider-steam",
+    "originalBytes": 975040,
+    "webpBytes": {
+      "64": 2564,
+      "128": 5314,
+      "256": 11784
+    }
+  },
+  {
+    "id": "provider-linkedin",
+    "originalBytes": 1026020,
+    "webpBytes": {
+      "64": 2512,
+      "128": 5206,
+      "256": 11830
+    }
+  },
+  {
+    "id": "provider-microsoft",
+    "originalBytes": 783629,
+    "webpBytes": {
+      "64": 2068,
+      "128": 4078,
+      "256": 8978
+    }
+  }
+]

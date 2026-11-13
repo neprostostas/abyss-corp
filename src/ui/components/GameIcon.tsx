@@ -1,4 +1,6 @@
 import { memo } from 'react';
+import { useIconAssets } from './iconAssets';
+import { RasterIcon } from './RasterIcon';
 import type { ReactNode } from 'react';
 export type IconName =
   | 'coin'
@@ -288,6 +290,11 @@ export const GameIcon = memo(function GameIcon({
   name: IconName;
   className?: string;
 }) {
+  const base = useIconAssets();
+  if (base)
+    return (
+      <RasterIcon base={base} name={name} className={className} size={32} />
+    );
   return (
     <svg
       className={`game-icon ${className}`}

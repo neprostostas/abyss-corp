@@ -1,3 +1,4 @@
+import { EXPEDITIONS } from '../src/data/expeditions';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
@@ -141,7 +142,7 @@ void test('all expeditions work with first-level pilots; claims and reloads cann
       ]),
     ),
   };
-  for (let completed = 1; completed <= 3; completed++) {
+  for (let completed = 1; completed <= EXPEDITIONS.length; completed++) {
     assert(getExpeditionOffer(world).canStart);
     world = advanceWorld(startExpedition(world), 180_000);
     assert(getExpeditionOffer(world).ready);

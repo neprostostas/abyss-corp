@@ -197,7 +197,17 @@ void test('Telegram and Steam identities provision email-less players without tr
       ]),
       /requirements/,
     );
-    const established = { ...gameSave(30000), world: completedWorld() };
+    const complete = completedWorld();
+    const established = {
+      ...gameSave(30000),
+      world: {
+        ...complete,
+        progression: {
+          ...complete.progression,
+          research: { trade: 5, storage: 5, engineering: 0, surveying: 0 },
+        },
+      },
+    };
     await db.query('select * from public.write_game_save($1,2,$2,$3,1)', [
       owner,
       JSON.stringify(established),
@@ -212,7 +222,7 @@ void test('Telegram and Steam identities provision email-less players without tr
       ...established,
       world: {
         ...established.world,
-        credits: 39999,
+        credits: 31999,
         campaign: { ...established.world.campaign, rank: 1 },
       },
     };
@@ -223,7 +233,7 @@ void test('Telegram and Steam identities provision email-less players without tr
     await db.exec('set role authenticated');
     const secondReset = JSON.stringify({
       ...established,
-      world: prestigeWorld({ ...secondRun.world, credits: 40000 }),
+      world: prestigeWorld({ ...secondRun.world, credits: 32000 }),
     });
     await assert.rejects(
       db.query('select * from public.prestige_game_save($1,$2,$3,1,3,1)', [
@@ -238,10 +248,24 @@ void test('Telegram and Steam identities provision email-less players without tr
       [['world', 'layers', 'shallows', 'levels', 'mining'], '4'],
       [['world', 'layers', 'shallows', 'automation', 'level'], '2'],
       [['world', 'layers', 'shallows', 'specialists', 'broker'], '2'],
-      [['world', 'progression', 'research', 'engineering'], '4'],
+      [['world', 'progression', 'research', 'trade'], '4'],
+      [['world', 'progression', 'research', 'storage'], '4'],
       [['world', 'campaign', 'infrastructure', 'sonar'], '2'],
       [['world', 'progression', 'claimedMissions'], '[]'],
-      [['world', 'progression', 'expedition', 'completed'], '2'],
+      [
+        ['world', 'progression', 'claimedMissions'],
+        JSON.stringify([
+          'improve',
+          'automate',
+          'expand',
+          'discover',
+          'explore',
+          'network',
+          'research',
+          'vents',
+        ]),
+      ],
+      [['world', 'progression', 'expedition', 'completed'], '4'],
     ] as const) {
       await db.exec('reset role');
       await db.query(

@@ -1,3 +1,4 @@
+import { PRESTIGE_RESEARCH_IDS } from '../../data/campaign';
 import { LAYERS } from '../../data/layers';
 import type { ReactNode } from 'react';
 import {
@@ -19,6 +20,8 @@ const goals: Record<MissionId, string> = {
   explore: 'Open 3 depths',
   network: 'Automate 3 outposts',
   research: 'Complete 6 research levels',
+  vents: 'Open the 900 m outpost',
+  rift: 'Open the 1,900 m outpost',
 };
 export function ProgressionPanel({
   world,
@@ -34,9 +37,9 @@ export function ProgressionPanel({
   mode?: 'research' | 'missions';
 }) {
   if (mode === 'missions') {
-    const missions = (
+    const missions = (ids: readonly MissionId[]) => (
       <div className="mission-list">
-        {MISSION_IDS.map((id) => {
+        {ids.map((id) => {
           const definition = MISSIONS[id];
           const progress = getMissionProgress(world, id);
           return (
@@ -86,18 +89,21 @@ export function ProgressionPanel({
         })}
       </div>
     );
-    const allClaimed =
-      world.progression?.claimedMissions.length === MISSION_IDS.length;
+    const pending = MISSION_IDS.filter(
+      (id) => !getMissionProgress(world, id).claimed,
+    );
+    const completed = MISSION_IDS.filter(
+      (id) => getMissionProgress(world, id).claimed,
+    );
     return (
       <>
         {expeditions}
-        {allClaimed ? (
+        {pending.length > 0 && missions(pending)}
+        {completed.length > 0 && (
           <details className="mission-history">
             <summary>Completed missions</summary>
-            {missions}
+            {missions(completed)}
           </details>
-        ) : (
-          missions
         )}
       </>
     );
@@ -163,6 +169,12 @@ export function ProgressionPanel({
                 : id === 'storage'
                   ? 'Storage · all depths'
                   : definition.description}
+              {!PRESTIGE_RESEARCH_IDS.some((required) => required === id) && (
+                <>
+                  <br />
+                  <span>Optional for prestige</span>
+                </>
+              )}
             </p>
             <button
               disabled={!offer.affordable}

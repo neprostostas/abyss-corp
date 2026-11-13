@@ -226,6 +226,8 @@ export function getAutomationOffer(world: WorldState) {
     affordable: cost !== null && world.credits >= cost,
     intervalMs: AUTOMATION_LEVELS[level - 1]?.intervalMs ?? null,
     nextIntervalMs: definition?.intervalMs ?? null,
+    saleBonus: AUTOMATION_LEVELS[level - 1]?.saleBonus ?? 0,
+    nextSaleBonus: definition?.saleBonus ?? null,
   };
 }
 

@@ -1,3 +1,5 @@
+import { completedWorld } from './fixtures';
+import { PRESTIGE } from '../src/data/campaign';
 import { getProgression } from '../src/domain/progression';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
@@ -93,7 +95,7 @@ void test('hints distinguish rewards, automation, expansion and completed machin
         },
       },
     }).text,
-    /fully upgraded/,
+    /180 m/,
   );
 });
 
@@ -163,4 +165,137 @@ void test('completed expedition reward is not hidden by a paused base or full wa
     },
   };
   assert.equal(getProductionHint(world).text, 'Claim expedition bonus');
+});
+
+void test('maxed local production points to unfinished production or crew on another depth', () => {
+  const complete = { ...completedWorld(), credits: 0 };
+  assert(complete.layers['golden-trench']);
+  assert(complete.layers['midnight-rift']);
+  const production: WorldState = {
+    ...complete,
+    layers: {
+      ...complete.layers,
+      'golden-trench': {
+        ...complete.layers['golden-trench'],
+        levels: { mining: 4, transport: 5, processing: 5, storage: 5 },
+      },
+    },
+  };
+  assert.equal(getProductionHint(production).text, 'Finish production · 180 m');
+  const crew: WorldState = {
+    ...complete,
+    layers: {
+      ...complete.layers,
+      'midnight-rift': {
+        ...complete.layers['midnight-rift'],
+        specialists: { quartermaster: 2, broker: 3 },
+      },
+    },
+  };
+  assert.equal(getProductionHint(crew).text, 'Max crew · 1,900 m · Base');
+});
+
+void test('late research and network goals stay visible even when no purchase is affordable', () => {
+  const complete = { ...completedWorld(), credits: 0 };
+  const research = {
+    ...complete,
+    progression: {
+      ...complete.progression,
+      research: { ...complete.progression.research, trade: 4 },
+    },
+  };
+  assert.equal(
+    getProductionHint(research).text,
+    'Max trade & storage · Research',
+  );
+  const network = {
+    ...complete,
+    campaign: {
+      ...complete.campaign,
+      infrastructure: { ...complete.campaign.infrastructure, sonar: 2 },
+    },
+  };
+  assert.equal(
+    getProductionHint(network).text,
+    'Max network facilities · Base',
+  );
+});
+
+void test('completed run hints distinguish remaining credits, sellable cargo, readiness and maximum rank', () => {
+  const complete = { ...completedWorld(), credits: 1946 };
+  assert(complete.layers.shallows);
+  assert.equal(getProductionHint(complete).text, 'Prestige · 23,054 CR to go');
+  assert.equal(
+    getProductionHint({
+      ...complete,
+      campaign: { ...complete.campaign, rank: 1 },
+    }).text,
+    'Prestige · 30,054 CR to go',
+  );
+  assert.equal(
+    getProductionHint({ ...complete, credits: 25000 }).text,
+    'Prestige ready · Base',
+  );
+  const cargo = {
+    ...complete,
+    credits: 24999,
+    layers: {
+      ...complete.layers,
+      shallows: { ...complete.layers.shallows, refined: 3 },
+    },
+  };
+  assert.equal(getProductionHint(cargo).text, 'Sell cargo to reach prestige');
+  const maximum = {
+    ...complete,
+    campaign: { ...complete.campaign, rank: PRESTIGE.maxRank },
+  };
+  assert.equal(
+    getProductionHint(maximum).text,
+    'Maximum prestige rank reached',
+  );
+  const paused = {
+    ...complete,
+    layers: {
+      ...complete.layers,
+      shallows: { ...complete.layers.shallows, running: false },
+    },
+  };
+  assert.equal(getProductionHint(paused).text, 'Resume production');
+});
+
+void test('ready prestige takes priority over affordable optional research', () => {
+  const complete = completedWorld();
+  const world = {
+    ...complete,
+    progression: {
+      ...complete.progression,
+      research: { trade: 5, storage: 5, engineering: 0, surveying: 0 },
+    },
+  };
+  assert.equal(getProductionHint(world).text, 'Prestige ready · Base');
+  assert.equal(
+    getProductionHint({ ...world, credits: 1946 }).text,
+    'Prestige · 23,054 CR to go',
+  );
+});
+
+void test('expired discount research does not hide the remaining crew goal', () => {
+  const complete = completedWorld();
+  assert(complete.layers['midnight-rift']);
+  const world = {
+    ...complete,
+    credits: 300,
+    progression: {
+      ...complete.progression,
+      research: { trade: 5, storage: 5, engineering: 0, surveying: 0 },
+    },
+    layers: {
+      ...complete.layers,
+      'midnight-rift': {
+        ...complete.layers['midnight-rift'],
+        specialists: { quartermaster: 2, broker: 3 },
+      },
+    },
+  };
+  assert.equal(getProductionHint(world).text, 'Max crew · 1,900 m · Base');
 });

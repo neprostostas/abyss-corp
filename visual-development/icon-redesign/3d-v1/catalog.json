@@ -1,0 +1,1298 @@
+[
+  {
+    "id": "coin",
+    "label": "Кредити",
+    "motion": "Монета робить підкид із повним обертом і м’яко сідає.",
+    "family": "Інтерфейс",
+    "index": 1,
+    "reference": "../v1/coin.png",
+    "model": "models/coin.glb",
+    "duration": 3.8,
+    "tracks": 2,
+    "meshes": 4,
+    "triangles": 3228,
+    "bytes": 210904,
+    "animatedBounds": {
+      "min": [
+        -1.0478453710021067,
+        -1.0420286452872092,
+        -1.1476551703250788
+      ],
+      "max": [
+        1.0478453710021067,
+        1.5044347069228043,
+        0.9726551750934505
+      ]
+    },
+    "loopError": 2.4492937051703357e-16
+  },
+  {
+    "id": "crystal",
+    "label": "Кристал",
+    "motion": "Грані повільно повертаються й нахиляються, відкриваючи форму кристала.",
+    "family": "Інтерфейс",
+    "index": 2,
+    "reference": "../v1/crystal.png",
+    "model": "models/crystal.glb",
+    "duration": 6,
+    "tracks": 1,
+    "meshes": 1,
+    "triangles": 44,
+    "bytes": 9776,
+    "animatedBounds": {
+      "min": [
+        -0.846286526400351,
+        -0.9814667107633576,
+        -0.9336447544249887
+      ],
+      "max": [
+        0.8462864985158625,
+        0.980890198367877,
+        0.9391098008105571
+      ]
+    },
+    "loopError": 2.4492937051703357e-16
+  },
+  {
+    "id": "mining",
+    "label": "Видобуток",
+    "motion": "Бур розкручується, висувається й повертається в корпус.",
+    "family": "Техніка",
+    "index": 3,
+    "reference": "../v1/mining.png",
+    "model": "models/mining.glb",
+    "duration": 3.6,
+    "tracks": 2,
+    "meshes": 12,
+    "triangles": 14272,
+    "bytes": 712456,
+    "animatedBounds": {
+      "min": [
+        -0.7250000238418579,
+        -0.7350000067055226,
+        -1.1164306998252869
+      ],
+      "max": [
+        0.7250000238418579,
+        0.7350000067055226,
+        1.3158289191112014
+      ]
+    },
+    "loopError": 9.797174820681343e-16
+  },
+  {
+    "id": "transport",
+    "label": "Транспорт",
+    "motion": "Човен проходить короткий маршрут; гвинт працює, корпус крениться.",
+    "family": "Техніка",
+    "index": 4,
+    "reference": "../v1/transport.png",
+    "model": "models/transport.glb",
+    "duration": 5,
+    "tracks": 3,
+    "meshes": 17,
+    "triangles": 9796,
+    "bytes": 545860,
+    "animatedBounds": {
+      "min": [
+        -1.5511643015385674,
+        -0.9605659147543528,
+        -0.8379537973732399
+      ],
+      "max": [
+        1.5816407545862976,
+        0.9088661415754385,
+        0.8379537973732399
+      ]
+    },
+    "loopError": 2.4492935992912173e-15
+  },
+  {
+    "id": "processing",
+    "label": "Переробка",
+    "motion": "Поршень прокачує сировину; рівень у резервуарі підіймається й спадає.",
+    "family": "Техніка",
+    "index": 5,
+    "reference": "../v1/processing.png",
+    "model": "models/processing.glb",
+    "duration": 4,
+    "tracks": 3,
+    "meshes": 12,
+    "triangles": 5536,
+    "bytes": 190104,
+    "animatedBounds": {
+      "min": [
+        -1.0099999871850014,
+        -0.9784093378484249,
+        -0.7699999809265137
+      ],
+      "max": [
+        1.0099999871850014,
+        1.0184093330800534,
+        0.7699999809265137
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "storage",
+    "label": "Склад",
+    "motion": "Ворота підіймаються, ящик виїжджає на приймальний майданчик.",
+    "family": "Техніка",
+    "index": 6,
+    "reference": "../v1/storage.png",
+    "model": "models/storage.glb",
+    "duration": 5.2,
+    "tracks": 2,
+    "meshes": 22,
+    "triangles": 12776,
+    "bytes": 1251084,
+    "animatedBounds": {
+      "min": [
+        -1.0700000524520874,
+        -1.0000246138870716,
+        -0.8805000003352761
+      ],
+      "max": [
+        1.0700000524520874,
+        1.0000246138870716,
+        1.460166423989518
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "map",
+    "label": "Карта",
+    "motion": "Складена карта розкриває бічні секції, пін позначає точку маршруту.",
+    "family": "Інтерфейс",
+    "index": 7,
+    "reference": "../v1/map.png",
+    "model": "models/map.glb",
+    "duration": 5,
+    "tracks": 3,
+    "meshes": 33,
+    "triangles": 18160,
+    "bytes": 916412,
+    "animatedBounds": {
+      "min": [
+        -1.0019168319703036,
+        -0.7550000001490116,
+        -0.1849999985843897
+      ],
+      "max": [
+        1.0019168319703036,
+        0.7550000001490116,
+        0.4983905926590056
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "sonar",
+    "label": "Сонар",
+    "motion": "Промінь обертається, а кільця й контакт відповідають на сканування.",
+    "family": "Інтерфейс",
+    "index": 8,
+    "reference": "../v1/sonar.png",
+    "model": "models/sonar.glb",
+    "duration": 4,
+    "tracks": 5,
+    "meshes": 10,
+    "triangles": 7688,
+    "bytes": 302732,
+    "animatedBounds": {
+      "min": [
+        -0.8799999952316284,
+        -0.9399999962747096,
+        -0.3549999955296516
+      ],
+      "max": [
+        0.8799999952316284,
+        0.9399999962747096,
+        0.3998430272874447
+      ]
+    },
+    "loopError": 2.4492937051703357e-16
+  },
+  {
+    "id": "prestige",
+    "label": "Престиж",
+    "motion": "Зірка розвертається, а знак досягнення встає на своє місце.",
+    "family": "Інтерфейс",
+    "index": 9,
+    "reference": "../v1/prestige.png",
+    "model": "models/prestige.glb",
+    "duration": 4.6,
+    "tracks": 3,
+    "meshes": 4,
+    "triangles": 496,
+    "bytes": 59856,
+    "animatedBounds": {
+      "min": [
+        -1.115019000120967,
+        -1.0247510473538424,
+        -0.6621222608584976
+      ],
+      "max": [
+        1.1150189999179607,
+        1.0235744075859678,
+        0.659598480008231
+      ]
+    },
+    "loopError": 8.572527306351685e-17
+  },
+  {
+    "id": "research",
+    "label": "Дослідження",
+    "motion": "У камері зразка рухаються гілочки; верхній сканер проходить над ними.",
+    "family": "Інтерфейс",
+    "index": 10,
+    "reference": "../v1/research.png",
+    "model": "models/research.glb",
+    "duration": 5,
+    "tracks": 2,
+    "meshes": 16,
+    "triangles": 8508,
+    "bytes": 776124,
+    "animatedBounds": {
+      "min": [
+        -0.6600000262260437,
+        -0.699999988079071,
+        -0.6049999986588954
+      ],
+      "max": [
+        0.6600000262260437,
+        0.699999988079071,
+        0.6049999986588954
+      ]
+    },
+    "loopError": 8.817456809217617e-17
+  },
+  {
+    "id": "trade-network",
+    "label": "Торгова мережа",
+    "motion": "Дві стрілки передають рух одна одній у протилежних напрямках.",
+    "family": "Інтерфейс",
+    "index": 11,
+    "reference": "../v1/trade-network.png",
+    "model": "models/trade-network.glb",
+    "duration": 4,
+    "tracks": 2,
+    "meshes": 4,
+    "triangles": 3216,
+    "bytes": 317660,
+    "animatedBounds": {
+      "min": [
+        -1.177786845270613,
+        -0.8147685527801514,
+        -0.1549999974668026
+      ],
+      "max": [
+        1.1777868452706128,
+        0.8147685527801514,
+        0.23499999567866325
+      ]
+    },
+    "loopError": 4.408728404608808e-17
+  },
+  {
+    "id": "modular-storage",
+    "label": "Модульний склад",
+    "motion": "Три контейнери по черзі розбираються й складаються в стос.",
+    "family": "Інтерфейс",
+    "index": 12,
+    "reference": "../v1/modular-storage.png",
+    "model": "models/modular-storage.glb",
+    "duration": 5.4,
+    "tracks": 4,
+    "meshes": 15,
+    "triangles": 8820,
+    "bytes": 871060,
+    "animatedBounds": {
+      "min": [
+        -1.0499999819366024,
+        -0.8100000178813935,
+        -0.4752323921053524
+      ],
+      "max": [
+        1.0499999819366024,
+        1.2499999841387157,
+        0.45503239769328785
+      ]
+    },
+    "loopError": 4.408728404608808e-17
+  },
+  {
+    "id": "missions",
+    "label": "Завдання",
+    "motion": "Лист на планшеті піднімається, а галочка підтверджує виконання.",
+    "family": "Інтерфейс",
+    "index": 13,
+    "reference": "../v1/missions.png",
+    "model": "models/missions.glb",
+    "duration": 4.2,
+    "tracks": 3,
+    "meshes": 6,
+    "triangles": 2140,
+    "bytes": 211096,
+    "animatedBounds": {
+      "min": [
+        -0.699999988079071,
+        -0.9475000050663949,
+        -0.25675000000000003
+      ],
+      "max": [
+        0.699999988079071,
+        0.9475000050663949,
+        0.4600606405500446
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "trophy",
+    "label": "Трофей",
+    "motion": "Кубок святково нахиляється; емблема робить короткий уклін.",
+    "family": "Інтерфейс",
+    "index": 14,
+    "reference": "../v1/trophy.png",
+    "model": "models/trophy.glb",
+    "duration": 5,
+    "tracks": 2,
+    "meshes": 7,
+    "triangles": 4192,
+    "bytes": 137292,
+    "animatedBounds": {
+      "min": [
+        -1.0886465192789925,
+        -0.8125000004470349,
+        -0.709884371468277
+      ],
+      "max": [
+        1.0886465192789925,
+        0.9096625247799335,
+        0.6961908996522326
+      ]
+    },
+    "loopError": 4.3891340973190935e-17
+  },
+  {
+    "id": "refresh",
+    "label": "Оновлення",
+    "motion": "Кругова стрілка набирає оберт і проходить повний цикл.",
+    "family": "Керування",
+    "index": 15,
+    "reference": "../v1/refresh.png",
+    "model": "models/refresh.glb",
+    "duration": 3.5,
+    "tracks": 1,
+    "meshes": 3,
+    "triangles": 1652,
+    "bytes": 164736,
+    "animatedBounds": {
+      "min": [
+        -1.1828905872787248,
+        -1.147956559074498,
+        -0.20750000640749933
+      ],
+      "max": [
+        1.1203021809172649,
+        1.155624340522755,
+        0.2075000064074993
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "settings",
+    "label": "Налаштування",
+    "motion": "Шестерня переходить на один зубець за крок, втулка рухається назустріч.",
+    "family": "Керування",
+    "index": 16,
+    "reference": "../v1/settings.png",
+    "model": "models/settings.glb",
+    "duration": 4.8,
+    "tracks": 3,
+    "meshes": 3,
+    "triangles": 4352,
+    "bytes": 337276,
+    "animatedBounds": {
+      "min": [
+        -1.3743474254503067,
+        -1.3743474254503067,
+        -0.20999999985098838
+      ],
+      "max": [
+        1.3743474254503067,
+        1.3743474254503067,
+        0.20999999985098838
+      ]
+    },
+    "loopError": 2.4492937051703357e-16
+  },
+  {
+    "id": "lock",
+    "label": "Замок",
+    "motion": "Дужка підіймається, відвертається й замикається назад.",
+    "family": "Керування",
+    "index": 17,
+    "reference": "../v1/lock.png",
+    "model": "models/lock.glb",
+    "duration": 4.5,
+    "tracks": 2,
+    "meshes": 4,
+    "triangles": 1944,
+    "bytes": 147012,
+    "animatedBounds": {
+      "min": [
+        -0.6600000262260437,
+        -0.8823047250509262,
+        -0.2825000020489097
+      ],
+      "max": [
+        0.6600000262260437,
+        1.132304726243019,
+        0.9357819871457981
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "play",
+    "label": "Старт",
+    "motion": "Трикутник подається вперед із коротким пружним відгуком.",
+    "family": "Керування",
+    "index": 18,
+    "reference": "../v1/play.png",
+    "model": "models/play.glb",
+    "duration": 3.2,
+    "tracks": 2,
+    "meshes": 2,
+    "triangles": 88,
+    "bytes": 14552,
+    "animatedBounds": {
+      "min": [
+        -0.8140665292739868,
+        -0.8929850459098816,
+        -0.2300000000745058
+      ],
+      "max": [
+        1.0124770297281822,
+        0.8929850459098816,
+        0.4091121047755357
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "pause",
+    "label": "Пауза",
+    "motion": "Дві клавіші натискаються по черзі й зупиняються разом.",
+    "family": "Керування",
+    "index": 19,
+    "reference": "../v1/pause.png",
+    "model": "models/pause.glb",
+    "duration": 3.6,
+    "tracks": 2,
+    "meshes": 2,
+    "triangles": 1176,
+    "bytes": 118996,
+    "animatedBounds": {
+      "min": [
+        -0.6150000095367432,
+        -0.824999988079071,
+        -0.34959395229816437
+      ],
+      "max": [
+        0.6150000095367432,
+        0.8848646394908428,
+        0.17000000178813934
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "close",
+    "label": "Закрити",
+    "motion": "Плечі хрестика розходяться, перехрещуються й фіксуються.",
+    "family": "Керування",
+    "index": 20,
+    "reference": "../v1/close.png",
+    "model": "models/close.glb",
+    "duration": 4,
+    "tracks": 4,
+    "meshes": 4,
+    "triangles": 2352,
+    "bytes": 238748,
+    "animatedBounds": {
+      "min": [
+        -0.9126911257987129,
+        -0.8273149486103651,
+        -0.23999999828636648
+      ],
+      "max": [
+        0.9126911257987129,
+        0.8273149486103651,
+        0.23999999828636648
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "arrow",
+    "label": "Напрямок",
+    "motion": "Стрілка двічі вказує шлях короткими рухами вперед.",
+    "family": "Керування",
+    "index": 21,
+    "reference": "../v1/arrow.png",
+    "model": "models/arrow.glb",
+    "duration": 3.8,
+    "tracks": 2,
+    "meshes": 1,
+    "triangles": 108,
+    "bytes": 15744,
+    "animatedBounds": {
+      "min": [
+        -0.9974264204502106,
+        -0.5958074331283569,
+        -0.19500000588595867
+      ],
+      "max": [
+        1.3002146915304587,
+        0.5958074331283569,
+        0.19500000588595867
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "robot",
+    "label": "Помічник",
+    "motion": "Робот оглядається, кліпає очима й ворушить антеною.",
+    "family": "Інтерфейс",
+    "index": 22,
+    "reference": "../v1/robot.png",
+    "model": "models/robot.glb",
+    "duration": 5.8,
+    "tracks": 4,
+    "meshes": 13,
+    "triangles": 8368,
+    "bytes": 416260,
+    "animatedBounds": {
+      "min": [
+        -1.0545240530399491,
+        -0.9162275144078235,
+        -0.7896745440541975
+      ],
+      "max": [
+        1.0545240530399491,
+        0.8848823341252942,
+        0.6644474698208265
+      ]
+    },
+    "loopError": 1.3960973391551974e-16
+  },
+  {
+    "id": "cloud",
+    "label": "Збереження",
+    "motion": "Стрілка проходить крізь хмару; частини хмари м’яко розсуваються.",
+    "family": "Інтерфейс",
+    "index": 23,
+    "reference": "../v1/cloud.png",
+    "model": "models/cloud.glb",
+    "duration": 4.4,
+    "tracks": 4,
+    "meshes": 5,
+    "triangles": 2856,
+    "bytes": 135388,
+    "animatedBounds": {
+      "min": [
+        -1.068186837632787,
+        -0.9884000134468078,
+        -0.4663999992609024
+      ],
+      "max": [
+        1.0849999954295906,
+        0.9631293527370414,
+        0.46639998733997345
+      ]
+    },
+    "loopError": 6.123233849335533e-18
+  },
+  {
+    "id": "check",
+    "label": "Підтвердити",
+    "motion": "Галочка розгортається від короткого плеча до довгого.",
+    "family": "Керування",
+    "index": 24,
+    "reference": "../v1/check.png",
+    "model": "models/check.glb",
+    "duration": 4.1,
+    "tracks": 3,
+    "meshes": 4,
+    "triangles": 2352,
+    "bytes": 237256,
+    "animatedBounds": {
+      "min": [
+        -0.8931063623702136,
+        -0.6336268320583117,
+        -0.16999999903142454
+      ],
+      "max": [
+        1.0812595445431614,
+        0.5975052603929848,
+        0.25985846392810347
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "depth",
+    "label": "Глибина",
+    "motion": "Стрілка занурюється повз три послідовні відмітки глибини.",
+    "family": "Інтерфейс",
+    "index": 25,
+    "reference": "../v1/depth.png",
+    "model": "models/depth.glb",
+    "duration": 4.8,
+    "tracks": 4,
+    "meshes": 4,
+    "triangles": 1872,
+    "bytes": 193376,
+    "animatedBounds": {
+      "min": [
+        -0.7783229777216913,
+        -1.1176837764694725,
+        -0.20000000298023224
+      ],
+      "max": [
+        0.7783229818940165,
+        1.1176837772130968,
+        0.20000000298023224
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "profile",
+    "label": "Профіль",
+    "motion": "Шолом повертає ілюмінатор, боковий вентиль прокручується.",
+    "family": "Інтерфейс",
+    "index": 26,
+    "reference": "../v1/profile.png",
+    "model": "models/profile.glb",
+    "duration": 5.6,
+    "tracks": 2,
+    "meshes": 12,
+    "triangles": 5636,
+    "bytes": 318552,
+    "animatedBounds": {
+      "min": [
+        -0.9196604887493469,
+        -0.9250000011175872,
+        -0.8706535759457448
+      ],
+      "max": [
+        0.8496604701228954,
+        0.9250000011175872,
+        0.7980946268277106
+      ]
+    },
+    "loopError": 2.4492935679936405e-16
+  },
+  {
+    "id": "camera",
+    "label": "Камера",
+    "motion": "Об’єктив висувається й фокусується, кнопка спускає затвор.",
+    "family": "Інтерфейс",
+    "index": 27,
+    "reference": "../v1/camera.png",
+    "model": "models/camera.glb",
+    "duration": 4.5,
+    "tracks": 3,
+    "meshes": 9,
+    "triangles": 6016,
+    "bytes": 342792,
+    "animatedBounds": {
+      "min": [
+        -0.824999988079071,
+        -0.6700000025331974,
+        -0.5052499982714653
+      ],
+      "max": [
+        0.824999988079071,
+        0.6699999786913395,
+        0.6751777353803066
+      ]
+    },
+    "loopError": 1.4695762231022014e-16
+  },
+  {
+    "id": "trash",
+    "label": "Видалення",
+    "motion": "Кришка відкидається на петлі, контейнер робить короткий струс.",
+    "family": "Керування",
+    "index": 28,
+    "reference": "../v1/trash.png",
+    "model": "models/trash.glb",
+    "duration": 5,
+    "tracks": 2,
+    "meshes": 6,
+    "triangles": 3528,
+    "bytes": 350812,
+    "animatedBounds": {
+      "min": [
+        -0.6851014388784781,
+        -0.8945676283446227,
+        -0.570885914743867
+      ],
+      "max": [
+        0.6719893248596326,
+        1.5271414650357578,
+        0.5033616755254188
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "cookie",
+    "label": "Cookies",
+    "motion": "Печиво хитнеться; чотири крихти по черзі втискаються в тісто.",
+    "family": "Інтерфейс",
+    "index": 29,
+    "reference": "../v1/cookie.png",
+    "model": "models/cookie.glb",
+    "duration": 5.2,
+    "tracks": 5,
+    "meshes": 5,
+    "triangles": 1676,
+    "bytes": 179832,
+    "animatedBounds": {
+      "min": [
+        -1.0255699355176406,
+        -1.0348171640695978,
+        -0.2698507060326404
+      ],
+      "max": [
+        1.0255742803841845,
+        1.0348149541352325,
+        0.23244966234921294
+      ]
+    },
+    "loopError": 4.408728404608808e-17
+  },
+  {
+    "id": "database",
+    "label": "База даних",
+    "motion": "Три диски розсуваються; індикатор запису переходить згори вниз.",
+    "family": "Інтерфейс",
+    "index": 30,
+    "reference": "../v1/database.png",
+    "model": "models/database.glb",
+    "duration": 5.2,
+    "tracks": 5,
+    "meshes": 12,
+    "triangles": 4680,
+    "bytes": 426004,
+    "animatedBounds": {
+      "min": [
+        -0.7300000190734863,
+        -0.9999605450034141,
+        -0.742500009611249
+      ],
+      "max": [
+        0.7300000190734863,
+        0.9999605450034141,
+        0.742500009611249
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "analytics",
+    "label": "Статистика",
+    "motion": "Стовпчики послідовно виростають до трьох різних значень.",
+    "family": "Інтерфейс",
+    "index": 31,
+    "reference": "../v1/analytics.png",
+    "model": "models/analytics.glb",
+    "duration": 5,
+    "tracks": 3,
+    "meshes": 4,
+    "triangles": 2352,
+    "bytes": 237492,
+    "animatedBounds": {
+      "min": [
+        -0.949999988079071,
+        -0.9149999958276749,
+        -0.32499998807907104
+      ],
+      "max": [
+        0.949999988079071,
+        0.9129730782495991,
+        0.32499998807907104
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "logout",
+    "label": "Вихід",
+    "motion": "Дверцята відчиняються, стрілка проходить крізь раму.",
+    "family": "Керування",
+    "index": 32,
+    "reference": "../v1/logout.png",
+    "model": "models/logout.glb",
+    "duration": 5.2,
+    "tracks": 2,
+    "meshes": 5,
+    "triangles": 2460,
+    "bytes": 246808,
+    "animatedBounds": {
+      "min": [
+        -0.8650470288097858,
+        -0.9099999983608722,
+        -0.408800006210804
+      ],
+      "max": [
+        1.263589360307459,
+        0.9099999983608722,
+        0.7884399888800295
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "resource-gold",
+    "label": "Золото",
+    "motion": "Злиток перекочується з однієї скошеної грані на іншу.",
+    "family": "Ресурси",
+    "index": 33,
+    "reference": "../v1/resource-gold.png",
+    "model": "models/resource-gold.glb",
+    "duration": 5.5,
+    "tracks": 2,
+    "meshes": 1,
+    "triangles": 60,
+    "bytes": 13260,
+    "animatedBounds": {
+      "min": [
+        -1.0311869511140817,
+        -0.6323130296947711,
+        -0.7213346250353572
+      ],
+      "max": [
+        1.0311869511140817,
+        0.7193562701722942,
+        0.7263868638572899
+      ]
+    },
+    "loopError": 3.184081560294566e-17
+  },
+  {
+    "id": "resource-pearl",
+    "label": "Перлина",
+    "motion": "Перлина погойдується на опорній точці й повертає перламутровий бік.",
+    "family": "Ресурси",
+    "index": 34,
+    "reference": "../v1/resource-pearl.png",
+    "model": "models/resource-pearl.glb",
+    "duration": 6.4,
+    "tracks": 2,
+    "meshes": 1,
+    "triangles": 2976,
+    "bytes": 97512,
+    "animatedBounds": {
+      "min": [
+        -1.3528770014218865,
+        -0.9151805715870712,
+        -1.2565623342337369
+      ],
+      "max": [
+        1.3528770014218865,
+        1.0151389615845536,
+        1.2565623342337369
+      ]
+    },
+    "loopError": 1.714505461270337e-16
+  },
+  {
+    "id": "resource-alloy",
+    "label": "Сплав",
+    "motion": "Броньовані грані розкривають внутрішній метал і змикаються.",
+    "family": "Ресурси",
+    "index": 35,
+    "reference": "../v1/resource-alloy.png",
+    "model": "models/resource-alloy.glb",
+    "duration": 5.6,
+    "tracks": 6,
+    "meshes": 13,
+    "triangles": 7644,
+    "bytes": 761436,
+    "animatedBounds": {
+      "min": [
+        -0.8997112201102896,
+        -0.8996254154686721,
+        -0.899968800934588
+      ],
+      "max": [
+        0.8999688015154031,
+        0.8992144102403496,
+        0.8999170901806144
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "resource-core",
+    "label": "Енергоядро",
+    "motion": "Три захисні затискачі відходять, лінза ядра пульсує.",
+    "family": "Ресурси",
+    "index": 36,
+    "reference": "../v1/resource-core.png",
+    "model": "models/resource-core.glb",
+    "duration": 4.8,
+    "tracks": 4,
+    "meshes": 6,
+    "triangles": 2532,
+    "bytes": 206800,
+    "animatedBounds": {
+      "min": [
+        -0.7188010811805725,
+        -0.40700000435113903,
+        -0.8566119509295005
+      ],
+      "max": [
+        0.8650000016473992,
+        0.4805000055666565,
+        0.8566119509295005
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "email",
+    "label": "Пошта",
+    "motion": "Клапан конверта відкривається, лист виходить назовні.",
+    "family": "Інтерфейс",
+    "index": 37,
+    "reference": "../v1/email.png",
+    "model": "models/email.glb",
+    "duration": 5.4,
+    "tracks": 2,
+    "meshes": 6,
+    "triangles": 2288,
+    "bytes": 203444,
+    "animatedBounds": {
+      "min": [
+        -0.8999999761581421,
+        -0.6000000238418579,
+        -0.2400000012293458
+      ],
+      "max": [
+        0.8999999761581421,
+        1.2889301294556765,
+        0.8697014972739225
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "brand-abyss",
+    "label": "Abyss Corp",
+    "motion": "Фірмовий човен вітає нахилом носа, хвостовий гвинт дає короткий поштовх.",
+    "family": "Техніка",
+    "index": 38,
+    "reference": "../v1/brand-abyss.png",
+    "model": "models/brand-abyss.glb",
+    "duration": 4.8,
+    "tracks": 3,
+    "meshes": 17,
+    "triangles": 9796,
+    "bytes": 545828,
+    "animatedBounds": {
+      "min": [
+        -1.4027134649281832,
+        -1.0854167033641458,
+        -0.8404691371879609
+      ],
+      "max": [
+        1.445281456271484,
+        0.924567989404417,
+        0.8404691369681665
+      ]
+    },
+    "loopError": 1.2246467996456087e-15
+  },
+  {
+    "id": "provider-google",
+    "label": "Google",
+    "motion": "Чотири кольорові частини G розсуваються й збираються по черзі.",
+    "family": "Вхід",
+    "index": 39,
+    "reference": "../v1/provider-google.png",
+    "model": "models/provider-google.glb",
+    "duration": 5.6,
+    "tracks": 4,
+    "meshes": 4,
+    "triangles": 2060,
+    "bytes": 213876,
+    "animatedBounds": {
+      "min": [
+        -0.9949277120413786,
+        -1.00517289569202,
+        -0.05159999820590019
+      ],
+      "max": [
+        0.988619150283608,
+        1.0092124836228753,
+        0.10158828058356795
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "provider-facebook",
+    "label": "Facebook",
+    "motion": "Літера f піднімається над плиткою й м’яко повертається.",
+    "family": "Вхід",
+    "index": 40,
+    "reference": "../v1/provider-facebook.png",
+    "model": "models/provider-facebook.glb",
+    "duration": 4.8,
+    "tracks": 2,
+    "meshes": 2,
+    "triangles": 856,
+    "bytes": 89936,
+    "animatedBounds": {
+      "min": [
+        -0.8500000238418579,
+        -0.9024999797344208,
+        -0.2800000065565109
+      ],
+      "max": [
+        0.8500000238418579,
+        0.9301643025039721,
+        0.4399388490686176
+      ]
+    },
+    "loopError": 1.102182101152202e-17
+  },
+  {
+    "id": "provider-discord",
+    "label": "Discord",
+    "motion": "Маскот кивне; вічка по черзі підморгують.",
+    "family": "Вхід",
+    "index": 41,
+    "reference": "../v1/provider-discord.png",
+    "model": "models/provider-discord.glb",
+    "duration": 5.3,
+    "tracks": 3,
+    "meshes": 3,
+    "triangles": 6736,
+    "bytes": 556676,
+    "animatedBounds": {
+      "min": [
+        -0.9863829365810561,
+        -0.7857006008119096,
+        -0.13201990738833164
+      ],
+      "max": [
+        0.9863822956488599,
+        0.7839719853181327,
+        0.07923296857190065
+      ]
+    },
+    "loopError": 1.8369702788777518e-17
+  },
+  {
+    "id": "provider-github",
+    "label": "GitHub",
+    "motion": "Octocat махає хвостом і нахиляє вушка.",
+    "family": "Вхід",
+    "index": 42,
+    "reference": "../v1/provider-github.png",
+    "model": "models/provider-github.glb",
+    "duration": 5.9,
+    "tracks": 3,
+    "meshes": 10,
+    "triangles": 4752,
+    "bytes": 239132,
+    "animatedBounds": {
+      "min": [
+        -0.9100000262260437,
+        -0.9100000262260437,
+        -0.20449999973177918
+      ],
+      "max": [
+        0.9100000262260437,
+        0.9100000262260437,
+        0.20449999973177918
+      ]
+    },
+    "loopError": 1.3226185213826425e-16
+  },
+  {
+    "id": "provider-twitch",
+    "label": "Twitch",
+    "motion": "Рамка повідомлення відгукується на два послідовні рухи штрихів.",
+    "family": "Вхід",
+    "index": 43,
+    "reference": "../v1/provider-twitch.png",
+    "model": "models/provider-twitch.glb",
+    "duration": 4.6,
+    "tracks": 3,
+    "meshes": 4,
+    "triangles": 1424,
+    "bytes": 148144,
+    "animatedBounds": {
+      "min": [
+        -0.8918684125047411,
+        -1.0410508712740056,
+        -0.22749999973922969
+      ],
+      "max": [
+        0.8916184880832436,
+        1.0366267680802093,
+        0.22749998543411498
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "provider-x",
+    "label": "X",
+    "motion": "Дві діагоналі відкриваються навколо центра й замикаються в X.",
+    "family": "Вхід",
+    "index": 44,
+    "reference": "../v1/provider-x.png",
+    "model": "models/provider-x.glb",
+    "duration": 5.1,
+    "tracks": 2,
+    "meshes": 5,
+    "triangles": 1784,
+    "bytes": 75024,
+    "animatedBounds": {
+      "min": [
+        -0.9100000262260437,
+        -0.9100000262260437,
+        -0.23850000008940705
+      ],
+      "max": [
+        0.9100000262260437,
+        0.9100000262260437,
+        0.3760963935275991
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "provider-telegram",
+    "label": "Telegram",
+    "motion": "Паперовий літак вилітає з жетона й повертається по дузі.",
+    "family": "Вхід",
+    "index": 45,
+    "reference": "../v1/provider-telegram.png",
+    "model": "models/provider-telegram.glb",
+    "duration": 5.7,
+    "tracks": 2,
+    "meshes": 5,
+    "triangles": 1816,
+    "bytes": 78120,
+    "animatedBounds": {
+      "min": [
+        -0.9100000262260437,
+        -0.9100000262260437,
+        -0.2600000003725291
+      ],
+      "max": [
+        0.9100000262260437,
+        0.9100000262260437,
+        0.6568208432211902
+      ]
+    },
+    "loopError": 5.633375257193976e-17
+  },
+  {
+    "id": "provider-steam",
+    "label": "Steam",
+    "motion": "Шатун Steam обертається навколо верхнього шарніра.",
+    "family": "Вхід",
+    "index": 46,
+    "reference": "../v1/provider-steam.png",
+    "model": "models/provider-steam.glb",
+    "duration": 6.3,
+    "tracks": 1,
+    "meshes": 8,
+    "triangles": 4764,
+    "bytes": 148628,
+    "animatedBounds": {
+      "min": [
+        -0.9100000262260437,
+        -0.9100000262260437,
+        -0.23500000104308136
+      ],
+      "max": [
+        0.9100000262260437,
+        0.9100000262260437,
+        0.23500000104308139
+      ]
+    },
+    "loopError": 4.65365790747474e-17
+  },
+  {
+    "id": "provider-linkedin",
+    "label": "LinkedIn",
+    "motion": "Крапка i підстрибує, а літера n вітає коротким нахилом.",
+    "family": "Вхід",
+    "index": 47,
+    "reference": "../v1/provider-linkedin.png",
+    "model": "models/provider-linkedin.glb",
+    "duration": 4.9,
+    "tracks": 2,
+    "meshes": 7,
+    "triangles": 3516,
+    "bytes": 314772,
+    "animatedBounds": {
+      "min": [
+        -0.8999999761581421,
+        -0.8999999761581421,
+        -0.27750000134110453
+      ],
+      "max": [
+        0.8999999761581421,
+        0.8999999761581421,
+        0.27750000134110453
+      ]
+    },
+    "loopError": 0
+  },
+  {
+    "id": "provider-microsoft",
+    "label": "Microsoft",
+    "motion": "Чотири плитки відкриваються віялом по черзі.",
+    "family": "Вхід",
+    "index": 48,
+    "reference": "../v1/provider-microsoft.png",
+    "model": "models/provider-microsoft.glb",
+    "duration": 5.8,
+    "tracks": 8,
+    "meshes": 4,
+    "triangles": 2352,
+    "bytes": 254640,
+    "animatedBounds": {
+      "min": [
+        -0.9119780642342618,
+        -0.8949999809265137,
+        -0.15207302424654606
+      ],
+      "max": [
+        0.9119986320331552,
+        0.8949999809265137,
+        0.41196991770382513
+      ]
+    },
+    "loopError": 0
+  }
+]

@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Abyss · погодження 3D-іконок</title>
+    <style>
+      @font-face {
+        font-family: Manrope;
+        src: url('../../../public/fonts/manrope-variable.ttf');
+      }
+      @font-face {
+        font-family: Russo;
+        src: url('../../../public/fonts/russo-one.ttf');
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #092a39;
+        color: #eaf1de;
+        font:
+          14px Manrope,
+          system-ui;
+      }
+      header {
+        max-width: 1440px;
+        margin: auto;
+        padding: 42px 30px 22px;
+      }
+      small {
+        color: #8dc8bc;
+        font-size: 10px;
+        letter-spacing: 2px;
+      }
+      h1 {
+        font:
+          30px Russo,
+          sans-serif;
+        margin: 12px 0;
+      }
+      p {
+        color: #adc8bd;
+        line-height: 1.6;
+        max-width: 850px;
+      }
+      nav {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 22px;
+      }
+      button,
+      select,
+      input,
+      textarea {
+        font: inherit;
+      }
+      button,
+      select {
+        cursor: pointer;
+        background: #194555;
+        color: #dceada;
+        border: 1px solid #79a89f4a;
+        border-radius: 10px;
+        padding: 10px 13px;
+      }
+      button.active,
+      button[aria-pressed='true'] {
+        border-color: #e2c36c;
+        background: #546b5d;
+        color: #fff0be;
+      }
+      input {
+        margin-left: auto;
+        background: #103745;
+        border: 1px solid #79a89f4a;
+        border-radius: 10px;
+        padding: 10px;
+        color: inherit;
+      }
+      main {
+        max-width: 1440px;
+        margin: auto;
+        padding: 8px 30px 80px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+      }
+      .card {
+        padding: 17px;
+        background: linear-gradient(150deg, #204953, #113543);
+        border: 1px solid #b6d5ba28;
+        border-radius: 19px;
+      }
+      .card[data-review='good'] {
+        border-color: #9bd5a6;
+      }
+      .card[data-review='redo'] {
+        border-color: #edbd71;
+      }
+      .heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .heading img {
+        width: 25px;
+        height: 25px;
+        object-fit: contain;
+      }
+      .heading b {
+        font-size: 12px;
+      }
+      .heading code {
+        margin-left: auto;
+        color: #85afa5;
+        font-size: 9px;
+      }
+      .art {
+        margin: 14px 0 8px;
+        height: 190px;
+        border-radius: 13px;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(ellipse, #315e66, #123c4b);
+      }
+      .art.light {
+        background: #d6e1cf;
+      }
+      .art.checker {
+        background: conic-gradient(
+            #204552 25%,
+            #163b49 0 50%,
+            #204552 0 75%,
+            #163b49 0
+          )
+          0 0/20px 20px;
+      }
+      .art img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .pending {
+        color: #799b94;
+        font-size: 11px;
+      }
+      .sizes {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        height: 68px;
+        border-bottom: 1px solid #8cb3a51e;
+        margin-bottom: 12px;
+      }
+      .sizes img {
+        object-fit: contain;
+      }
+      .sizes span {
+        display: grid;
+        place-items: center;
+        gap: 3px;
+        font-size: 8px;
+        color: #86aaa0;
+      }
+      .actions {
+        display: flex;
+        gap: 6px;
+      }
+      .actions button {
+        padding: 8px;
+        flex: 1;
+        font-size: 11px;
+      }
+      textarea {
+        width: 100%;
+        height: 45px;
+        resize: vertical;
+        background: #0c303c;
+        border: 1px solid #79a89f2a;
+        border-radius: 8px;
+        color: #d4e4d5;
+        padding: 8px;
+        font-size: 11px;
+        margin-top: 8px;
+      }
+      .status {
+        font-size: 11px;
+        color: #9dc9af;
+      }
+      footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        justify-content: center;
+        padding: 12px;
+        background: #092a39ed;
+        border-top: 1px solid #b6d5ba28;
+        backdrop-filter: blur(10px);
+        font-size: 12px;
+      }
+      footer button {
+        background: #e4c478;
+        color: #1d4247;
+        font-weight: 800;
+      }
+      a {
+        color: #e1cf8a;
+      }
+      @media (max-width: 600px) {
+        header {
+          padding: 24px 16px 16px;
+        }
+        main {
+          padding: 8px 16px 100px;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+        }
+        .card {
+          padding: 10px;
+        }
+        .art {
+          height: 140px;
+        }
+        .heading {
+          display: block;
+        }
+        .heading code {
+          display: block;
+          margin-top: 3px;
+        }
+        .actions {
+          flex-direction: column;
+        }
+        h1 {
+          font-size: 24px;
+        }
+        input {
+          width: 100%;
+          margin: 0;
+        }
+        .sizes {
+          gap: 8px;
+        }
+        footer {
+          font-size: 10px;
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <small>ABYSS CORP · ART REVIEW · V1</small>
+      <h1>Нова родина іконок</h1>
+      <p>
+        48 окремих пропозицій у м’якому мультяшному 3D-стилі. Поряд — поточний
+        SVG; нижче — нова іконка в реальних малих розмірах. Позначки й нотатки
+        зберігаються локально. Заміна в грі — після погодження.
+      </p>
+      <nav>
+        <button class="active" data-family="all">Усі</button
+        ><button data-family="game-ui">Інтерфейс</button
+        ><button data-family="resources-and-brand">Ресурси й бренд</button
+        ><button data-family="login-provider">Вхід</button
+        ><select id="background" aria-label="Тло перегляду">
+          <option value="">Темне тло</option>
+          <option value="light">Світле тло</option>
+          <option value="checker">Прозорість</option></select
+        ><input
+          id="search"
+          type="search"
+          placeholder="Пошук за назвою…"
+          aria-label="Пошук іконок"
+        />
+      </nav>
+      <p class="status" id="count"></p>
+    </header>
+    <main></main>
+    <footer>
+      <span id="summary"></span
+      ><button id="download">Зберегти мої позначки</button>
+    </footer>
+    <script type="module">
+      const catalog = await fetch('./catalog.json').then((r) => r.json());
+      let review = {};
+      try {
+        review = JSON.parse(
+          localStorage.getItem('abyss.icon-review.v1') || '{}',
+        );
+      } catch {}
+      let family = 'all';
+      const titles = {
+        coin: 'Кредити',
+        crystal: 'Кристал',
+        mining: 'Бур',
+        transport: 'Субмарина',
+        processing: 'Переробка',
+        storage: 'Склад',
+        map: 'Мапа',
+        sonar: 'Сонар',
+        prestige: 'Престиж',
+        research: 'Дослідження',
+        'trade-network': 'Торгова мережа',
+        'modular-storage': 'Модульний склад',
+        missions: 'Завдання',
+        trophy: 'Рейтинг',
+        refresh: 'Оновити',
+        settings: 'Налаштування',
+        lock: 'Замок',
+        play: 'Почати',
+        pause: 'Пауза',
+        close: 'Закрити',
+        arrow: 'Стрілка',
+        robot: 'Команда',
+        cloud: 'Хмарне збереження',
+        check: 'Підтвердити',
+        depth: 'Глибина',
+        profile: 'Капітан',
+        camera: 'Камера',
+        trash: 'Видалити',
+        cookie: 'Cookies',
+        database: 'База даних',
+        analytics: 'Аналітика',
+        logout: 'Вийти',
+        'resource-gold': 'Золото',
+        'resource-pearl': 'Перлина',
+        'resource-alloy': 'Титановий сплав',
+        'resource-core': 'Світлове ядро',
+        email: 'Пошта',
+        'brand-abyss': 'Знак Abyss',
+      };
+      function persist() {
+        localStorage.setItem('abyss.icon-review.v1', JSON.stringify(review));
+        summary();
+      }
+      function summary() {
+        const good = Object.values(review).filter(
+            (x) => x.choice === 'good',
+          ).length,
+          redo = Object.values(review).filter(
+            (x) => x.choice === 'redo',
+          ).length;
+        document.querySelector('#summary').textContent =
+          `Подобається: ${good} · Переробити: ${redo} · Без позначки: ${catalog.length - good - redo}`;
+      }
+      for (const item of catalog) {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.dataset.family = item.family;
+        card.dataset.id = item.id;
+        card.dataset.review = review[item.id]?.choice || '';
+        card.innerHTML = `<div class="heading"><img src="./originals/${item.id}.svg" alt="Поточний SVG"><b>${titles[item.id] || item.id.replace('provider-', '')}</b><code>${item.id}</code></div><div class="art"><img src="./${item.id}.png" alt="Нова 3D-іконка: ${titles[item.id] || item.id}"></div><div class="sizes">${[24, 32, 48].map((n) => `<span><img src="./${item.id}.png" width="${n}" height="${n}" alt="${n}px">${n}px</span>`).join('')}</div><div class="actions"><button data-choice="good">Подобається</button><button data-choice="redo">Переробити</button></div><textarea aria-label="Нотатка ${item.id}" placeholder="Що змінити…"></textarea>`;
+        card.querySelector('textarea').value = review[item.id]?.note || '';
+        card.querySelectorAll('[data-choice]').forEach((b) => {
+          b.setAttribute(
+            'aria-pressed',
+            String(review[item.id]?.choice === b.dataset.choice),
+          );
+          b.onclick = () => {
+            const choice =
+              review[item.id]?.choice === b.dataset.choice
+                ? ''
+                : b.dataset.choice;
+            review[item.id] = { ...review[item.id], choice };
+            card.dataset.review = choice;
+            card
+              .querySelectorAll('[data-choice]')
+              .forEach((x) =>
+                x.setAttribute(
+                  'aria-pressed',
+                  String(x.dataset.choice === choice),
+                ),
+              );
+            persist();
+          };
+        });
+        card.querySelector('textarea').oninput = (e) => {
+          review[item.id] = { ...review[item.id], note: e.target.value };
+          persist();
+        };
+        card.querySelector('.art img').onerror = (e) => {
+          e.target.hidden = true;
+          const pending = document.createElement('span');
+          pending.className = 'pending';
+          pending.textContent = 'Генерується…';
+          e.target.parentElement.append(pending);
+        };
+        document.querySelector('main').append(card);
+      }
+      function filter() {
+        const q = document.querySelector('#search').value.toLowerCase();
+        let count = 0;
+        document.querySelectorAll('.card').forEach((c) => {
+          c.hidden = !(
+            (family === 'all' || c.dataset.family === family) &&
+            c.querySelector('.heading').textContent.toLowerCase().includes(q)
+          );
+          if (!c.hidden) count++;
+        });
+        document.querySelector('#count').textContent =
+          `Показано ${count} з ${catalog.length}`;
+      }
+      document.querySelectorAll('[data-family]').forEach(
+        (b) =>
+          (b.onclick = () => {
+            family = b.dataset.family;
+            document
+              .querySelectorAll('[data-family]')
+              .forEach((x) => x.classList.toggle('active', x === b));
+            filter();
+          }),
+      );
+      document.querySelector('#search').oninput = filter;
+      document.querySelector('#background').onchange = (e) =>
+        document
+          .querySelectorAll('.art')
+          .forEach((a) => (a.className = 'art ' + e.target.value));
+      document.querySelector('#download').onclick = () => {
+        const url = URL.createObjectURL(
+          new Blob(
+            [JSON.stringify({ set: 'abyss-icons-v1', review }, null, 2)],
+            { type: 'application/json' },
+          ),
+        );
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'abyss-icons-v1-review.json';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      };
+      filter();
+      summary();
+    </script>
+  </body>
+</html>

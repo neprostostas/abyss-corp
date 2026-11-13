@@ -17,6 +17,9 @@
   display: block;
   flex-shrink: 0;
 }
+.raster-icon {
+  object-fit: contain;
+}
 .game-hud {
   position: relative;
   z-index: 3;

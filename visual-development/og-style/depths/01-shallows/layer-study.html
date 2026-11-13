@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crystal shallows — пошаровий ескіз</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font:
+          16px system-ui,
+          sans-serif;
+        color: #e7ffff;
+        background: #092b3c;
+      }
+      header {
+        padding: 18px 20px;
+      }
+      h1 {
+        font-size: 20px;
+        margin: 0 0 6px;
+      }
+      p {
+        margin: 0;
+        line-height: 1.4;
+      }
+      .scene {
+        width: min(100%, 1200px);
+        aspect-ratio: 3 / 2;
+        position: relative;
+        margin: 0 auto;
+        overflow: hidden;
+        background: linear-gradient(#39bdc2, #0a4565 65%, #062c46);
+      }
+      .layer {
+        position: absolute;
+        display: block;
+        height: auto;
+      }
+      .platform {
+        width: 88%;
+        left: 6%;
+        top: 28%;
+      }
+      .drill {
+        width: 25%;
+        left: 11%;
+        top: 35%;
+      }
+      .refinery {
+        width: 30%;
+        left: 44%;
+        top: 18%;
+      }
+      .storage {
+        width: 30%;
+        left: 57%;
+        top: 51%;
+      }
+      .submarine {
+        width: 24%;
+        left: 3%;
+        top: 65%;
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        padding: 14px 20px;
+        flex-wrap: wrap;
+      }
+      button {
+        font: inherit;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #88d9d0;
+        background: #17475a;
+        color: #fff;
+        cursor: pointer;
+      }
+      .scene.light {
+        background: #eaf0ef;
+      }
+      .scene.dark {
+        background: #101a22;
+      }
+      .scene.light-check {
+        background: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Crystal shallows · пошаровий ескіз</h1>
+      <p>Окремі PNG: контрольна композиція, не екран гри.</p>
+    </header>
+    <div class="controls" aria-label="Тло для перевірки альфа-каналу">
+      <button type="button" data-bg="water">Вода</button
+      ><button type="button" data-bg="light">Світле</button
+      ><button type="button" data-bg="dark">Темне</button
+      ><button type="button" data-bg="light-check">Біле</button>
+    </div>
+    <main class="scene" aria-label="Пошарова композиція бази">
+      <img class="layer platform" src="layers/platform.png" alt="Платформа" />
+      <img class="layer drill" src="layers/drill.png" alt="Бур" />
+      <img class="layer refinery" src="layers/refinery.png" alt="Переробка" />
+      <img class="layer storage" src="layers/storage.png" alt="Склад" />
+      <img class="layer submarine" src="layers/submarine.png" alt="Субмарина" />
+    </main>
+    <script>
+      const scene = document.querySelector('.scene');
+      document.querySelectorAll('[data-bg]').forEach((button) =>
+        button.addEventListener('click', () => {
+          scene.className = 'scene';
+          if (button.dataset.bg !== 'water')
+            scene.classList.add(button.dataset.bg);
+        }),
+      );
+    </script>
+  </body>
+</html>
