@@ -17,4 +17,6 @@ Build your underwater empire. Mine crystals, automate your outposts, and explore
 
 Jump into Quick play without an account, or sign in to keep your progress across devices. Choose your captain name and manage your profile in-game. Play on your phone or settle in on a bigger screen.
 
-![Abyss Corp gameplay](docs/images/abyss-corp-gameplay.png)
+![Abyss Corp 2D gameplay](docs/images/abyss-corp-gameplay.png)
+
+![Abyss Corp 3D gameplay](docs/images/abyss-corp-gameplay-3d.png)
