@@ -174,6 +174,9 @@ outgoingLight=mix(outgoingLight,glassTint,.97);
         lamp.position.copy(p);
         lamp.target.position.copy(p).add(new T.Vector3(3, -1.8, 0.8));
         scene.add(lamp, lamp.target);
+        // Keep both the light and its aim in the moving lens coordinate frame.
+        o.attach(lamp);
+        o.attach(lamp.target);
       }
     });
     window.abyss = { scene, camera, controls, renderer, sun, loaded: true };

@@ -934,3 +934,18 @@
   margin-right: 10px;
   pointer-events: auto;
 }
+
+/* Close controls stay quiet; shared 2D button chrome does not apply here. */
+.dive-app button[aria-label^='Close'],
+.dive-app button[aria-label='Skip tutorial'],
+.dive-app button[aria-label^='Close']:hover,
+.dive-app button[aria-label='Skip tutorial']:hover {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.dive-app button[aria-label^='Close']:focus-visible,
+.dive-app button[aria-label='Skip tutorial']:focus-visible {
+  outline: 2px solid #f6d47e;
+  outline-offset: 2px;
+}
